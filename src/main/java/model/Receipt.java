@@ -5,6 +5,7 @@
 package model;
 
 import dao.CourseDAO;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
@@ -16,19 +17,31 @@ public class Receipt {
     private int receiptID;
     private int userID;
     private String paymentDetail; // Format: "UserID CourseID[-CourseID...] Price VoucherCode"
-    private String paymentStatus;
+    private int paymentStatus;
+    private Timestamp paymentDate;
 
     // Default constructor
     public Receipt() {
     }
 
     // Parameterized constructor
-    public Receipt(int receiptID, int userID, String paymentDetail, String paymentStatus) {
+
+    public Receipt(int receiptID, int userID, String paymentDetail, int paymentStatus, Timestamp paymentDate) {
         this.receiptID = receiptID;
         this.userID = userID;
         this.paymentDetail = paymentDetail;
         this.paymentStatus = paymentStatus;
+        this.paymentDate = paymentDate;
     }
+
+    public Receipt(int userID, String paymentDetail, int paymentStatus, Timestamp paymentDate) {
+        this.userID = userID;
+        this.paymentDetail = paymentDetail;
+        this.paymentStatus = paymentStatus;
+        this.paymentDate = paymentDate;
+    }
+    
+    
 
     // Getters and Setters
     public int getReceiptID() {
@@ -55,11 +68,11 @@ public class Receipt {
         this.paymentDetail = paymentDetail;
     }
 
-    public String getPaymentStatus() {
+    public int getPaymentStatus() {
         return paymentStatus;
     }
 
-    public void setPaymentStatus(String paymentStatus) {
+    public void setPaymentStatus(int paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
 
@@ -72,7 +85,7 @@ public class Receipt {
         return 0;
     }
 
-    public ArrayList<Course> getCourseIDs() {
+    public ArrayList<Course> getCourse() {
         if (paymentDetail != null && !paymentDetail.isEmpty()) {
             String[] parts = paymentDetail.split(" ");
             String[] courseID;
@@ -108,6 +121,16 @@ public class Receipt {
         }
         return "0";
     }
+
+    public Timestamp getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Timestamp paymentDate) {
+        this.paymentDate = paymentDate;
+    }
+    
+    
 
     @Override
     public String toString() {

@@ -32,6 +32,12 @@ import model.User;
 @WebServlet(name = "LearnerViewCourseContent", urlPatterns = {"/learner/course"})
 public class LearnerViewCourseContentServlet extends HttpServlet {
 
+    EnrollDAO eDAO = new EnrollDAO();
+    StudyDAO sDAO = new StudyDAO();
+    CourseDAO couDAO = new CourseDAO();
+    ModuleDAO molDAO = new ModuleDAO();
+    MaterialDAO matDAO = new MaterialDAO();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -72,11 +78,6 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        EnrollDAO eDAO = new EnrollDAO();
-        StudyDAO sDAO = new StudyDAO();
-        CourseDAO couDAO = new CourseDAO();
-        ModuleDAO molDAO = new ModuleDAO();
-        MaterialDAO matDAO = new MaterialDAO();
         List<Module> molList;
         List<Material> matList;
         HashMap<Integer, List<Material>> mapOfModuleIdToMaterialList = new HashMap<>();
@@ -94,11 +95,11 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
                     progress = sDAO.returnStudyProgress(user.getUserId(), courseID);
                     cou = couDAO.getCourseByCourseID(courseID);
                     molList = molDAO.getAllModuleByCourseID(courseID);
-                    for (Module mol : molList){
+                    for (Module mol : molList) {
                         matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
                         mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
                         mapOfModuleIdToTotalStudiedCount.put(mol.getModuleID(), sDAO.returnTotalStudy(user.getUserId(), mol.getModuleID(), matList.size()));
-                        for (Material mat : matList){
+                        for (Material mat : matList) {
                             mapOfMaterialIdToStudyStatus.put(mat.getMaterialId(), sDAO.checkStudy(user.getUserId(), mat.getMaterialId()));
                         }
                     }
@@ -130,7 +131,17 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        String courseParam = request.getParameter("courseID");
+        try{
+            int courseID = Integer.parseInt(courseParam);
+            if(eDAO.setEnrollDate(user.getUserId(), courseID) > 0){
+                response.sendRedirect(request.getContextPath() + "/learner/course?courseID=" + courseID);
+            }
+        } catch(Exception E){
+            System.out.println("Can't Enroll User");
+        }
     }
 
     /**

@@ -25,7 +25,8 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <!-- Font Awesome cho nhi?u lo?i bi?u t??ng hi?n ??i -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <style>
             body {
                 font-family: 'Inter', sans-serif;
@@ -96,6 +97,42 @@
                 .sidebar-container:hover ~ main {
                     margin-left: 0;
                 }
+            }
+            .star-rating {
+                display: inline-flex;
+                flex-direction: row-reverse; /* Reverse order for intuitive hover effect */
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            .star-rating input {
+                display: none; /* Hide radio inputs */
+            }
+
+            .star-rating label {
+                color: #d1d5db; /* Tailwind gray-300 for unselected stars */
+                transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+                margin-right: 0.25rem; /* Tailwind spacing */
+            }
+
+            .star-rating input:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #facc15; /* Tailwind yellow-400 for selected/hovered stars */
+            }
+
+            .star-rating label:hover {
+                transform: scale(1.1); /* Slight scale effect on hover */
+            }
+
+            .review-stars {
+                display: inline-flex;
+                font-size: 1rem; /* Smaller stars for review display */
+                margin-top: 0.25rem; /* Tailwind spacing */
+            }
+
+            .review-stars .fa-star {
+                margin-right: 0.25rem; /* Tailwind spacing */
             }
         </style>
     </head>
@@ -175,15 +212,43 @@
                                     </c:choose>
                                 </div>
                                 <div class="flex space-x-4">
-                                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                                        Enroll Now
-                                    </button>
-                                    <form method="POST" action="<%= request.getContextPath()%>/cart">
-                                        <input type="hidden" name="CourseID" value="${course.courseID}">
-                                        <button type="submit" name="CartAction" value="Add" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
-                                            Add to Cart
-                                        </button>
-                                    </form>
+                                    <c:choose>
+                                        <c:when test="${isEnroll}">
+                                            <button onclick="location.href='<%= request.getContextPath()%>/learner/course?courseID =${course.courseID}'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                To Course
+                                            </button>
+                                        </c:when>
+                                        <c:when test="${isBought}">
+                                            <form method="POST" action="<%= request.getContextPath()%>/learner/course">
+                                                <button type="submit" name="Enroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                    Enroll Now
+                                                </button>
+                                            </form>
+                                        </c:when>
+                                        <c:when test="${isInCart}">
+                                            <form method="POST" action="<%= request.getContextPath()%>/checkout">
+                                                <button type="submit" name="buynowid" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                    Buy Now
+                                                </button>
+                                            </form>
+                                            <button onclick="location.href='<%= request.getContextPath()%>/cart'" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
+                                                To Cart
+                                            </button>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <form method="POST" action="<%= request.getContextPath()%>/checkout">
+                                                <button type="submit" name="buynowid" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                    Buy Now
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="<%= request.getContextPath()%>/cart">
+                                                <input type="hidden" name="CourseID" value="${course.courseID}">
+                                                <button type="submit" name="CartAction" value="Add" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
+                                                    Add to Cart
+                                                </button>
+                                            </form>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </div>
                         </div>
@@ -250,7 +315,75 @@
                             <!-- Reviews Tab -->
                             <div id="reviews" class="tab-content hidden">
                                 <h3 class="text-xl font-bold text-gray-900 mb-4">Student Reviews</h3>
-                                <p class="text-gray-600">Course reviews will be displayed here when available.</p>
+
+
+                                <!-- Review Submission Form -->
+                                <c:if test="${studyProgress >= 50 && !hasReviewed}">
+                                    <div class="bg-white p-6 rounded-lg mb-6 shadow-md">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Submit Your Review</h4>
+                                        <form method="POST" action="<%= request.getContextPath() %>/courseDetail">
+                                            <input type="hidden" name="courseID" value="${course.courseID}">
+                                            <input type="hidden" name="userID" value="${user.userId}">
+                                            <input type="hidden" name="rate" id="rating-value" value="0">
+                                            <div class="mb-4">
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                                                <div class="star-rating">
+                                                    <input type="radio" id="star5" name="star-rating" value="5" onclick="setRating(5)">
+                                                    <label for="star5" class="fas fa-star"></label>
+                                                    <input type="radio" id="star4" name="star-rating" value="4" onclick="setRating(4)">
+                                                    <label for="star4" class="fas fa-star"></label>
+                                                    <input type="radio" id="star3" name="star-rating" value="3" onclick="setRating(3)">
+                                                    <label for="star3" class="fas fa-star"></label>
+                                                    <input type="radio" id="star2" name="star-rating" value="2" onclick="setRating(2)">
+                                                    <label for="star2" class="fas fa-star"></label>
+                                                    <input type="radio" id="star1" name="star-rating" value="1" onclick="setRating(1)">
+                                                    <label for="star1" class="fas fa-star"></label>
+                                                </div>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="reviewDescription" class="block text-sm font-medium text-gray-700">Feedback</label>
+                                                <textarea id="reviewDescription" name="reviewDescription" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2" placeholder="Share your thoughts about the course..." required></textarea>
+                                            </div>
+                                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                                                Submit Review
+                                            </button>
+                                        </form>
+                                    </div>
+                                </c:if>
+
+                                <!-- Display Reviews -->
+                                <c:choose>
+                                    <c:when test="${not empty reviewList}">
+                                        <div class="space-y-6">
+                                            <c:forEach var="review" items="${reviewList}">
+                                                <div class="bg-white p-4 rounded-lg shadow-md">
+                                                    <div class="flex items-center mb-2">
+                                                        <c:choose>
+                                                            <c:when test="${not empty review.user.avatarUrl || not empty review.user.avatar}">
+                                                                <img src="${not empty review.user.avatarUrl ? review.user.avatarUrl : review.user.imageDataURI}" alt="${review.user.displayName}" class="w-10 h-10 rounded-full mr-3 object-cover" onerror="this.src='https://i.pravatar.cc/48?u=${review.user.displayName}'">
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <img src="https://i.pravatar.cc/48?u=${review.user.displayName}" alt="${review.user.displayName}" class="w-10 h-10 rounded-full mr-3 object-cover">
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <div>
+                                                            <p class="text-gray-900 font-semibold">${review.user.displayName}</p>
+                                                            <div class="review-stars text-sm">
+                                                                <c:forEach begin="1" end="5" var="i">
+                                                                    <i class="fas fa-star ${review.rate >= i ? 'text-yellow-400' : 'text-gray-300'}"></i>
+                                                                </c:forEach>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-gray-700">${review.reviewDescription}</p>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <p class="text-gray-600">No reviews available for this course yet.</p>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>
@@ -302,6 +435,9 @@
                     });
                 });
             });
+            function setRating(value) {
+                document.getElementById('rating-value').value = value;
+            }
         </script>
     </body>
 </html>

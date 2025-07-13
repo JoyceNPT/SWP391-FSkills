@@ -35,13 +35,17 @@ public class StudyDAO extends DBContext {
         return false;
     }
 
-    public int addLearnerStudyCompletion(int UserID, int MaterialID) {
+    public int addLearnerStudyCompletion(int UserID, int MaterialID, int CourseID) {
         String sql = "Insert Into Study (CompleteDate, UserID, MaterialID) Values (GETDATE(),?,?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
             ps.setInt(2, MaterialID);
             int result = ps.executeUpdate();
+            if ((result != 0) && (returnStudyProgress(UserID, CourseID) == 100)){
+                EnrollDAO eDAO = new EnrollDAO();
+                eDAO.setCompleteDate(UserID, CourseID);
+            }
             return result;
         } catch (Exception e) {
             System.out.println(e.getMessage());
