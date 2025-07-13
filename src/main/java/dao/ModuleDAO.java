@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import model.Material;
 import model.Category;
 
 /**
@@ -248,7 +248,65 @@ public class ModuleDAO extends DBContext {
             return 0;
         }
     }
+    public List<Module> getModulesByCourseIDAdmin(int courseID) throws SQLException {
+        List<Module> modules = new ArrayList<>();
+        String query = "SELECT moduleID, moduleName, courseID, moduleLastUpdate FROM Modules WHERE courseID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, courseID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Module module = new Module();
+                module.setModuleID(rs.getInt("moduleID"));
+                module.setModuleName(rs.getString("moduleName"));
+                Course course = new Course();
+                course.setCourseID(rs.getInt("courseID"));
+                module.setCourse(course);
+                module.setModuleLastUpdate(rs.getTimestamp("moduleLastUpdate"));
 
+                // Get materials for this module
+                MaterialDAO materialDAO = new MaterialDAO();
+                List<Material> materials = materialDAO.getMaterialsByModuleIDAdmin(rs.getInt("moduleID"));
+                module.setMaterials(materials);
+
+                modules.add(module);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getModulesByCourseIDAdmin: " + e.getMessage());
+        }
+        return modules;
+    }
+
+    public int deleteModuleAdmin(int moduleID) throws SQLException {
+        // Delete all materials in this module
+        MaterialDAO materialDAO = new MaterialDAO();
+        materialDAO.deleteMaterialsByModuleIDAdmin(moduleID);
+
+        // Delete the module
+        String query = "DELETE FROM Modules WHERE moduleID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, moduleID);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error in deleteModuleAdmin: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public int deleteModulesByCourseIDAdmin(int courseID) throws SQLException {
+        // Delete all materials for all modules in this course
+        MaterialDAO materialDAO = new MaterialDAO();
+        materialDAO.deleteMaterialsByCourseIDAdmin(courseID);
+
+        // Delete all modules
+        String query = "DELETE FROM Modules WHERE courseID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, courseID);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error in deleteModulesByCourseIDAdmin: " + e.getMessage());
+            throw e;
+        }
+    }
 //    public static void main(String[] args) {
 //        ModuleDAO dao = new ModuleDAO();
 //        CourseDAO courseDAO = new CourseDAO();

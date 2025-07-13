@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
 import model.Course;
 import model.Material;
 import model.Module;
@@ -61,7 +62,7 @@ public class MaterialDAO extends DBContext {
     }
 
     public int insertMaterial(int moduleID, String materialName, String type, int materialOrder,
-            String materialUrl, InputStream materialFile, String fileName, String videoTime, String materialDescription) {
+                              String materialUrl, InputStream materialFile, String fileName, String videoTime, String materialDescription) {
         String sql;
         if (type.equalsIgnoreCase("pdf")) {
             sql = "INSERT INTO [dbo].[Materials] "
@@ -143,8 +144,8 @@ public class MaterialDAO extends DBContext {
     }
 
     public boolean update(String materialName, String type, int order, String materialUrl,
-            InputStream materialFile, String fileName,
-            String videoTime, String description, int materialId, int moduleId, int courseId, boolean updateNew) {
+                          InputStream materialFile, String fileName,
+                          String videoTime, String description, int materialId, int moduleId, int courseId, boolean updateNew) {
         String sql;
 
         if (type.equalsIgnoreCase("pdf")) {
@@ -193,12 +194,12 @@ public class MaterialDAO extends DBContext {
                 ps.setInt(8, moduleId);
                 ps.setInt(9, courseId);
             } else {
-               ps.setString(4, description);
+                ps.setString(4, description);
                 ps.setInt(5, materialId);
                 ps.setInt(6, moduleId);
-                ps.setInt(7, courseId); 
+                ps.setInt(7, courseId);
             }
-            
+
             int num = ps.executeUpdate();
             if (num > 0) {
                 return true;
@@ -228,4 +229,75 @@ public class MaterialDAO extends DBContext {
 
         return 0;
     }
+    public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
+        List<Material> materials = new ArrayList<>();
+        String query = "SELECT materialId, materialName, moduleID, type, materialLastUpdate, " +
+                "materialOrder, time, materialDescription, materialUrl, materialFile, fileName " +
+                "FROM Materials WHERE moduleID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, moduleID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Material material = new Material();
+                    material.setMaterialId(rs.getInt("materialId"));
+                    material.setMaterialName(rs.getString("materialName"));
+                    material.setModule(new Module(rs.getInt("moduleID"), rs.getString("moduleName"), null));
+                    material.setType(rs.getString("type"));
+                    material.setMaterialLastUpdate(rs.getTimestamp("materialLastUpdate"));
+                    material.setMaterialOrder(rs.getInt("materialOrder"));
+                    material.setTime(rs.getString("time"));
+                    material.setMaterialDescription(rs.getString("materialDescription"));
+                    material.setMaterialUrl(rs.getString("materialUrl"));
+                    material.setMaterialFile(rs.getBytes("materialFile"));
+                    material.setFileName(rs.getString("fileName"));
+
+                    // Encode PDF file to base64 (nếu cần)
+                    if ("pdf".equalsIgnoreCase(material.getType()) && material.getMaterialFile() != null) {
+                        String base64 = java.util.Base64.getEncoder().encodeToString(material.getMaterialFile());
+                        material.setPdfDataURI("data:application/pdf;base64," + base64);
+                    }
+
+                    materials.add(material);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getMaterialsByModuleIDAdmin: " + e.getMessage());
+            throw e;
+        }
+        return materials;
+    }
+
+    public int deleteMaterialAdmin(int materialID) throws SQLException {
+        String query = "DELETE FROM Materials WHERE materialId = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, materialID);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error in deleteMaterialAdmin: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public int deleteMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
+        String query = "DELETE FROM Materials WHERE moduleID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, moduleID);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error in deleteMaterialsByModuleIDAdmin: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public int deleteMaterialsByCourseIDAdmin(int courseID) throws SQLException {
+        String query = "DELETE FROM Materials WHERE moduleID IN (SELECT moduleID FROM Modules WHERE courseID = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, courseID);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error in deleteMaterialsByCourseIDAdmin: " + e.getMessage());
+            throw e;
+        }
+    }
+
 }
