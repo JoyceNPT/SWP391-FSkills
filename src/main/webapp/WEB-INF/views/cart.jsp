@@ -288,7 +288,7 @@
                     </form>
 
                     <!-- Separate form for checkout (submits to CheckoutServlet) -->
-                    <form method="POST" action="${pageContext.request.contextPath}/Checkout">
+                    <form method="POST" action="${pageContext.request.contextPath}/checkout">
                         <div class="receipt-container">
                             <table class="table">
                                 <thead>

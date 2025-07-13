@@ -93,38 +93,36 @@
                     </div>
 
                     <div class="receipt-container">
-                        <form id="paymentForm" method="POST" action="${pageContext.request.contextPath}/PaymentServlet">
-                            <input type="hidden" name="userID" value="${sessionScope.user.userId}">
-                            <input type="hidden" name="courseIDs" value="${selectedCourseIDs}">
-                            <input type="hidden" name="finalPrice" id="finalPrice" value="${totalPrice}">
-                            <input type="hidden" name="voucherCode" id="voucherCodeHidden" value="0">
-                            <table class="table">
-                                <thead>
-                                    <tr><th>Payment Summary</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex justify-content-between ps-3 pe-3">
-                                                <span class="text">Total:</span>
-                                                <span><span id="totalDisplay"><fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true"/></span> VND</span>
+                        <input type="hidden" name="userID" value="${sessionScope.user.userId}">
+                        <input type="hidden" name="courseIDs" value="${selectedCourseIDs}">
+                        <input type="hidden" name="finalPrice" id="finalPrice" value="${totalPrice}">
+                        <input type="hidden" name="voucherCode" id="voucherCodeHidden" value="0">
+                        <table class="table">
+                            <thead>
+                                <tr><th>Payment Summary</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex justify-content-between ps-3 pe-3">
+                                            <span class="text">Total:</span>
+                                            <span><span id="totalDisplay"><fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true"/></span> VND</span>
+                                        </div>
+                                        <div class="mt-3">
+                                            <label for="voucherCode" class="form-label">Voucher Code:</label>
+                                            <div class="input-group">
+                                                <input type="text" id="voucherCode" class="form-control" placeholder="Enter voucher code">
+                                                <button type="button" class="btn btn-outline-primary" onclick="applyVoucher()">Apply Voucher</button>
                                             </div>
-                                            <div class="mt-3">
-                                                <label for="voucherCode" class="form-label">Voucher Code:</label>
-                                                <div class="input-group">
-                                                    <input type="text" id="voucherCode" class="form-control" placeholder="Enter voucher code">
-                                                    <button type="button" class="btn btn-outline-primary" onclick="applyVoucher()">Apply Voucher</button>
-                                                </div>
-                                                <span id="voucherMessage"></span>
-                                            </div>
-                                            <div class="mt-3">
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal">Proceed to Payment</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </form>
+                                            <span id="voucherMessage"></span>
+                                        </div>
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qrModal">Proceed to Payment</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </c:otherwise>
             </c:choose>
@@ -149,9 +147,54 @@
                     </div>
                 </div>
             </div>
+            <form method="post" action="${pageContext.request.contextPath}/checkout" id="submit-form">
+            </form>
         </main>
 
         <script>
+            let isSuccess = false;
+            const price = ${totalPrice};
+            const content = "${addInfo}";
+            document.addEventListener("DOMContentLoaded", () => {
+                setInterval(() => {
+                    checkPaid(price, content);
+                }, 1000);
+            });
+            async function checkPaid(price, content) {
+                if (isSuccess) {
+                    return;
+                } else {
+                    try {
+                        const response = await fetch(
+                                "https://script.google.com/macros/s/AKfycbxKPwVyhF7P1WVYoa7kKjl_wFHTCZ0uCf9a521GovWVgKFObLmhhXTeWgthZjYNHLPu/exec",
+                                );
+
+                        const data = await response.json();
+                        const lastPaid = data.data[data.data.length - 1];
+                        const lastPrice = lastPaid["Giá trị"];
+                        const lastContent = lastPaid["Mô tả"];
+                        const submitData = document.createElement("input");
+                        const submitAction = document.createElement("input");
+
+                        if (lastPrice >= price && lastContent.includes(content)) {
+                            isSuccess = true;
+                            submitData.type = "hidden";
+                            submitData.name = "submitData";
+                            submitData.value = content;
+                            submitAction.type = "hidden";
+                            submitAction.name = "action";
+                            submitAction.value = "submit-payment";
+                            document.getElementById("submit-form").appendChild(submitData);
+                            document.getElementById("submit-form").appendChild(submitAction);
+                            document.getElementById("submit-form").submit();
+                        } else {
+                            console.log("Không thành công"); // ❌ Payment failed
+                        }
+                    } catch (e) {
+                        console.error("Lỗi", e); // ⚠️ Error handling
+                    }
+                }
+            }
             function applyVoucher() {
                 const voucherCode = document.getElementById('voucherCode').value;
                 const userID = ${user.userId};
@@ -181,8 +224,8 @@
                             $('#finalPrice').val(response.newPrice);
                             $('#voucherCodeHidden').val(voucherCode);
                             // Update QR code URL with new price and voucher code
-                            const addInfo = userID + ' ' + courseIDs + ' ' + response.newPrice + ' ' + encodeURIComponent(voucherCode);
-                            const qrUrl = 'https://img.vietqr.io/image/MB-0919470174-compact2.png?amount=' + response.newPrice + '&addInfo=' + encodeURIComponent(addInfo) + '&accountName=Phuong%20Gia%20Lac';
+                            const addInfo = userID + ' ' + courseIDs + ' ' + response.parseInt(newPrice) + ' ' + encodeURIComponent(voucherCode);
+                            const qrUrl = 'https://img.vietqr.io/image/MB-0919470174-compact2.png?amount=' + response.parseInt(newPrice) + '&addInfo=' + encodeURIComponent(addInfo) + '&accountName=Phuong%20Gia%20Lac';
                             $('#qrCodeImg').attr('src', qrUrl);
                         } else {
                             $('#voucherMessage').css('color', 'red').text('Error: ' + response.message);

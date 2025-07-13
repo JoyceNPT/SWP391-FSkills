@@ -17,8 +17,25 @@ public class EnrollDAO extends DBContext{
         
     }
     
+    public boolean checkBought(int UserID, int CourseID){
+        String sql = "Select * From Enroll Where UserID = ? AND CourseID = ? AND EnrollDate IS NULL";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserID);
+            ps.setInt(2, CourseID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+    
     public boolean checkEnrollment(int UserID, int CourseID){
-        String sql = "Select * From Enroll Where UserID = ? AND CourseID = ?";
+        String sql = "Select * From Enroll Where UserID = ? AND CourseID = ? AND EnrollDate IS NOT NULL";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
@@ -36,6 +53,23 @@ public class EnrollDAO extends DBContext{
     
     public int addLearnerEnrollment(int UserID, int CourseID){
         String sql = "Insert Into Enroll (UserID, CourseID) Values (?,?)";
+        try{
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserID);
+            ps.setInt(2, CourseID);
+            int result = ps.executeUpdate();
+            return result;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+    
+    public int setEnrollDate(int UserID, int CourseID){
+        String sql
+                = "Update Enroll\n"
+                + "Set EnrollDate = GETDATE()\n"
+                + "Where UserID = ? CourseID = ?";
         try{
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);

@@ -49,6 +49,55 @@ public class CartDAO extends DBContext{
         return null;
     }
     
+    public Cart getRecentCart(int UserID){
+        String sql = "Select top (1) * From Cart Where UserID = ? order by CartID DESC";
+        try{
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                return new Cart(rs.getInt("CartID"), rs.getInt("UserID"), rs.getInt("CourseID"), rs.getTimestamp("BuyDate"));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    
+    
+    public boolean isInCart(int UserID, int CourseID){
+        String sql = "Select * From Cart Where UserID = ? AND CourseID = ? AND BuyDate IS NULL";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserID);
+            ps.setInt(2, CourseID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+    
+    public Cart getCartByCourseID(int UserID, int CourseID){
+        String sql = "Select * From Cart Where UserID = ? AND CourseID = ?";
+        try{
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserID);
+            ps.setInt(2, CourseID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                return new Cart(rs.getInt("CartID"), rs.getInt("UserID"), rs.getInt("CourseID"), rs.getTimestamp("BuyDate"));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    
     public int addToCart( int UserID, int CourseID){
         String sql 
                 = "Insert Into Cart (UserID, CourseID)\n"

@@ -2,6 +2,8 @@ package controller;
 
 import dao.CartDAO;
 import dao.CourseDAO;
+import dao.EnrollDAO;
+import dao.ReceiptDAO;
 import dao.VoucherDAO;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -21,23 +23,30 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.User;
+import model.Receipt;
 
 /**
  * @author CE191059 Phuong Gia Lac
  */
-@WebServlet(name = "CheckoutServlet", urlPatterns = {"/Checkout"})
+@WebServlet(name = "CheckoutServlet", urlPatterns = {"/checkout"})
 public class CheckoutServlet extends HttpServlet {
 
     private CartDAO cartDAO;
     private CourseDAO courseDAO;
     private VoucherDAO voucherDAO;
+    private ReceiptDAO receiptDAO;
+    private EnrollDAO enrollDAO;
 
     @Override
     public void init() throws ServletException {
         cartDAO = new CartDAO();
         courseDAO = new CourseDAO();
         voucherDAO = new VoucherDAO();
+        receiptDAO = new ReceiptDAO();
+        enrollDAO = new EnrollDAO();
     }
 
     @Override
@@ -70,6 +79,13 @@ public class CheckoutServlet extends HttpServlet {
         if ("voucher".equals(action)) {
             handleVoucherValidation(request, response);
             return;
+        } else if ("submit-payment".equals(action)) {
+            try {
+                handlePayment(request, response);
+                return;
+            } catch (SQLException ex) {
+                Logger.getLogger(CheckoutServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         handleCheckout(request, response);
     }
@@ -80,9 +96,21 @@ public class CheckoutServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
         // Get selected cart IDs from the form
         String[] selectedCartIDs = request.getParameterValues("checkbox");
+        if ((selectedCartIDs == null || selectedCartIDs.length == 0)){
+            selectedCartIDs = new String[1];
+            selectedCartIDs[0] = (String)request.getParameter("buynowid");
+            if (selectedCartIDs[0]!=null){
+                if(!cartDAO.isInCart(user.getUserId(), Integer.parseInt(selectedCartIDs[0]))){
+                    cartDAO.addToCart(user.getUserId(), Integer.parseInt(selectedCartIDs[0]));
+                    selectedCartIDs[0] = String.valueOf(cartDAO.getRecentCart(user.getUserId()).getCartID());
+                } else{
+                    selectedCartIDs[0] = String.valueOf(cartDAO.getCartByCourseID(user.getUserId(), Integer.parseInt(selectedCartIDs[0])).getCartID());
+                }
+            }
+        }
         List<Course> selectedCourses = new ArrayList<>();
         List<Integer> courseIDs = new ArrayList<>();
-        double totalPrice = 0.0;
+        int totalPrice = 0;
 
         if (selectedCartIDs == null || selectedCartIDs.length == 0) {
             request.setAttribute("errorMessage", "Please select at least one course to checkout.");
@@ -125,7 +153,7 @@ public class CheckoutServlet extends HttpServlet {
         String voucherCode = request.getParameter("voucherCode");
         int userID = Integer.parseInt(request.getParameter("userID"));
         String courseIDs = request.getParameter("courseIDs");
-        double totalPrice = Double.parseDouble(request.getParameter("totalPrice"));
+        int totalPrice = Integer.parseInt(request.getParameter("totalPrice"));
 
         try {
             // Search for voucher by code
@@ -176,6 +204,31 @@ public class CheckoutServlet extends HttpServlet {
         JsonObject json = jsonBuilder.build();
         out.print(json.toString());
         out.flush();
+    }
+
+    private void handlePayment(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        String paymentInfo = (String) request.getParameter("submitData");
+        Receipt receipt = new Receipt(user.getUserId(), paymentInfo, 1, new Timestamp(System.currentTimeMillis()));
+        System.out.println(receipt);
+        if (receiptDAO.saveReceipt(receipt)) {
+            for (Course c : receipt.getCourse()){
+                cartDAO.setCartBuyDate(cartDAO.getCartByCourseID(user.getUserId(), c.getCourseID()).getCartID());
+                enrollDAO.addLearnerEnrollment(user.getUserId(), c.getCourseID());
+                
+            }
+            request.setAttribute("user", user);
+            request.setAttribute("selectedCourses", receipt.getCourse());
+            request.setAttribute("finalPrice", receipt.getPrice());
+            request.setAttribute("voucherCode", receipt.getVoucherCode());
+            request.setAttribute("paymentDate", receipt.getPaymentDate());
+            request.getRequestDispatcher("/WEB-INF/views/paymentSuccess.jsp").forward(request, response);
+        } else {
+            System.err.println("Failed to save receipt for userID: " + user.getUserId() + ", paymentDetail: " + receipt.getPaymentDetail());
+            
+        }
     }
 
     @Override
