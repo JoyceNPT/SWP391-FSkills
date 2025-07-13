@@ -54,11 +54,11 @@ public class VoucherDAO extends DBContext {
         return null;
     }
     
-    public boolean useVoucher(int voucherCode){
+    public boolean useVoucher(String voucherCode){
         String sql = "Update Vouchers Set Amount = Amount - 1 Where VoucherCode =?";
         try{
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, voucherCode);
+            ps.setString(1, voucherCode);
             int result = ps.executeUpdate();
             return result > 0;
         } catch (Exception e) {

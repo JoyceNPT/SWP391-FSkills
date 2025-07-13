@@ -3,7 +3,9 @@ package dao;
 import model.Receipt;
 import util.DBContext;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,5 +25,21 @@ public class ReceiptDAO extends DBContext {
             LOGGER.log(Level.SEVERE, "Error in saveReceipt: " + e.getMessage(), e);
             throw e;
         }
+    }
+    
+    public ArrayList<Receipt> getLearnerReceipt(int UserID){
+        ArrayList<Receipt> receiptList = new ArrayList<Receipt>();
+        String sql = "Select * From Receipts Where UserID = ? AND PaymentStatus = 1";
+        try{
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                receiptList.add(new Receipt(rs.getInt("ReceiptID"), rs.getInt("UserID"),  rs.getString("PaymentDetail"), rs.getInt("PaymentStatus"), rs.getTimestamp("PaymentDate")));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return receiptList;
     }
 }
