@@ -96,6 +96,7 @@
           <button class="change-password">Change Password</button>
           <button class="change-email">Change Email</button>
           <button class="edit-btn">Edit Profile</button>
+          <a class="edit-btn" href="${pageContext.request.contextPath}/instructor/profile/degree">Degree</a>
         </div>
       </div>
     </div>

@@ -196,6 +196,8 @@ public class ReportServlet extends HttpServlet {
 
             if (action.equalsIgnoreCase("reportMaterial")) {
                 try {
+                    String idt = request.getParameter("userTarget");
+                    int userIdTarget = Integer.parseInt(idt);
                     String categoryIdStr = request.getParameter("categorySelection");
                     int categoryId = Integer.parseInt(categoryIdStr);
                     String materialIdStr = request.getParameter("materialId");
@@ -208,10 +210,11 @@ public class ReportServlet extends HttpServlet {
                     if (reportDetail == null || reportDetail.trim().isEmpty() || reportDetail.matches(".*\\s{2,}.*")) {
                         reportDetail = "No Data";
                     }
-
+                    
                     int result = reDao.createReportMaterial(reportDetail, userId, materialId, categoryId);
-
+                    
                     if (result == 1) {
+                        reDao.increaseReportAmount(userIdTarget);
                         request.setAttribute("listReportCategory", listReportCate);
                         request.setAttribute("Course", course);
                         request.setAttribute("ModuleList", moduleList);
@@ -255,6 +258,8 @@ public class ReportServlet extends HttpServlet {
 
             } else if (action.equalsIgnoreCase("reportComment")) {
                 try {
+                    String idt = request.getParameter("userTargetComment");
+                    int userIdTarget = Integer.parseInt(idt);
                     String categoryIdStr = request.getParameter("categorySelection");
                     int categoryId = Integer.parseInt(categoryIdStr);
                     String commentIdStr = request.getParameter("commentId");
@@ -273,6 +278,7 @@ public class ReportServlet extends HttpServlet {
                     int result = reDao.createReportComment(reportDetail, userId, materialId, commentId, categoryId);
 
                     if (result == 1) {
+                        reDao.increaseReportAmount(userIdTarget);
                         request.setAttribute("listReportCategory", listReportCate);
                         request.setAttribute("Course", course);
                         request.setAttribute("ModuleList", moduleList);

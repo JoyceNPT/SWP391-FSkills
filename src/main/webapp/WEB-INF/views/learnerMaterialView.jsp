@@ -278,89 +278,6 @@
                 background-color: var(--secondary-color) !important;
             }
 
-            .report-modal {
-                font-family: 'Inter', sans-serif;
-                max-width: 500px;
-            }
-
-            .report-modal .modal-content {
-                border-radius: 12px;
-                border: none;
-                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-            }
-
-            .report-modal .modal-header {
-                padding: 1.5rem 2rem;
-                border-bottom: none;
-            }
-
-            .report-modal .modal-body {
-                padding: 1.5rem 2rem;
-            }
-
-            .report-modal .modal-footer {
-                padding: 1rem 2rem;
-                border-top: none;
-            }
-
-            .report-modal h4 {
-                font-size: 1.5rem;
-                font-weight: 600;
-            }
-
-            .report-modal h6 {
-                font-size: 1.1rem;
-                font-weight: 600;
-                margin-bottom: 1rem;
-            }
-
-            .report-modal p {
-                font-size: 0.9rem;
-                color: #6b7280;
-                margin-bottom: 1.5rem;
-            }
-
-            .form-check-label {
-                font-size: 0.95rem;
-                color: var(--text-color);
-            }
-
-            .form-check-input:checked {
-                background-color: var(--primary-color);
-                border-color: var(--primary-color);
-            }
-
-            .btn-next {
-                background-color: var(--primary-color);
-                color: white;
-                font-weight: 500;
-                border-radius: 999px;
-                padding: 0.75rem;
-                width: 100%;
-                transition: background-color 0.2s ease;
-            }
-
-            .btn-next:hover {
-                background-color: var(--secondary-color);
-            }
-
-            .btn-next:disabled {
-                opacity: 0.6;
-                cursor: not-allowed;
-            }
-
-            .btn-back {
-                border: 1px solid var(--border-color);
-                background-color: transparent;
-                color: var(--text-color);
-                border-radius: 999px;
-                padding: 0.5rem 1.5rem;
-                font-size: 0.9rem;
-            }
-
-            .btn-back:hover {
-                background-color: var(--background-color);
-            }
 
             @media (max-width: 768px) {
                 #content {
@@ -437,7 +354,7 @@
                             <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(Material.materialUrl, 'v='), '&')}" />
                         </c:if>
                         <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen class="youtube-iframe mx-auto"></iframe>
-                    </c:when>
+                        </c:when>
 
                     <c:when test="${not empty Material.materialFile && (fn:endsWith(Material.materialFile, '.jpg') || fn:endsWith(Material.materialFile, '.jpeg') || fn:endsWith(Material.materialFile, '.png') || fn:endsWith(Material.materialFile, '.gif'))}">
                         <!-- Image file -->
@@ -551,9 +468,10 @@
 
         <div class="modal fade" id="reportMaterialModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
+                <div class="modal-content rounded-4 report-modal">
                     <form method="POST" action="${pageContext.request.contextPath}/report" 
                           onsubmit="return validateReportForm();">
+                                              <input type="hidden" name="userTarget" value="${Material.module.course.user.userId}">
                         <input type="hidden" name="action" value="reportMaterial">
                         <input type="hidden" name="courseId" value="${Course.courseID}">
                         <input type="hidden" name="moduleId" value="${Material.module.moduleID}">
@@ -566,8 +484,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
-                                <h6>What's the issue?</h6>
-                                <p>We'll review your report based on our Community Guidelines.</p>
+                                <h6 class="fw-bold">What's going on?</h6>
+                                <p class="text-muted small">We'll check for all Community Guidelines, so don't worry about making the perfect choice.</p>
 
                                 <c:forEach var="cate" items="${listReportCategory}">
                                     <div class="form-check mb-3">
@@ -582,27 +500,29 @@
                                 </c:forEach>
                             </div>
 
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-next" id="nextStep" disabled>Next</button>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-dark w-100 rounded-pill" id="nextStep" disabled>Next</button>
                             </div>
                         </div>
 
                         <div id="reportStep2" style="display: none;">
                             <div class="modal-header">
-                                <button type="button" class="btn btn-back" id="backStep">← Back</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm me-2 px-3 py-2 rounded-pill" id="backStep">
+                                    ← Back
+                                </button>
                                 <h4 class="modal-title mx-auto">Report Material</h4>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <input type="hidden" name="categoryId" id="selectedCategoryId" />
 
                             <div class="modal-body">
-                                <h6>Additional Details (Optional)</h6>
-                                <p>Provide more information to help us understand the issue.</p>
-                                <textarea name="reportDetail" class="form-control" rows="5" placeholder="Add details..."></textarea>
+                                <h6 class="fw-bold">Want to tell us more? It's optional</h6>
+                                <p class="text-muted small">Sharing a few details can help us understand the issue. Please don't include personal info or questions.</p>
+                                <textarea name="reportDetail" class="form-control" rows="6" placeholder="Add details..."></textarea>
                             </div>
 
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-next">Submit Report</button>
+                            <div class="modal-footer border-0">
+                                <button type="submit" class="btn btn-dark w-100 rounded-pill">Report</button>
                             </div>
                         </div>
                     </form>
