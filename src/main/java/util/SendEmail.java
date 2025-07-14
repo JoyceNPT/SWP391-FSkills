@@ -12,7 +12,7 @@ import com.sendgrid.helpers.mail.objects.Email;
  *
  * @author NgoThinh1902
  */
-public class  SendEmail {
+public class SendEmail {
 
     public boolean sendEmailNormal(String toEmail, String message, String title) {
         Email from = new Email("noreply@fskills.website");
