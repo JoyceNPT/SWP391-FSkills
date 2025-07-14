@@ -69,7 +69,7 @@ public class EnrollDAO extends DBContext{
         String sql
                 = "Update Enroll\n"
                 + "Set EnrollDate = GETDATE()\n"
-                + "Where UserID = ? CourseID = ?";
+                + "Where UserID = ? AND CourseID = ?";
         try{
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);

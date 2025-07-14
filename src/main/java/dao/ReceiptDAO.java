@@ -27,6 +27,21 @@ public class ReceiptDAO extends DBContext {
         }
     }
     
+    public ArrayList<Receipt> getReceipt(){
+        ArrayList<Receipt> receiptList = new ArrayList<Receipt>();
+        String sql = "Select * From Receipts";
+        try{
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                receiptList.add(new Receipt(rs.getInt("ReceiptID"), rs.getInt("UserID"),  rs.getString("PaymentDetail"), rs.getInt("PaymentStatus"), rs.getTimestamp("PaymentDate")));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return receiptList;
+    }
+    
     public ArrayList<Receipt> getLearnerReceipt(int UserID){
         ArrayList<Receipt> receiptList = new ArrayList<Receipt>();
         String sql = "Select * From Receipts Where UserID = ? AND PaymentStatus = 1";

@@ -20,7 +20,7 @@
         <a href="#"><i class="bi bi-mortarboard"></i> <span>My Courses</span></a>
         <a href="${pageContext.request.contextPath}/cart"><i class="bi bi-cart"></i> <span>Cart</span></a>
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
-
+        <a href="${pageContext.request.contextPath}/bills"><i class="bi bi-receipt"></i> <span>Bills</span></a>
         <a href="${pageContext.request.contextPath}/report"><i class="bi bi-flag-fill"></i> <span>Report history</span></a>
         <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <div class="divider"></div>
