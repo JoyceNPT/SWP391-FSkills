@@ -264,4 +264,59 @@ public class ReportDAO extends DBContext {
 
         return list;
     }
+    
+    public int getReportAmount(int id) {
+        String sql = "SELECT [ReportAmount] FROM [dbo].[Users] WHERE UserID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("ReportAmount");
+            } else {
+                return 0;
+            }
+        } catch (Exception e) {
+            System.out.println("Error getting report amount: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public boolean increaseReportAmount(int id) {
+        String sql = "UPDATE [dbo].[Users] SET ReportAmount = ReportAmount + 1 WHERE UserID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            System.out.println("Error increasing report amount: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean decreaseReportAmount(int id) {
+        String sql = "UPDATE [dbo].[Users] SET ReportAmount = ReportAmount - 1 WHERE UserID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            System.out.println("Error increasing report amount: " + e.getMessage());
+            return false;
+        }
+    }
+
+//    public static void main(String[] args) {
+//        int id=3;
+//        ReportDAO reDao = new ReportDAO();
+//        int sl = reDao.getReportAmount(id);
+//        System.out.println("sl: "+ sl);
+//        reDao.decreaseReportAmount(id);
+//        int afterin = reDao.getReportAmount(id);
+//        System.out.println("sl: "+ afterin);
+//    }
+
+
 }
