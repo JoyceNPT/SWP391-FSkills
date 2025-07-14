@@ -40,10 +40,6 @@ public class DBContext {
                         + dm.getDatabaseProductVersion());
             }
         } catch (SQLException ex) {
-            System.err.println("Database connection error: " + ex.getMessage());
-            System.err.println("SQL State: " + ex.getSQLState());
-            System.err.println("Error Code: " + ex.getErrorCode());
-            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
