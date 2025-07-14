@@ -12,6 +12,7 @@ import java.util.List;
 import model.Course;
 import model.Material;
 import model.Module;
+import model.User;
 import util.DBContext;
 
 public class MaterialDAO extends DBContext {
@@ -62,7 +63,7 @@ public class MaterialDAO extends DBContext {
     }
 
     public int insertMaterial(int moduleID, String materialName, String type, int materialOrder,
-                              String materialUrl, InputStream materialFile, String fileName, String videoTime, String materialDescription) {
+            String materialUrl, InputStream materialFile, String fileName, String videoTime, String materialDescription) {
         String sql;
         if (type.equalsIgnoreCase("pdf")) {
             sql = "INSERT INTO [dbo].[Materials] "
@@ -108,8 +109,11 @@ public class MaterialDAO extends DBContext {
 
     public Material getMaterialById(int id) {
         Material material = null;
-        String sql = "SELECT * FROM [dbo].[Materials] m JOIN [dbo].[Modules] mo ON m.ModuleID = mo.ModuleID JOIN [dbo].[Courses] c \n"
-                + "ON mo.CourseID = c.CourseID\n"
+        String sql = "SELECT * \n"
+                + "FROM [dbo].[Materials] m\n"
+                + "JOIN [dbo].[Modules] mo ON m.ModuleID = mo.ModuleID\n"
+                + "JOIN [dbo].[Courses] c ON mo.CourseID = c.CourseID\n"
+                + "JOIN [dbo].[Users] u ON c.UserID = u.UserID\n"
                 + "WHERE m.MaterialID = ?;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -130,7 +134,10 @@ public class MaterialDAO extends DBContext {
                 String moduleName = rs.getString("ModuleName");
                 int courseID = rs.getInt("CourseID");
                 String courseName = rs.getString("CourseName");
-                Course course = new Course(courseID, courseName);
+                int userId = rs.getInt("UserID");
+                String userName = rs.getString("UserName");
+                User user = new User(userId, userName);
+                Course course = new Course(courseID, courseName, user);
                 Module module = new Module(moduleID, moduleName, course);
                 material = new Material(materialID, materialName, module, type,
                         MaterialLastUpdate, materialOrder, videoTime, materialDescription,
@@ -144,8 +151,8 @@ public class MaterialDAO extends DBContext {
     }
 
     public boolean update(String materialName, String type, int order, String materialUrl,
-                          InputStream materialFile, String fileName,
-                          String videoTime, String description, int materialId, int moduleId, int courseId, boolean updateNew) {
+            InputStream materialFile, String fileName,
+            String videoTime, String description, int materialId, int moduleId, int courseId, boolean updateNew) {
         String sql;
 
         if (type.equalsIgnoreCase("pdf")) {
@@ -229,14 +236,15 @@ public class MaterialDAO extends DBContext {
 
         return 0;
     }
+
     public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
         List<Material> materials = new ArrayList<>();
-        String query = "SELECT materialId, materialName, moduleID, type, materialLastUpdate, " +
-                "materialOrder, time, materialDescription, materialUrl, materialFile, fileName " +
-                "FROM Materials WHERE moduleID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        String query = "SELECT materialId, materialName, moduleID, type, materialLastUpdate, "
+                + "materialOrder, time, materialDescription, materialUrl, materialFile, fileName "
+                + "FROM Materials WHERE moduleID = ?";
+        try ( PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, moduleID);
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Material material = new Material();
                     material.setMaterialId(rs.getInt("materialId"));
@@ -269,7 +277,7 @@ public class MaterialDAO extends DBContext {
 
     public int deleteMaterialAdmin(int materialID) throws SQLException {
         String query = "DELETE FROM Materials WHERE materialId = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        try ( PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, materialID);
             return ps.executeUpdate();
         } catch (SQLException e) {
@@ -280,7 +288,7 @@ public class MaterialDAO extends DBContext {
 
     public int deleteMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
         String query = "DELETE FROM Materials WHERE moduleID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        try ( PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, moduleID);
             return ps.executeUpdate();
         } catch (SQLException e) {
@@ -291,7 +299,7 @@ public class MaterialDAO extends DBContext {
 
     public int deleteMaterialsByCourseIDAdmin(int courseID) throws SQLException {
         String query = "DELETE FROM Materials WHERE moduleID IN (SELECT moduleID FROM Modules WHERE courseID = ?)";
-        try (PreparedStatement ps = conn.prepareStatement(query)) {
+        try ( PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, courseID);
             return ps.executeUpdate();
         } catch (SQLException e) {

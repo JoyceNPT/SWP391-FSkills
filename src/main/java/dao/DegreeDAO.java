@@ -108,11 +108,11 @@ public class DegreeDAO extends DBContext {
     public boolean update(InputStream image, String link, String applicationId, boolean updateImage) {
         String sql;
         if (updateImage) {
-            sql = "UPDATE InstructorApplications SET ApplicationSubmitDate = GETDATE(),"
-                + "CertificateImage = ?,CertificateLink = ? WHERE ApplicationID = ?;";
+            sql = "UPDATE InstructorApplications SET ApplicationSubmitDate = GETDATE(),ApplicationStatus= 0,\n"
+                    + "CertificateImage = ?,CertificateLink = ? WHERE ApplicationID = ?;";
         } else {
-            sql = "UPDATE InstructorApplications SET ApplicationSubmitDate = GETDATE(),"
-                + "CertificateLink = ? WHERE ApplicationID = ?;";
+            sql = "UPDATE InstructorApplications SET ApplicationSubmitDate = GETDATE(),ApplicationStatus= 0,\n"
+                    + "CertificateLink = ? WHERE ApplicationID = ?";
         }
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -122,9 +122,13 @@ public class DegreeDAO extends DBContext {
                 } else {
                     ps.setNull(1, Types.BLOB);
                 }
+
+                ps.setString(2, link);
+                ps.setString(3, applicationId);
+            } else {
+                ps.setString(1, link);
+                ps.setString(2, applicationId);
             }
-            ps.setString(2, link);
-            ps.setString(3, applicationId);
             int num = ps.executeUpdate();
             if (num > 0) {
                 return true;

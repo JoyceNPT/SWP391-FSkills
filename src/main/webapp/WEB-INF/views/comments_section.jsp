@@ -128,10 +128,15 @@
                     <c:if test="${comment.user != null}">
                         <p class="comment-author">${comment.user.displayName}</p>
 
-                        <!-- nút report của DUY -->   
-                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#reportCommentModal">
-                            <i class="fa-solid fa-flag me-1"></i> Report
-                        </button>
+                        <c:if test="${sessionScope.user != null && sessionScope.user.userId != comment.userId}">
+                            <button class="btn btn-outline-danger btn-sm report-comment-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#reportCommentModal"
+                                    data-comment-id="${comment.commentId}"
+                                    data-user-target="${comment.user.userId}">
+                                <i class="fa-solid fa-flag me-1"></i> Report
+                            </button>
+                        </c:if>
                         <!-- nút report của DUY -->
                     </c:if>
                     <c:choose>
@@ -166,7 +171,7 @@
                 <div class="comment-actions">
                     <c:if test="${sessionScope.user != null && sessionScope.user.userId == comment.userId}">
                         <c:if test="${commentToEdit == null || commentToEdit.commentId != comment.commentId}">
-                            
+
                             <a href="${pageContext.request.contextPath}/comments?action=editForm&commentId=${comment.commentId}&courseID=${Course.courseID}&moduleID=${CurrentModuleID}&materialID=${CurrentMaterialID}&redirectUrl=${materialPageUrl}" class="btn btn-sm btn-info text-white">Edit</a>                        
                         </c:if>
 
@@ -186,22 +191,20 @@
     </div>
 </div>
 
+<!-- ... (Previous JSP code remains unchanged until the modal section) ... -->
+
 <!-- 🔷 Modal Báo Cáo Comment -->
 <div class="modal fade" id="reportCommentModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 report-modal">
-
-            <form method="POST" action="${pageContext.request.contextPath}/report"
-                  onsubmit="return validateReportForm();">
+            <form method="POST" action="${pageContext.request.contextPath}/report" onsubmit="return validateReportForm();">
                 <input type="hidden" name="action" value="reportComment">
                 <input type="hidden" name="courseId" value="${Course.courseID}">
                 <input type="hidden" name="moduleId" value="${CurrentModuleID}">
-
-                <c:forEach var="comment" items="${comments}">
-                    <input type="hidden" name="commentId" value="${comment.commentId}">
-                </c:forEach>
                 <input type="hidden" name="materialId" value="${CurrentMaterialID}"/>
                 <input type="hidden" name="userId" value="${sessionScope.user.userId}">
+                <input type="hidden" name="commentId" id="reportCommentId">
+                <input type="hidden" name="userTargetComment" id="reportUserTargetComment">
 
                 <!-- Step 1 -->
                 <div id="reportStep1Comment">
@@ -212,7 +215,6 @@
                     <div class="modal-body">
                         <h6 class="fw-bold">What's going on?</h6>
                         <p class="text-muted small">We'll check for all Community Guidelines, so don't worry about making the perfect choice.</p>
-
                         <c:forEach var="cate" items="${listReportCategory}">
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio"
@@ -225,7 +227,6 @@
                             </div>
                         </c:forEach>
                     </div>
-
                     <div class="modal-footer border-0">
                         <button type="button" class="btn btn-dark w-100 rounded-pill" id="nextStepComment" disabled>Next</button>
                     </div>
@@ -240,15 +241,12 @@
                         <h4 class="modal-title mx-auto fw-semibold m-0 position-absolute start-50 translate-middle-x">Report</h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
                     <input type="hidden" name="categoryId" id="selectedCategoryIdComment" />
-
                     <div class="modal-body">
                         <h6 class="fw-bold">Want to tell us more? It's optional</h6>
                         <p class="text-muted small">Sharing a few details can help us understand the issue. Please don't include personal info or questions.</p>
                         <textarea name="reportDetail" class="form-control" rows="6" placeholder="Add details..."></textarea>
                     </div>
-
                     <div class="modal-footer border-0">
                         <button type="submit" class="btn btn-dark w-100 rounded-pill">Report</button>
                     </div>
@@ -258,41 +256,84 @@
     </div>
 </div>
 
+
 <!-- Script JS xử lý riêng cho modal comment -->
 <script>
     function validateReportForm() {
         const selectedInput = document.getElementById("selectedCategoryIdComment");
+        console.log("Validating form - selectedCategoryIdComment:", selectedInput.value);
         if (!selectedInput.value) {
+            console.log("Validation failed: No report reason selected");
             alert("Please select a report reason.");
             return false;
         }
+        const commentId = document.getElementById("reportCommentId").value;
+        const userTarget = document.getElementById("reportUserTargetComment").value;
+        console.log("Submitting report - commentId:", commentId, "userTargetComment:", userTarget);
         return true;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM loaded, initializing event listeners");
+
         const radios = document.querySelectorAll('#reportCommentModal input[name="categorySelection"]');
         const nextBtn = document.getElementById("nextStepComment");
         const backBtn = document.getElementById("backStepComment");
         const selectedInput = document.getElementById("selectedCategoryIdComment");
-
+        const reportCommentIdInput = document.getElementById("reportCommentId");
+        const reportUserTargetInput = document.getElementById("reportUserTargetComment");
         const step1 = document.getElementById("reportStep1Comment");
         const step2 = document.getElementById("reportStep2Comment");
 
-        radios.forEach(radio => {
-            radio.addEventListener("change", () => {
-                nextBtn.disabled = false;
-                selectedInput.value = radio.value;
+        // Handle report button click to set commentId and userTargetComment
+        document.querySelectorAll('.report-comment-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const commentId = button.getAttribute('data-comment-id');
+                const userTarget = button.getAttribute('data-user-target');
+                console.log("Report button clicked - commentId:", commentId, "userTarget:", userTarget);
+                reportCommentIdInput.value = commentId;
+                reportUserTargetInput.value = userTarget;
+                console.log("Set form inputs - reportCommentId:", reportCommentIdInput.value, "reportUserTargetComment:", reportUserTargetInput.value);
             });
         });
 
+        // Handle radio button selection for report category
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                console.log("Radio selected - categoryId:", radio.value);
+                nextBtn.disabled = false;
+                selectedInput.value = radio.value;
+                console.log("Updated selectedCategoryIdComment:", selectedInput.value);
+            });
+        });
+
+        // Handle Next button click
         nextBtn.addEventListener("click", () => {
+            console.log("Next button clicked, switching to step 2");
             step1.style.display = "none";
             step2.style.display = "block";
         });
 
+        // Handle Back button click
         backBtn.addEventListener("click", () => {
+            console.log("Back button clicked, returning to step 1");
             step2.style.display = "none";
             step1.style.display = "block";
+        });
+
+        // Reset modal when closed
+        document.getElementById('reportCommentModal').addEventListener('hidden.bs.modal', () => {
+            console.log("Modal closed, resetting form");
+            step1.style.display = "block";
+            step2.style.display = "none";
+            nextBtn.disabled = true;
+            selectedInput.value = "";
+            reportCommentIdInput.value = "";
+            reportUserTargetInput.value = "";
+            radios.forEach(radio => radio.checked = false);
+            console.log("Form reset - selectedCategoryIdComment:", selectedInput.value,
+                    "reportCommentId:", reportCommentIdInput.value,
+                    "reportUserTargetComment:", reportUserTargetInput.value);
         });
     });
 </script>

@@ -123,7 +123,7 @@
                                                         <i class="fas fa-eye"></i>
                                                     </button>
 
-                                                    <c:if test="${deg.status == 0}">
+                                                    <c:if test="${deg.status == 0 || deg.status == 1}">
                                                         <button class="btn btn-primary btn-sm" type="button"
                                                                 data-bs-placement="top" title="Edit"
                                                                 data-bs-target="#editModal${deg.degreeId}" data-bs-toggle="modal">
