@@ -133,7 +133,7 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        String courseParam = request.getParameter("courseID");
+        String courseParam = request.getParameter("Enroll");
         try{
             int courseID = Integer.parseInt(courseParam);
             if(eDAO.setEnrollDate(user.getUserId(), courseID) > 0){
