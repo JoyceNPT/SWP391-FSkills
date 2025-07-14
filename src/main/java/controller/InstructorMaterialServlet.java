@@ -208,13 +208,25 @@ public class InstructorMaterialServlet extends HttpServlet {
                 int materialOrder;
                 try {
                     materialOrder = Integer.parseInt(materialOrderStr.trim());
+                    courseId = Integer.parseInt(courseIdStr);
+                    moduleId = Integer.parseInt(module);
 
-                    // Tùy chọn: kiểm tra số âm
-                    if (materialOrder < 0) {
+                    if (materialOrder < 0 || materialOrder > 10) {
                         moduleId = Integer.parseInt(module);
                         Module mo = mdao.getModuleByID(moduleId);
                         request.setAttribute("module", mo);
                         request.setAttribute("err", "Material order must be a non-negative number.");
+                        request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                        return;
+                    }
+
+                    boolean isExisted = madao.checkMaterialOrderExists(materialOrder, moduleId, courseId);
+
+                    if (isExisted) {
+                        moduleId = Integer.parseInt(module);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "This Material Order already exists. Please choose a different number.");
                         request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
                         return;
                     }
@@ -434,9 +446,11 @@ public class InstructorMaterialServlet extends HttpServlet {
                 int materialOrder;
                 try {
                     materialOrder = Integer.parseInt(materialOrderStr.trim());
-
+                    courseId = Integer.parseInt(courseIdStr);
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
                     // Tùy chọn: kiểm tra số âm
-                    if (materialOrder < 0) {
+                    if (materialOrder < 0 || materialOrder > 10) {
                         moduleId = Integer.parseInt(module);
                         materialId = Integer.parseInt(material);
                         Material ma = madao.getMaterialById(materialId);
@@ -447,6 +461,22 @@ public class InstructorMaterialServlet extends HttpServlet {
                         request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
                         return;
                     }
+
+                    boolean isExisted = madao.checkMaterialOrderExistsForUpdate(materialOrder, 
+                            moduleId, courseId,materialId);
+
+                    if (isExisted) {
+                        moduleId = Integer.parseInt(module);
+                        materialId = Integer.parseInt(material);
+                        Material ma = madao.getMaterialById(materialId);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("material", ma);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "This Material Order already exists. Please choose a different number.");
+                        request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                        return;
+                    }
+                    
                 } catch (NumberFormatException e) {
                     moduleId = Integer.parseInt(module);
                     materialId = Integer.parseInt(material);
