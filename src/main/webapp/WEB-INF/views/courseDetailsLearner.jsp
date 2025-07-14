@@ -214,7 +214,7 @@
                                 <div class="flex space-x-4">
                                     <c:choose>
                                         <c:when test="${isEnroll}">
-                                            <button onclick="location.href='<%= request.getContextPath()%>/learner/course?courseID =${course.courseID}'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                            <button onclick="location.href='<%= request.getContextPath()%>/learner/course?courseID=${course.courseID}'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                                                 To Course
                                             </button>
                                         </c:when>

@@ -35,6 +35,7 @@ public class BillListServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
+        Boolean isAdmin = false;
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -44,7 +45,19 @@ public class BillListServlet extends HttpServlet {
         if ("LEARNER".equals(role)) {
             try {
                 ArrayList<Receipt> receipts = receiptDAO.getLearnerReceipt(user.getUserId());
+                isAdmin = false;
                 request.setAttribute("receipts", receipts);
+                request.setAttribute("isAdmin", isAdmin);
+            } catch (Exception e) {
+                System.err.println("Error fetching receipts for userID: " + user.getUserId() + ", error: " + e.getMessage());
+                request.setAttribute("errorMessage", "Failed to load bill list. Please try again or contact support.");
+            }
+        } else if("ADMIN".equals(role)){
+            try {
+                ArrayList<Receipt> receipts = receiptDAO.getReceipt();
+                request.setAttribute("receipts", receipts);
+                isAdmin = true;
+                request.setAttribute("isAdmin", isAdmin);
             } catch (Exception e) {
                 System.err.println("Error fetching receipts for userID: " + user.getUserId() + ", error: " + e.getMessage());
                 request.setAttribute("errorMessage", "Failed to load bill list. Please try again or contact support.");
