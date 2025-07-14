@@ -308,4 +308,46 @@ public class MaterialDAO extends DBContext {
         }
     }
 
+    public boolean checkMaterialOrderExists(int materialOrder, int moduleId, int courseId) {
+        boolean exists = false;
+
+        String sql = "SELECT 1 FROM Materials m "
+                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID "
+                + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
+                + "WHERE m.MaterialOrder = ? And mo.ModuleID= ? and c.CourseID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, materialOrder);
+            ps.setInt(2, moduleId);
+            ps.setInt(3, courseId);
+            ResultSet rs = ps.executeQuery();
+            exists = rs.next(); // Nếu có dòng nào trả về là tồn tại
+        } catch (SQLException e) {
+        }
+
+        return exists;
+    }
+
+    public boolean checkMaterialOrderExistsForUpdate(int materialOrder, int moduleId, 
+            int courseId,int materialId) {
+        boolean exists = false;
+        String sql = "SELECT 1 FROM Materials m JOIN Modules mo ON m.ModuleID = mo.ModuleID "
+                + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
+                + "WHERE m.MaterialOrder = ? And mo.ModuleID= ? and c.CourseID = ? "
+                + "and m.MaterialID != ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, materialOrder);
+            ps.setInt(2, moduleId);
+            ps.setInt(3, courseId);
+            ps.setInt(4, materialId);
+            ResultSet rs = ps.executeQuery();
+            exists = rs.next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return exists;
+    }
+
 }
