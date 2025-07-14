@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/transition.css">
+<script src="${pageContext.request.contextPath}/js/transition.js"></script>
 
 <header class="bg-white shadow-md p-4 rounded-b-lg">
     <div class="flex items-center justify-between">
@@ -16,7 +18,7 @@
         </div>
 
         <div class="flex items-center space-x-4 w-1/4 justify-end">
-           
+
             <%-- Phần user profile/avatar --%>
             <div class="flex items-center space-x-2">
                 <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-semibold">

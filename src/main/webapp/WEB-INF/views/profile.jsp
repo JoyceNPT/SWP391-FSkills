@@ -48,6 +48,27 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
+    .change-email-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    .change-email-container h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #sendOtpBtn {
+      margin-left: 10px;
+      width: auto;
+    }
   </style>
 </head>
 
@@ -202,6 +223,7 @@
         <div class="form-group">
           <label for="oldPassword">Old Password</label>
           <input type="password" id="oldPassword" name="oldPassword" required>
+          <p id="old-password-message" class="requirement"></p>
         </div>
         <div class="form-group">
           <label for="newPassword">New Password</label>
@@ -229,7 +251,7 @@
       <h1>Change Email</h1>
 
       <form id="emailForm"
-            action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=changeEmail"
+            action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/changeEmail' : sessionScope.user.role eq 'ADMIN' ? '/admin/changeEmail' : '/learner/changeEmail'}?action=changeEmail"
             method="POST">
         <div class="form-group">
           <label for="newEmail">New Email</label>
@@ -239,23 +261,20 @@
           </div>
           <div class="password-requirements">
             <p class="requirement" id="email-format">Valid email format required</p>
-            <p class="requirement" id="email-number">Must contain at least one number</p>
           </div>
         </div>
-      </form>
-      <form
-              id="OTPForm"
-              action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=OTP"
-              method="POST">
-      <div class="form-group">
+
+        <div class="form-group">
           <label for="otpCode">OTP Code</label>
           <input type="text" id="otpCode" name="otpCode" required>
           <p id="otp-message" class="requirement"></p>
         </div>
+
         <button type="submit" id="saveEmailBtn" disabled>Save Change</button>
       </form>
     </div>
   </div>
+
 
   <!-- Toast Notification -->
   <div style="z-index: 2000;" class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -376,6 +395,7 @@
       document.getElementById('saveEmailBtn').disabled = true;
     });
 
+
     // Preview avatar
     document.getElementById('avatar-upload').addEventListener('change', function (e) {
       const file = e.target.files[0];
@@ -433,6 +453,7 @@
       document.getElementById('emailModal').style.display = "none";
     });
 
+
     // Auto-hide alerts after 3 seconds
     window.addEventListener('load', function () {
       const alerts = document.querySelectorAll('.alert');
@@ -448,13 +469,66 @@
     // Password validation
     const newPasswordInput = document.getElementById('newPassword');
     const confirmPasswordInput = document.getElementById('confirmPassword');
+    const oldPasswordInput = document.getElementById('oldPassword');
+    const oldPasswordMessage = document.getElementById('old-password-message');
     const lengthRequirement = document.getElementById('length-requirement');
     const caseRequirement = document.getElementById('case-requirement');
     const specialRequirement = document.getElementById('special-requirement');
     const savePasswordBtn = document.getElementById('savePasswordBtn');
 
+    // Mặc định vô hiệu hóa trường newPassword
+    newPasswordInput.disabled = true;
+
+    oldPasswordInput.addEventListener('input', validateOldPassword);
     newPasswordInput.addEventListener('input', validatePassword);
     confirmPasswordInput.addEventListener('input', validatePassword);
+
+    // Hàm kiểm tra mật khẩu cũ
+    function validateOldPassword() {
+      const oldPassword = oldPasswordInput.value;
+
+      // Nếu trường mật khẩu cũ trống, xóa thông báo và vô hiệu hóa trường mật khẩu mới
+      if (!oldPassword) {
+        oldPasswordMessage.textContent = "";
+        oldPasswordMessage.classList.remove('valid', 'invalid');
+        newPasswordInput.disabled = true;
+        return;
+      }
+
+      // Gửi yêu cầu AJAX để kiểm tra mật khẩu
+      fetch('${pageContext.request.contextPath}/checkPassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'oldPassword=' + encodeURIComponent(oldPassword)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.valid) {
+          // Mật khẩu đúng
+          oldPasswordMessage.textContent = "Correct password";
+          oldPasswordMessage.classList.add('valid');
+          oldPasswordMessage.classList.remove('invalid');
+          newPasswordInput.disabled = false;
+        } else {
+          // Mật khẩu sai
+          oldPasswordMessage.textContent = "Incorrect password";
+          oldPasswordMessage.classList.add('invalid');
+          oldPasswordMessage.classList.remove('valid');
+          newPasswordInput.disabled = true;
+        }
+        // Gọi hàm validatePassword để cập nhật trạng thái nút lưu
+        validatePassword();
+      })
+      .catch(error => {
+        console.error('Error checking password:', error);
+        oldPasswordMessage.textContent = "Error checking password";
+        oldPasswordMessage.classList.add('invalid');
+        oldPasswordMessage.classList.remove('valid');
+        newPasswordInput.disabled = true;
+      });
+    }
 
     function validatePassword() {
       const oldPassword = document.getElementById('oldPassword').value;
@@ -510,7 +584,8 @@
               specialRequirement.classList.contains('valid') &&
               password === confirmPassword &&
               password.length > 0 &&
-              password !== oldPassword) {
+              password !== oldPassword &&
+              oldPasswordMessage.classList.contains('valid')) {
         savePasswordBtn.disabled = false;
       } else {
         savePasswordBtn.disabled = true;
@@ -602,7 +677,7 @@
       console.log("Sending OTP request for email: " + newEmail);
 
       // Send OTP via AJAX
-      fetch('${pageContext.request.contextPath}${sessionScope.user.role eq "INSTRUCTOR" ? "/instructor/profile" : sessionScope.user.role eq "ADMIN" ? "/admin/profile" : "/learner/profile"}?action=sendOtp', {
+      fetch('${pageContext.request.contextPath}${sessionScope.user.role eq "INSTRUCTOR" ? "/instructor/changeEmail" : sessionScope.user.role eq "ADMIN" ? "/admin/changeEmail" : "/learner/changeEmail"}?action=sendOtp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -688,6 +763,7 @@
         saveEmailBtn.disabled = true;
       }
     });
+
 
     // Initialize toast notifications
     document.addEventListener('DOMContentLoaded', function () {

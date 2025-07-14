@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/transition.css">
+<script src="${pageContext.request.contextPath}/js/transition.js"></script>
 <header class="header bg-white shadow-md p-4 rounded-b-lg">
     <div class="flex items-center justify-between">
         <%--        <div class="w-1/4">--%>

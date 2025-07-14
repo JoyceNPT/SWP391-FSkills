@@ -107,17 +107,7 @@ public class Profile {
 
         boolean isValidFormat = email != null && Pattern.matches(emailRegex, email);
 
-        boolean containsNumber = false;
-        if (email != null) {
-            for (char c : email.toCharArray()) {
-                if (Character.isDigit(c)) {
-                    containsNumber = true;
-                    break;
-                }
-            }
-        }
-
-        return isValidFormat && containsNumber;
+        return isValidFormat;
     }
 
     public boolean validatePhoneNumber() {
