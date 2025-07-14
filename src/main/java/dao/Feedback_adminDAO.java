@@ -29,7 +29,15 @@ public class Feedback_adminDAO extends DBContext {
             // Check if connection is valid
             if (conn == null || conn.isClosed()) {
                 System.err.println("Database connection is null or closed");
-                return feedbackList;
+                // Reinitialize connection
+                DBContext dbContext = new DBContext();
+                conn = dbContext.conn;
+
+                if (conn == null || conn.isClosed()) {
+                    System.err.println("Failed to reconnect to database");
+                    return feedbackList;
+                }
+                System.out.println("Successfully reconnected to database");
             }
 
             ps = conn.prepareStatement(sql);
@@ -99,7 +107,15 @@ public class Feedback_adminDAO extends DBContext {
             // Check if connection is valid
             if (conn == null || conn.isClosed()) {
                 System.err.println("Database connection is null or closed");
-                return feedbackList;
+                // Reinitialize connection
+                DBContext dbContext = new DBContext();
+                conn = dbContext.conn;
+
+                if (conn == null || conn.isClosed()) {
+                    System.err.println("Failed to reconnect to database");
+                    return feedbackList;
+                }
+                System.out.println("Successfully reconnected to database");
             }
 
             ps = conn.prepareStatement(sql);
@@ -169,7 +185,15 @@ public class Feedback_adminDAO extends DBContext {
             // Check if connection is valid
             if (conn == null || conn.isClosed()) {
                 System.err.println("Database connection is null or closed");
-                return 0;
+                // Reinitialize connection
+                DBContext dbContext = new DBContext();
+                conn = dbContext.conn;
+
+                if (conn == null || conn.isClosed()) {
+                    System.err.println("Failed to reconnect to database");
+                    return 0;
+                }
+                System.out.println("Successfully reconnected to database");
             }
 
             ps = conn.prepareStatement(sql);
@@ -305,7 +329,15 @@ public class Feedback_adminDAO extends DBContext {
             // Check if connection is valid
             if (conn == null || conn.isClosed()) {
                 System.err.println("Database connection is null or closed");
-                return 0;
+                // Reinitialize connection
+                DBContext dbContext = new DBContext();
+                conn = dbContext.conn;
+
+                if (conn == null || conn.isClosed()) {
+                    System.err.println("Failed to reconnect to database");
+                    return 0;
+                }
+                System.out.println("Successfully reconnected to database");
             }
 
             // Validate feedback object
@@ -369,7 +401,15 @@ public class Feedback_adminDAO extends DBContext {
             // Check if connection is valid
             if (conn == null || conn.isClosed()) {
                 System.err.println("Database connection is null or closed");
-                return -1;
+                // Reinitialize connection
+                DBContext dbContext = new DBContext();
+                conn = dbContext.conn;
+
+                if (conn == null || conn.isClosed()) {
+                    System.err.println("Failed to reconnect to database");
+                    return -1;
+                }
+                System.out.println("Successfully reconnected to database");
             }
 
             ps = conn.prepareStatement(sql);

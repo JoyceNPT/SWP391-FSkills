@@ -112,7 +112,7 @@ public class ProfileDAO {
         try {
             stmt = prepareStatement(sql);
             stmt.setString(1, email);
-            stmt.setBoolean(2, false); // Set isVerified to false for new email
+            stmt.setBoolean(2, true); // Set isVerified to true for new email
             stmt.setInt(3, userId);
 
             return stmt.executeUpdate() > 0;

@@ -1035,5 +1035,8 @@ public class CourseDAO extends DBContext {
 
         Instant nowInstant = Instant.now();
         System.out.println("Instant.now(): " + now);
+
+        String turnstileSiteKey = System.getenv("SENDGRID_API_KEY");
+        System.out.println("Turnstile Site Key:" + turnstileSiteKey);
     }
 }

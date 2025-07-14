@@ -52,28 +52,28 @@ public class FeedbackUserServlet extends HttpServlet {
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
-        
+
         // Validate required fields
         if (feedbackContent == null || feedbackContent.trim().isEmpty()) {
             request.setAttribute("err", "Please enter your feedback content.");
             request.getRequestDispatcher("/WEB-INF/views/feedback_user.jsp").forward(request, response);
             return;
         }
-        
+
         if (email == null || email.trim().isEmpty()) {
             request.setAttribute("err", "Please enter your email address.");
             request.getRequestDispatcher("/WEB-INF/views/feedback_user.jsp").forward(request, response);
             return;
         }
-        
+
         // Get user ID from session if available
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         int userId = 0; // Default for anonymous users
-        
+
         if (user != null) {
             userId = user.getUserId();
-            
+
             // If user is logged in and didn't provide name, use their display name
             if ((firstName == null || firstName.trim().isEmpty()) && 
                 (lastName == null || lastName.trim().isEmpty())) {
@@ -87,13 +87,13 @@ public class FeedbackUserServlet extends HttpServlet {
                     }
                 }
             }
-            
+
             // If user is logged in and didn't provide email, use their email
             if (email == null || email.trim().isEmpty()) {
                 email = user.getEmail();
             }
         }
-        
+
         // Create feedback object
         Feedback_user feedback = new Feedback_user(
                 feedbackType,
@@ -104,19 +104,31 @@ public class FeedbackUserServlet extends HttpServlet {
                 email, 
                 userId
         );
-        
+
+        // Log feedback details for debugging
+        System.out.println("Attempting to save feedback: " + feedback.toString());
+
         // Save feedback to database
         Feedback_userDAO dao = new Feedback_userDAO();
-        int result = dao.insertFeedback(feedback);
-        
-        if (result > 0) {
-            // Success
-            request.setAttribute("success", "Thank you for your feedback! We will review and respond as soon as possible.");
-        } else {
-            // Error
-            request.setAttribute("err", "Failed to submit feedback. Please try again later.");
+        try {
+            int result = dao.insertFeedback(feedback);
+
+            if (result > 0) {
+                // Success
+                System.out.println("Feedback submitted successfully with result: " + result);
+                request.setAttribute("success", "Thank you for your feedback! We will review and respond as soon as possible.");
+            } else {
+                // Error
+                System.err.println("Failed to submit feedback. Result: " + result);
+                request.setAttribute("err", "Failed to submit feedback. Please try again later.");
+            }
+        } catch (Exception e) {
+            // Log any unexpected exceptions
+            System.err.println("Exception during feedback submission: " + e.getMessage());
+            e.printStackTrace();
+            request.setAttribute("err", "An error occurred while processing your feedback. Please try again later.");
         }
-        
+
         // Forward back to the feedback page
         request.getRequestDispatcher("/WEB-INF/views/feedback_user.jsp").forward(request, response);
     }
