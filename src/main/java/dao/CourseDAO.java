@@ -7,7 +7,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import model.Module;
 import model.Category;
 import model.Course;
 import model.Role;
@@ -648,6 +648,7 @@ public class CourseDAO extends DBContext {
         }
     }
 
+
     /*============*/
     // Methods for AllCoursesServlet
     public List<Course> getAllCourses(int page, int pageSize) {
@@ -661,7 +662,7 @@ public class CourseDAO extends DBContext {
                 + "FROM Courses c "
                 + "JOIN Users u ON c.UserID = u.UserID "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "WHERE c.ApproveStatus = 1 "
                 + "ORDER BY c.PublicDate DESC "
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -692,7 +693,7 @@ public class CourseDAO extends DBContext {
                 + "FROM Courses c "
                 + "JOIN Users u ON c.UserID = u.UserID "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "WHERE c.ApproveStatus = 1 "
                 + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) "
                 + "ORDER BY c.PublicDate DESC "
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
@@ -728,7 +729,7 @@ public class CourseDAO extends DBContext {
                 + "FROM Courses c "
                 + "JOIN Users u ON c.UserID = u.UserID "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ? "
+                + "WHERE c.ApproveStatus = 1 AND cat.category_name = ? "
                 + "ORDER BY c.PublicDate DESC "
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -760,7 +761,7 @@ public class CourseDAO extends DBContext {
                 + "FROM Courses c "
                 + "JOIN Users u ON c.UserID = u.UserID "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "WHERE c.ApproveStatus = 1 "
                 + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) "
                 + "AND cat.category_name = ? "
                 + "ORDER BY c.PublicDate DESC "
@@ -788,7 +789,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int getTotalCoursesCount() {
-        String sql = "SELECT COUNT(*) as total FROM Courses WHERE Status = 0 AND ApproveStatus = 1";
+        String sql = "SELECT COUNT(*) as total FROM Courses WHERE ApproveStatus = 1";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -804,7 +805,7 @@ public class CourseDAO extends DBContext {
     public int getSearchCoursesCount(String keyword) {
         String sql = "SELECT COUNT(*) as total FROM Courses c "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "WHERE c.ApproveStatus = 1 "
                 + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -825,7 +826,7 @@ public class CourseDAO extends DBContext {
     public int getCoursesByCategoryCount(String categoryName) {
         String sql = "SELECT COUNT(*) as total FROM Courses c "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ?";
+                + "WHERE c.ApproveStatus = 1 AND cat.category_name = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, categoryName);
@@ -842,7 +843,7 @@ public class CourseDAO extends DBContext {
     public int getSearchAndFilterCoursesCount(String keyword, String categoryName) {
         String sql = "SELECT COUNT(*) as total FROM Courses c "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "WHERE c.ApproveStatus = 1 "
                 + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) "
                 + "AND cat.category_name = ?";
         try {
@@ -906,6 +907,106 @@ public class CourseDAO extends DBContext {
 
         return course;
     }
+    // Admin methods for course management
+    public Course getCourseByCourseIDAdmin(int courseID) throws SQLException {
+        String sql = "SELECT c.*, " +
+                "cat.category_name, " +
+                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
+                "COALESCE(e.TotalEnrolled, 0) AS TotalEnrolled " +
+                "FROM Courses c " +
+                "JOIN Users u ON c.UserID = u.UserID " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "LEFT JOIN (SELECT CourseID, COUNT(*) AS TotalEnrolled FROM Enroll GROUP BY CourseID) e ON c.CourseID = e.CourseID " +
+                "WHERE c.CourseID = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courseID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Course course = buildCourseFromResultSet(rs);
+                course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
+                course.setStatus(rs.getInt("Status"));
+
+                // Get modules
+                ModuleDAO moduleDAO = new ModuleDAO();
+                List<Module> modules = moduleDAO.getModulesByCourseIDAdmin(courseID);
+                course.setModules(modules);
+
+                return course;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getCourseByCourseIDAdmin: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public int deleteCourseAdmin(int courseID) {
+        String checkEnrollmentSql = "SELECT COUNT(*) AS enrolledCount FROM Enroll WHERE CourseID = ?";
+        String deleteCourseSql = "DELETE FROM Courses WHERE CourseID = ?";
+
+        try (
+                PreparedStatement checkPs = conn.prepareStatement(checkEnrollmentSql)
+        ) {
+            checkPs.setInt(1, courseID);
+            ResultSet rs = checkPs.executeQuery();
+
+            if (rs.next()) {
+                int enrolledCount = rs.getInt("enrolledCount");
+                if (enrolledCount > 0) {
+                    return -1;
+                }
+            }
+
+            ModuleDAO moduleDAO = new ModuleDAO();
+            moduleDAO.deleteModulesByCourseIDAdmin(courseID);
+
+            try (PreparedStatement deletePs = conn.prepareStatement(deleteCourseSql)) {
+                deletePs.setInt(1, courseID);
+                int rowsAffected = deletePs.executeUpdate();
+                return rowsAffected > 0 ? 1 : 0;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error in deleteCourseAdmin: " + e.getMessage());
+            return -2;
+        }
+    }
+
+
+    public List<Course> getAllCoursesAdmin(int page, int pageSize) {
+        List<Course> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = "SELECT " +
+                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
+                "c.*, " +
+                "cat.category_id, cat.category_name, " +
+                "COALESCE(e.TotalEnrolled, 0) AS TotalEnrolled " +
+                "FROM Courses c " +
+                "JOIN Users u ON c.UserID = u.UserID " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "LEFT JOIN (SELECT CourseID, COUNT(*) AS TotalEnrolled FROM Enroll GROUP BY CourseID) e ON c.CourseID = e.CourseID " +
+                "ORDER BY c.PublicDate DESC " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, offset);
+            ps.setInt(2, pageSize);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Course course = buildCourseFromResultSet(rs);
+                course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
+                course.setStatus(rs.getInt("Status"));
+                list.add(course);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
 
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
@@ -926,13 +1027,12 @@ public class CourseDAO extends DBContext {
 //        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
 //        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
 //        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
-
 //        System.out.println("Secret Key:" + secretKey);
 //        System.out.println("Site Key:" + turnstileSiteKey);
 //        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
 //        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
         System.out.println("Local JVM time: " + ZonedDateTime.now());
-        
+
         Instant nowInstant = Instant.now();
         System.out.println("Instant.now(): " + now);
     }

@@ -1,31 +1,30 @@
 package model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-/**
- * @author Ngo Phuoc Thinh - CE170008 - SE1815
- */
 public class Module {
     private int moduleID;
     private String moduleName;
     private Course course;
     private Timestamp moduleLastUpdate;
+    private List<Material> materials;
 
     public Module() {
     }
-    
+
     public Module(int moduleID, String moduleName, Course course) {
         this.moduleID = moduleID;
         this.moduleName = moduleName;
         this.course = course;
     }
-    
 
-    public Module(int moduleID, String moduleName, Course course, Timestamp moduleLastUpdate) {
+    public Module(int moduleID, String moduleName, Course course, Timestamp moduleLastUpdate, List<Material> materials) {
         this.moduleID = moduleID;
         this.moduleName = moduleName;
         this.course = course;
         this.moduleLastUpdate = moduleLastUpdate;
+        this.materials = materials;
     }
 
     // Using Insert Module
@@ -66,6 +65,14 @@ public class Module {
         this.moduleLastUpdate = moduleLastUpdate;
     }
 
+    public List<Material> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(List<Material> materials) {
+        this.materials = materials;
+    }
+
     @Override
     public String toString() {
         return "Module{" +
@@ -73,6 +80,7 @@ public class Module {
                 ", moduleName='" + moduleName + '\'' +
                 ", course=" + course +
                 ", moduleLastUpdate=" + moduleLastUpdate +
+                ", materials=" + materials +
                 '}';
     }
 }
