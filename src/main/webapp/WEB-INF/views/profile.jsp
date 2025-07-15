@@ -102,12 +102,12 @@
 
           <c:choose>
             <c:when test="${profile.isVerified}">
-              <span class="verified-badge" title="Email đã xác nhận">
+              <span class="verified-badge" title="Confirmed">
                 <i class="bi bi-check-circle-fill"></i> Confirmed
               </span>
             </c:when>
             <c:otherwise>
-              <span class="unverified-badge" title="Email chưa xác minh">
+              <span class="unverified-badge" title="Not Verified">
                 <i class="bi bi-exclamation-circle-fill"></i> Not Verified
               </span>
             </c:otherwise>

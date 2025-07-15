@@ -65,7 +65,7 @@
 
     <body class="bg-gray-50">
         <jsp:include page="/layout/sidebar_user.jsp"/>
-        <jsp:include page="/layout/header_user.jsp"/>
+
         <!-- ======================= Main Content ======================= -->
         <main class="main mx-auto px-4 py-8 md:py-12">
             <section id="dashboard" class="mb-12">

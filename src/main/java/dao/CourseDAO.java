@@ -789,5 +789,8 @@ public class CourseDAO extends DBContext {
         for (Course course : courseList) {
             System.out.println(course);
         }
+        
+        String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
+        System.out.println(YOUTUBE_API_KEY);
     }
 }

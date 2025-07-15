@@ -113,13 +113,19 @@ public class InstructorMaterialServlet extends HttpServlet {
 
                 moduleId = Integer.parseInt(module);
                 Module mo = mdao.getModuleByID(moduleId);
+                String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
+                
                 request.setAttribute("module", mo);
+                request.setAttribute("apiKey", YOUTUBE_API_KEY);
                 request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
             } else if (action.equalsIgnoreCase("update")) {
                 moduleId = Integer.parseInt(module);
                 materialId = Integer.parseInt(material);
                 Material ma = madao.getMaterialById(materialId);
                 Module mo = mdao.getModuleByID(moduleId);
+                String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
+                
+                request.setAttribute("apiKey", YOUTUBE_API_KEY);
                 request.setAttribute("material", ma);
                 request.setAttribute("module", mo);
                 request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);

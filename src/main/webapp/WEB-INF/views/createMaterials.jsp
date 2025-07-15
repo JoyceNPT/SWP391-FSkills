@@ -64,6 +64,10 @@
         </style>
     </head>
     <body>
+        <script>
+            const YOUTUBE_API_KEY = '${apiKey}';
+        </script>
+
         <jsp:include page="/layout/sidebar_user.jsp"/>
         <div class="container-fluid flex px-4">
             <div class="container py-2 ps-3">
@@ -280,8 +284,6 @@
 
 
         <script>
-            const YOUTUBE_API_KEY = "AIzaSyBSPV56TgcJqr6mgWr6hDkMA2yfdirLDpA"; // ← bạn cần thay bằng API key thật
-
             function previewYoutubeThumbnail() {
                 const url = document.getElementById("youtubeLinkInput").value.trim();
                 let videoId = null;
