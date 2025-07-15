@@ -33,7 +33,7 @@ public class CourseDAO extends DBContext {
                 + "FROM Courses c\n"
                 + "JOIN Users u ON c.UserID = u.UserID\n"
                 + "JOIN Category cat ON c.category_id = cat.category_id\n"
-                + "WHERE c.UserID = ? AND c.Status = 0 AND (c.ApproveStatus = 0 OR c.ApproveStatus = 1)";
+                + "WHERE c.UserID = ? AND c.Status = 0 AND (c.ApproveStatus = 0 OR c.ApproveStatus = 1 OR c.ApproveStatus = 3)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userID);
@@ -94,23 +94,23 @@ public class CourseDAO extends DBContext {
 
         String sql = "SELECT TOP 3\n"
                 + "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
-                + "    c.*, \n"
+                + "    c.*,\n"
                 + "    cat.category_id, cat.category_name,\n"
-                + "    COUNT(DISTINCT e.UserID) AS TotalEnrolled,\n"
-                + "    AVG(f.Rate) AS AvgRate\n"
+                + "    COUNT(DISTINCT e.UserID) AS TotalEnrolled\n"
                 + "FROM Courses c\n"
                 + "JOIN Users u ON c.UserID = u.UserID\n"
                 + "JOIN Category cat ON c.category_id = cat.category_id\n"
                 + "LEFT JOIN Enroll e ON c.CourseID = e.CourseID\n"
-                + "LEFT JOIN Feedbacks f ON c.CourseID = f.CourseID\n"
-                + "WHERE c.UserID = ? AND c.Status = 0 AND c.ApproveStatus = 1\n"
-                + "GROUP BY \n"
+                + "WHERE c.UserID = ? \n"
+                + "  AND c.Status = 0 \n"
+                + "  AND c.ApproveStatus = 1\n"
+                + "GROUP BY\n"
                 + "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
                 + "    c.CourseID, c.CourseName, c.OriginalPrice, c.SalePrice, c.IsSale, \n"
                 + "    c.CourseImageLocation, c.PublicDate, c.CourseLastUpdate, c.Status, c.ApproveStatus, c.UserID, c.category_id,\n"
                 + "    c.CourseSummary, c.CourseHighlight,\n"
                 + "    cat.category_id, cat.category_name\n"
-                + "ORDER BY AvgRate DESC;";
+                + "ORDER BY TotalEnrolled DESC;";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -329,7 +329,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int countCoursesByUserID(int userId) {
-        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ? AND Status = 0 AND (ApproveStatus = 1 OR ApproveStatus = 0)";
+        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ? AND Status = 0 AND (ApproveStatus = 0 OR ApproveStatus = 1 OR ApproveStatus = 3)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -383,6 +383,22 @@ public class CourseDAO extends DBContext {
 
         return avgRating;
     }
+
+    public int submitCourseApprove(int courseID) {
+        String sql = "UPDATE Courses SET ApproveStatus = 3 WHERE CourseID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, courseID);
+
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
 
     public int courseUpdateTime(int id) {
         String updateSql = "  UPDATE [dbo].[Courses] SET [CourseLastUpdate] = GETDATE() WHERE [CourseID] = ?;";
@@ -785,11 +801,11 @@ public class CourseDAO extends DBContext {
         Instant nowInstant = Instant.now();
         System.out.println("Instant.now(): " + now);
 
-        List<Course> courseList = dao.getCourseByUserID(3);
+        List<Course> courseList = dao.get3CourseByUserID(3);
         for (Course course : courseList) {
             System.out.println(course);
         }
-        
+
         String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
         System.out.println(YOUTUBE_API_KEY);
     }

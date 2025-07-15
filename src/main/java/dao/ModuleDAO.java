@@ -61,6 +61,28 @@ public class ModuleDAO extends DBContext {
         return list;
     }
 
+    public int checkModuleByCourseID(int CourseID) {
+        String sql = "SELECT TOP 1\n" +
+                "ModuleID\n" +
+                "FROM Modules m\n" +
+                "WHERE CourseID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, CourseID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return 1;
+            } else {
+                return 0;
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
     public Module getModuleByID(int moduleID) {
         String sql = "SELECT m.*, c.CourseName, c.CourseID, cat.category_id, cat.category_name " +
                 "FROM Modules m " +
