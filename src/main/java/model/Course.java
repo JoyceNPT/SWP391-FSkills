@@ -9,7 +9,7 @@ public class Course {
     private String courseName;
     private Category category;
     private User user;
-    private int approveStatus;
+    private int approveStatus; // 0: Default    1: Approved     2: Rejected   3: Processing
     private Timestamp publicDate;
     private Timestamp courseLastUpdate;
     private int salePrice;

@@ -1,9 +1,6 @@
 package controller;
 
-import dao.CategoryDAO;
-import dao.CourseDAO;
-import dao.NotificationDAO;
-import dao.UserDAO;
+import dao.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,10 +20,8 @@ import jakarta.servlet.annotation.MultipartConfig;
 
 import java.util.List;
 
-import model.Category;
-import model.Course;
-import model.Role;
-import model.User;
+import model.*;
+import model.Module;
 
 /**
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
@@ -146,6 +141,8 @@ public class InstructorCourseServlet extends HttpServlet {
             throws ServletException, IOException {
         CourseDAO cDao = new CourseDAO();
         UserDAO uDao = new UserDAO();
+        ModuleDAO mDao = new ModuleDAO();
+        MaterialDAO matDao = new MaterialDAO();
 
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String action = request.getParameter("action");
@@ -405,6 +402,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Cannot delete course: Students are still enrolled.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
                 } else {
                     int delete = cDao.checkStatus(courseID);
 
@@ -418,6 +416,44 @@ public class InstructorCourseServlet extends HttpServlet {
                         request.setAttribute("err", "Delete failed: Unknown error!");
                         request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     }
+                }
+            } else if (action.equalsIgnoreCase("approve")) {
+                int userID = Integer.parseInt(request.getParameter("userID"));
+                int courseID = Integer.parseInt(request.getParameter("courseID"));
+
+                Course course = cDao.getCourseByCourseID(courseID);
+
+                if (course  != null) {
+                    int hasModule = mDao.checkModuleByCourseID(courseID);
+                    int hasMaterial = matDao.checkMaterialInCourse(courseID);
+
+                    if(hasModule < 1 || hasMaterial < 1){
+                        List<Course> list = cDao.getCourseByUserID(userID);
+
+                        request.setAttribute("listCourse", list);
+                        request.setAttribute("err", "Submit failed: The course must have at least one data in Module and Material!");
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
+                    }
+
+                    int submit = cDao.submitCourseApprove(courseID);
+
+                    if (submit > 0) {
+                        List<Course> list = cDao.getCourseByUserID(userID);
+
+                        request.setAttribute("success", "Submit Course successfully!!!");
+                        request.setAttribute("listCourse", list);
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    } else {
+                        request.setAttribute("err", "Delete failed: Unknown error!");
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    }
+                } else {
+                    List<Course> list = cDao.getCourseByUserID(userID);
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Submit failed: CourseID does not exist!");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                 }
             }
         }
