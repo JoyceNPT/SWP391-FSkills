@@ -39,4 +39,5 @@
             showJsToast("${fn:escapeXml(success)}", "success");
         });
     </script>
+    <c:remove var="success" scope="session"/>
 </c:if>

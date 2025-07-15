@@ -418,7 +418,7 @@
                                         <div class="detail-item">
                                             <span class="detail-label">Phone Number</span>
                                             <span class="detail-value" id="displayPhone">${user.phone}</span>
-                                            <input type="text" id="inputPhone" name="phone" class="detail-input" value="${param.phone != null ? param.phone : user.phone}" required>
+                                            <input type="text" id="inputPhone" name="phone" class="detail-input" value="${param.phone != null ? param.phone : user.phone}">
                                             <c:if test="${not empty errorMessages['phone']}">
                                                 <span class="error-message">${errorMessages['phone']}</span>
                                             </c:if>
@@ -450,7 +450,7 @@
         </div>
 
         <jsp:include page="/layout/toast.jsp" />
-        <%-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --%>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
     </body>
 
 </html>

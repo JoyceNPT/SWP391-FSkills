@@ -124,6 +124,39 @@ public class VoucherDAO extends DBContext {
             throw e;
         }
     }
+    
+    public boolean isVoucherCodeExists(String voucherCode) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Vouchers WHERE VoucherCode = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, voucherCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error checking if voucher code exists for code " + voucherCode + ": " + e.getMessage(), e);
+            throw e;
+        }
+        return false;
+    }
+    
+    public boolean isVoucherCodeExistsForOtherVoucher(String voucherCode, int voucherID) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Vouchers WHERE VoucherCode = ? AND VoucherID != ?";  //khi edit tranh trung lap
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, voucherCode);
+            ps.setInt(2, voucherID);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error checking if voucher code exists for other voucher (code: " + voucherCode + ", ID: " + voucherID + "): " + e.getMessage(), e);
+            throw e;
+        }
+        return false;
+    }
 
     public boolean updateVoucher(Voucher voucher) throws SQLException {
         String sql = "UPDATE Vouchers SET VoucherName = ?, VoucherCode = ?, ExpiredDate = ?, SaleType = ?, SaleAmount = ?, MinPrice = ?, Amount = ? WHERE VoucherID = ?";

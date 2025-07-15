@@ -17,9 +17,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Role;
@@ -69,6 +67,7 @@ public class AddVoucherServlet extends HttpServlet {
 
         List<String> errorMessages = new ArrayList();
         String globalMessage = "";
+
         String voucherName = request.getParameter("voucherName");
         String voucherCode = request.getParameter("voucherCode");
         String expiredDateStr = request.getParameter("expiredDate");
@@ -78,56 +77,55 @@ public class AddVoucherServlet extends HttpServlet {
         String amountStr = request.getParameter("amount");
 
         Timestamp expiredDate = null;
+        int saleAmount = 0;
+        int minPrice = 0;
+        int amount = 0;
 
         if (voucherName == null || voucherName.trim().isEmpty()) {
-            errorMessages.add("Voucher name cannot be empty.");
+            errorMessages.add("Not null here.");
         }
 
         if (voucherCode == null || voucherCode.trim().isEmpty()) {
-            errorMessages.add("Voucher code cannot be empty.");
+            errorMessages.add("Not null here.");
         }
 
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
-            errorMessages.add("Expiration date cannot be empty.");
+            errorMessages.add("Not null here.");
         } else {
             try {
                 LocalDateTime inputDateTime = LocalDateTime.parse(expiredDateStr);
                 expiredDate = Timestamp.valueOf(inputDateTime);
                 if (inputDateTime.isBefore(LocalDateTime.now())) {
-                    errorMessages.add("Expiration date must be in the future.");
+                    errorMessages.add("Expired date must be in the future.");
                 }
             } catch (DateTimeParseException e) {
                 LOGGER.log(Level.WARNING, "Invalid Expiration Date format: " + expiredDateStr, e);
-                errorMessages.add("Invalid format. Use `YYYY-MM-DDTHH:MM` (e.g., 2025-06-23T14:30).");
+                errorMessages.add("Date: Wrong format. Use YYYY-MM-DDTHH:MM.");
             }
         }
 
         if (saleType == null || saleType.trim().isEmpty()) {
-            errorMessages.add("Sale type cannot be empty.");
-        } else if (!saleType.equals("PERCENT") && !saleType.equals("FIXED")) {
-            errorMessages.add("Invalid sale type.");
+            errorMessages.add("Not null here.");
         }
 
-        int saleAmount = 0;
         if (saleAmountStr == null || saleAmountStr.trim().isEmpty()) {
-            errorMessages.add("Sale amount cannot be empty.");
+            errorMessages.add("Not null here.");
         } else {
             try {
                 saleAmount = Integer.parseInt(saleAmountStr.trim());
                 if (saleAmount <= 0) {
-                    errorMessages.add("Sale amount must be greater than 0.");
+                    errorMessages.add("The discount amount must be greater than 0.");
                 }
                 if (saleType != null && saleType.equals("PERCENT") && (saleAmount > 100 || saleAmount < 0)) {
-                    errorMessages.add("Percentage sale amount must be between 0 and 100.");
+                    errorMessages.add("For percentage, discount amount must be between 0 and 100.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.add("Invalid sale amount (must be an integer).");
+                errorMessages.add("Invalid discount amount (must be an integer).");
             }
         }
 
-        int minPrice = 0;
         if (minPriceStr == null || minPriceStr.trim().isEmpty()) {
-            errorMessages.add("Minimum price cannot be empty.");
+            errorMessages.add("Not null here.");
         } else {
             try {
                 minPrice = Integer.parseInt(minPriceStr.trim());
@@ -139,26 +137,37 @@ public class AddVoucherServlet extends HttpServlet {
             }
         }
 
-        int amount = 0;
         if (amountStr == null || amountStr.trim().isEmpty()) {
-            errorMessages.add("Amount cannot be empty.");
+            errorMessages.add("Not null here.");
         } else {
             try {
                 amount = Integer.parseInt(amountStr.trim());
                 if (amount <= 0) {
-                    errorMessages.add("Amount must be greater than 0.");
+                    errorMessages.add("Quantity must be > 0.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.add("Invalid amount (must be an integer).");
+                errorMessages.add("Invalid quantity (must be an integer).");
             }
         }
 
-        if (!errorMessages.isEmpty()) {
-            globalMessage = "Failed to add Voucher. Please check for errors.";
-            request.setAttribute("err", globalMessage);
-            request.setAttribute("err", errorMessages);
+        VoucherDAO voucherDAO = new VoucherDAO();
+        try {
+            if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+                if (voucherDAO.isVoucherCodeExists(voucherCode.trim())) { 
+                    errorMessages.add("Voucher code '" + voucherCode.trim() + "' already exists. Please select another code..");
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error.", ex);
+            errorMessages.add("Error.");
+        }
 
-            // Giữ lại các giá trị đã nhập
+        if (!errorMessages.isEmpty()) {
+            globalMessage = "Update failed. Please check and fix all of these errors:.";
+            request.setAttribute("globalMessage", globalMessage);
+            request.setAttribute("err", errorMessages);
+            request.setAttribute("errorGlobalMessage", true);
+
             Voucher voucherForDisplay = new Voucher();
             voucherForDisplay.setVoucherName(voucherName);
             voucherForDisplay.setVoucherCode(voucherCode);
@@ -169,7 +178,6 @@ public class AddVoucherServlet extends HttpServlet {
             voucherForDisplay.setAmount(amount);
 
             request.setAttribute("voucher", voucherForDisplay);
-
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             return;
         }
@@ -183,22 +191,23 @@ public class AddVoucherServlet extends HttpServlet {
         newVoucher.setMinPrice(minPrice);
         newVoucher.setAmount(amount);
 
-        VoucherDAO voucherDAO = new VoucherDAO();
         try {
             boolean success = voucherDAO.addVoucher(newVoucher);
             if (success) {
-                request.setAttribute("success", "Voucher added successfully!");
-                request.getRequestDispatcher("voucherList").forward(request, response);
+                request.getSession().setAttribute("success", "Voucher added successfully!");
+                response.sendRedirect(request.getContextPath() + "/voucherList");
             } else {
-                globalMessage = "Failed to add Voucher. An error occurred, possibly due to duplicate data or database issue.";
-                request.setAttribute("err", globalMessage);
+                globalMessage = "Add new Voucher failed. An error occurred..";
+                request.setAttribute("globalMessage", globalMessage);
+                request.setAttribute("errorGlobalMessage", true);
                 request.setAttribute("voucher", newVoucher);
                 request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Database error adding voucher", ex);
-            globalMessage = "Database error: " + ex.getMessage();
-            request.setAttribute("err", globalMessage);
+            LOGGER.log(Level.SEVERE, "Error", ex);
+            globalMessage = "Error: " + ex.getMessage();
+            request.setAttribute("globalMessage", globalMessage);
+            request.setAttribute("errorGlobalMessage", true);
             request.setAttribute("voucher", newVoucher);
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
         }
