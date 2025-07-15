@@ -161,8 +161,9 @@
                             <!-- Order -->
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Display Order</label>
-                                <input type="number" name="materialOrder" class="form-control" required min="1" max="1000">
+                                <input type="number" name="materialOrder" class="form-control" required min="1" max="10">
                             </div>
+
 
                             <!-- Description -->
                             <div class="col-12">

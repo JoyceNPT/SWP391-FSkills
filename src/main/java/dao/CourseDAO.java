@@ -329,7 +329,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int countCoursesByUserID(int userId) {
-        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ? AND Status = 0 AND ApproveStatus = 1";
+        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ? AND Status = 0 AND (ApproveStatus = 1 OR ApproveStatus = 0)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
