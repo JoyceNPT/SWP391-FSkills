@@ -147,6 +147,19 @@
         <label>Address</label>
         <input type="text" value="<c:out value="${profile.info}"/>" readonly>
       </div>
+
+      <c:if test="${!profile.isVerified}">
+        <div class="alert alert-warning d-flex justify-content-between align-items-center px-3 py-2 rounded" role="alert">
+          <div>
+            <strong>Notice:</strong> Your email is <strong>not verified</strong>. Please verify to unlock full features.
+          </div>
+          <div>
+            <a href="${pageContext.request.contextPath}/verifyemail?userID=${profile.userId}" class="btn btn-sm btn-primary">
+              <i class="bi bi-envelope-check me-1"></i> Verify Now
+            </a>
+          </div>
+        </div>
+      </c:if>
     </div>
   </div>
 
@@ -504,31 +517,31 @@
         },
         body: 'oldPassword=' + encodeURIComponent(oldPassword)
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.valid) {
-          // Mật khẩu đúng
-          oldPasswordMessage.textContent = "Correct password";
-          oldPasswordMessage.classList.add('valid');
-          oldPasswordMessage.classList.remove('invalid');
-          newPasswordInput.disabled = false;
-        } else {
-          // Mật khẩu sai
-          oldPasswordMessage.textContent = "Incorrect password";
-          oldPasswordMessage.classList.add('invalid');
-          oldPasswordMessage.classList.remove('valid');
-          newPasswordInput.disabled = true;
-        }
-        // Gọi hàm validatePassword để cập nhật trạng thái nút lưu
-        validatePassword();
-      })
-      .catch(error => {
-        console.error('Error checking password:', error);
-        oldPasswordMessage.textContent = "Error checking password";
-        oldPasswordMessage.classList.add('invalid');
-        oldPasswordMessage.classList.remove('valid');
-        newPasswordInput.disabled = true;
-      });
+              .then(response => response.json())
+              .then(data => {
+                if (data.valid) {
+                  // Mật khẩu đúng
+                  oldPasswordMessage.textContent = "Correct password";
+                  oldPasswordMessage.classList.add('valid');
+                  oldPasswordMessage.classList.remove('invalid');
+                  newPasswordInput.disabled = false;
+                } else {
+                  // Mật khẩu sai
+                  oldPasswordMessage.textContent = "Incorrect password";
+                  oldPasswordMessage.classList.add('invalid');
+                  oldPasswordMessage.classList.remove('valid');
+                  newPasswordInput.disabled = true;
+                }
+                // Gọi hàm validatePassword để cập nhật trạng thái nút lưu
+                validatePassword();
+              })
+              .catch(error => {
+                console.error('Error checking password:', error);
+                oldPasswordMessage.textContent = "Error checking password";
+                oldPasswordMessage.classList.add('invalid');
+                oldPasswordMessage.classList.remove('valid');
+                newPasswordInput.disabled = true;
+              });
     }
 
     function validatePassword() {
@@ -685,75 +698,75 @@
         },
         body: 'newEmail=' + encodeURIComponent(newEmail)
       })
-      .then(response => {
-        console.log("Response status: " + response.status);
+              .then(response => {
+                console.log("Response status: " + response.status);
 
-        // Check if response is ok (status in the range 200-299)
-        if (!response.ok) {
-          throw new Error("Server returned status " + response.status);
-        }
+                // Check if response is ok (status in the range 200-299)
+                if (!response.ok) {
+                  throw new Error("Server returned status " + response.status);
+                }
 
-        // Try to parse as JSON
-        return response.text().then(text => {
-          try {
-            return JSON.parse(text);
-          } catch (e) {
-            console.error("Failed to parse JSON response: ", text);
-            throw new Error("Invalid response from server");
-          }
-        });
-      })
-      .then(data => {
-        console.log("Response data: ", data);
+                // Try to parse as JSON
+                return response.text().then(text => {
+                  try {
+                    return JSON.parse(text);
+                  } catch (e) {
+                    console.error("Failed to parse JSON response: ", text);
+                    throw new Error("Invalid response from server");
+                  }
+                });
+              })
+              .then(data => {
+                console.log("Response data: ", data);
 
-        if (data.success) {
-          // Success case
-          otpMessage.textContent = data.message || "OTP sent to your email.";
-          otpMessage.classList.add('valid');
-          otpMessage.classList.remove('invalid');
-          otpCodeInput.disabled = false;
-          otpCodeInput.focus();
+                if (data.success) {
+                  // Success case
+                  otpMessage.textContent = data.message || "OTP sent to your email.";
+                  otpMessage.classList.add('valid');
+                  otpMessage.classList.remove('invalid');
+                  otpCodeInput.disabled = false;
+                  otpCodeInput.focus();
 
-          // Show success toast
-          const customSuccessMessage = document.getElementById('customSuccessMessage');
-          if (customSuccessMessage) {
-            customSuccessMessage.textContent = "OTP sent successfully. Please check your email.";
-            const toast = new bootstrap.Toast(document.getElementById('customSuccessToast'), {delay: 3000});
-            toast.show();
-          }
-        } else {
-          // Error case
-          otpMessage.textContent = data.message || "Failed to send OTP.";
-          otpMessage.classList.add('invalid');
-          otpMessage.classList.remove('valid');
+                  // Show success toast
+                  const customSuccessMessage = document.getElementById('customSuccessMessage');
+                  if (customSuccessMessage) {
+                    customSuccessMessage.textContent = "OTP sent successfully. Please check your email.";
+                    const toast = new bootstrap.Toast(document.getElementById('customSuccessToast'), {delay: 3000});
+                    toast.show();
+                  }
+                } else {
+                  // Error case
+                  otpMessage.textContent = data.message || "Failed to send OTP.";
+                  otpMessage.classList.add('invalid');
+                  otpMessage.classList.remove('valid');
 
-          // Show error toast
-          const customErrorMessage = document.getElementById('customErrorMessage');
-          if (customErrorMessage) {
-            customErrorMessage.textContent = data.message || "Failed to send OTP.";
-            const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
-            toast.show();
-          }
-        }
-      })
-      .catch(error => {
-        console.error("Error sending OTP: ", error);
-        otpMessage.textContent = "Error sending OTP: " + error.message;
-        otpMessage.classList.add('invalid');
+                  // Show error toast
+                  const customErrorMessage = document.getElementById('customErrorMessage');
+                  if (customErrorMessage) {
+                    customErrorMessage.textContent = data.message || "Failed to send OTP.";
+                    const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+                    toast.show();
+                  }
+                }
+              })
+              .catch(error => {
+                console.error("Error sending OTP: ", error);
+                otpMessage.textContent = "Error sending OTP: " + error.message;
+                otpMessage.classList.add('invalid');
 
-        // Show error toast
-        const customErrorMessage = document.getElementById('customErrorMessage');
-        if (customErrorMessage) {
-          customErrorMessage.textContent = "Error sending OTP: " + error.message;
-          const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
-          toast.show();
-        }
-      })
-      .finally(() => {
-        // Re-enable button
-        sendOtpBtn.disabled = false;
-        sendOtpBtn.textContent = "Send";
-      });
+                // Show error toast
+                const customErrorMessage = document.getElementById('customErrorMessage');
+                if (customErrorMessage) {
+                  customErrorMessage.textContent = "Error sending OTP: " + error.message;
+                  const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+                  toast.show();
+                }
+              })
+              .finally(() => {
+                // Re-enable button
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = "Send";
+              });
     });
 
     otpCodeInput.addEventListener('input', function () {
