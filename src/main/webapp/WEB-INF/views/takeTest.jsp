@@ -20,7 +20,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             min-height: 80vh;
         }
-        
+
         .test-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -30,19 +30,19 @@
             top: 0;
             z-index: 100;
         }
-        
+
         .progress-container {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             padding: 1rem;
             margin-top: 1rem;
         }
-        
+
         .progress-bar {
             background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
             border-radius: 10px;
         }
-        
+
         .question-card {
             background: white;
             border: none;
@@ -51,19 +51,19 @@
             margin-bottom: 2rem;
             transition: all 0.3s ease;
         }
-        
+
         .question-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
-        
+
         .question-header {
             background: #f8f9fa;
             border-radius: 15px 15px 0 0;
             padding: 1.5rem;
             border-bottom: 2px solid #e9ecef;
         }
-        
+
         .question-number {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -90,24 +90,24 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .choice-option:hover {
             background: #e3f2fd;
             border-color: #2196f3;
             transform: translateX(5px);
         }
-        
+
         .choice-option.selected {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-color: #667eea;
             color: white;
         }
-        
+
         .choice-option input[type="radio"] {
             margin-right: 0.8rem;
             transform: scale(1.2);
         }
-        
+
         .writing-textarea {
             border: 2px solid #e9ecef;
             border-radius: 10px;
@@ -116,12 +116,12 @@
             min-height: 150px;
             transition: border-color 0.3s ease;
         }
-        
+
         .writing-textarea:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
-        
+
         .submit-section {
             background: linear-gradient(145deg, #ffffff, #f8f9fa);
             border-radius: 15px;
@@ -131,7 +131,7 @@
             position: sticky;
             bottom: 20px;
         }
-        
+
         .btn-submit-test {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             border: none;
@@ -143,13 +143,13 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-submit-test:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
             color: white;
         }
-        
+
         .btn-cancel {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             border: none;
@@ -159,13 +159,13 @@
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        
+
         .btn-cancel:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
             color: white;
         }
-        
+
         .question-type-badge {
             padding: 0.4rem 0.8rem;
             border-radius: 20px;
@@ -174,17 +174,17 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .badge-choice {
             background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             color: white;
         }
-        
+
         .badge-writing {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
             color: #8b4513;
         }
-        
+
         .answer-counter {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
@@ -203,7 +203,7 @@
     </style>
 </head>
 <body>
-    <%@include file="../../layout/header_user.jsp" %>
+    <%@include file="../../layout/header.jsp" %>
     <%@include file="../../layout/sidebar_user.jsp"%>
 
     <main id="main-body" class="main d-flex">
@@ -251,7 +251,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Progress Bar -->
 
                                 </div>
@@ -260,7 +260,7 @@
                                 <form id="testForm" action="${pageContext.request.contextPath}/learner/tests" method="post">
                                     <input type="hidden" name="action" value="submit">
                                     <input type="hidden" name="testId" value="${test.testID}">
-                                    
+
                                     <div class="p-4">
                                         <!-- Questions -->
                                         <c:forEach var="question" items="${questions}" varStatus="status">
@@ -283,7 +283,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="card-body p-4">
                                                     <c:choose>
                                                         <c:when test="${question.questionType == 'CHOICE'}">
@@ -365,7 +365,7 @@
     <script>
         // Add JSTL tag for total questions count
         const totalQuestions = ${fn:length(questions)};
-        
+
         // Update choice option selection visual feedback
         document.querySelectorAll('.choice-option').forEach(option => {
             option.addEventListener('click', function() {
@@ -383,49 +383,49 @@
                 }
             });
         });
-        
+
         // Update progress function
         function updateProgress() {
             let answeredCount = 0;
-            
+
             // Count answered multiple choice questions
             const allRadioNames = new Set();
             document.querySelectorAll('input[type="radio"][name^="answer_"]').forEach(radio => {
                 allRadioNames.add(radio.name);
             });
-            
+
             allRadioNames.forEach(name => {
                 if (document.querySelector(`input[name="` + name +`"]:checked`)) {
                     answeredCount++;
                 }
             });
-            
+
             // Count answered writing questions
             document.querySelectorAll('textarea[name^="answer_"]').forEach(textarea => {
                 if (textarea.value && textarea.value.trim().length > 0) {
                     answeredCount++;
                 }
             });
-            
+
             // Update progress display
             const percentage = Math.round((answeredCount / totalQuestions) * 100);
             document.getElementById('answeredCount').textContent = answeredCount;
             document.getElementById('progressPercent').textContent = percentage + '%';
             document.getElementById('progressBar').style.width = percentage + '%';
         }
-        
+
         // Confirm submit function
         function confirmSubmit() {
             const answeredCount = parseInt(document.getElementById('answeredCount').textContent);
             const unanswered = totalQuestions - answeredCount;
-            
+
             if (unanswered > 0) {
                 return confirm(`You have `+unanswered+ ` unanswered question(s). Are you sure you want to submit the test?`);
             }
-            
+
             return confirm('Are you sure you want to submit the test? This action cannot be undone.');
         }
-        
+
         // Auto-save functionality (optional - saves to localStorage)
         function autoSave() {
             const formData = new FormData(document.getElementById('testForm'));
@@ -437,7 +437,7 @@
             }
             localStorage.setItem('test_${test.testID}_autosave', JSON.stringify(data));
         }
-        
+
         // Restore from auto-save
         function restoreAutoSave() {
             const saved = localStorage.getItem('test_${test.testID}_autosave');
@@ -460,31 +460,31 @@
                 updateProgress();
             }
         }
-        
+
         // Initialize auto-save
         document.addEventListener('DOMContentLoaded', function() {
             restoreAutoSave();
             updateProgress(); // Initial progress update
-            
+
             // Auto-save every 30 seconds
             setInterval(autoSave, 30000);
-            
+
             // Save on form changes
             document.getElementById('testForm').addEventListener('change', autoSave);
             document.getElementById('testForm').addEventListener('input', autoSave);
-            
+
             // Add progress update listeners to textareas
             document.querySelectorAll('textarea[name^="answer_"]').forEach(textarea => {
                 textarea.addEventListener('input', updateProgress);
                 textarea.addEventListener('change', updateProgress);
             });
         });
-        
+
         // Clear auto-save on successful submit
         document.getElementById('testForm').addEventListener('submit', function() {
             localStorage.removeItem('test_${test.testID}_autosave');
         });
-        
+
         // Warning before leaving page
         window.addEventListener('beforeunload', function(e) {
             const answeredCount = parseInt(document.getElementById('answeredCount').textContent);

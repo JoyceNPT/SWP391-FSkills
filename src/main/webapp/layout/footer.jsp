@@ -1,43 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F-Skill Footer</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+<%-- Footer Component - No HTML/HEAD/BODY tags as this is included in other pages --%>
+<!-- Tailwind CSS Config for Footer -->
+<script>
+    if (typeof tailwind === 'undefined') {
+        document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+    }
+
+    if (typeof tailwind !== 'undefined') {
         tailwind.config = {
             theme: {
                 extend: {
-                    // Define a custom primary color to match the design (e.g., a blue shade)
                     colors: {
-                        primary: '#0284c7', // Tailwind's sky-600, or a custom blue
+                        primary: '#0284c7',
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'], // Set Inter as the default font
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
-    </script>
-    <!-- Font Awesome CDN for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Bootstrap Icons (only if still needed, otherwise remove) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
-    <style>
-        /* Apply Inter font globally for better consistency */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+    }
+</script>
+<!-- Font Awesome for icons (only loaded if not already present) -->
+<script>
+    if (!document.querySelector('link[href*="font-awesome"]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css';
+        document.head.appendChild(link);
+    }
+</script>
+<style>
+    /* Footer specific styles */
+    .footer-container {
+        margin-top: 2rem;
+        width: 100%;
+        overflow-x: hidden;
+        max-width: 100%;
+        box-sizing: border-box;
+        clear: both;
+    }
 
-        /* Ensure footer sticks to the bottom and has rounded corners */
-        footer {
-            margin-top: auto; /* Pushes footer to the bottom */
-        }
-    </style>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col justify-end">
+    .footer-content {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Ensure footer is properly aligned and doesn't get pushed to the right */
+    footer {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+</style>
+
+<div class="footer-container">
     <!-- Footer content -->
     <footer class="bg-white text-gray-900 rounded-t-lg shadow-lg">
         <!-- Main footer content area, adjusted padding -->
@@ -116,5 +133,4 @@
             </div>
         </div>
     </footer>
-</body>
-</html>
+</div>

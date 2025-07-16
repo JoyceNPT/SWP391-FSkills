@@ -66,7 +66,7 @@
     </head>
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
-        <jsp:include page="/layout/header_user.jsp"/>
+        <jsp:include page="/layout/header.jsp"/>
 
         <main class="main">
             <div class="px-5 py-6">

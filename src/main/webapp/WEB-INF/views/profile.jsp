@@ -1,4 +1,3 @@
-```html
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -69,6 +68,12 @@
       margin-left: 10px;
       width: auto;
     }
+    /* Add border and spacing styles */
+    .profile-edit-container {
+      border: 2px solid #ccc;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 
@@ -81,12 +86,8 @@
     <jsp:include page="/layout/sidebar_user.jsp"/>
   </c:otherwise>
 </c:choose>
+<jsp:include page="/layout/header.jsp"/>
 <div class="profile-edit-container">
-
-  <div class="welcome-section">
-    <h1>Welcome back, <c:out
-            value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/>!</h1>
-  </div>
 
   <c:if test="${not empty profile}">
     <%-- Profile Display Card --%>
@@ -411,7 +412,6 @@
       document.getElementById('saveEmailBtn').disabled = true;
     });
 
-
     // Preview avatar
     document.getElementById('avatar-upload').addEventListener('change', function (e) {
       const file = e.target.files[0];
@@ -469,7 +469,6 @@
       document.getElementById('emailModal').style.display = "none";
     });
 
-
     // Auto-hide alerts after 3 seconds
     window.addEventListener('load', function () {
       const alerts = document.querySelectorAll('.alert');
@@ -519,31 +518,31 @@
         },
         body: 'oldPassword=' + encodeURIComponent(oldPassword)
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.valid) {
-          // Mật khẩu đúng
-          oldPasswordMessage.textContent = "Correct password";
-          oldPasswordMessage.classList.add('valid');
-          oldPasswordMessage.classList.remove('invalid');
-          newPasswordInput.disabled = false;
-        } else {
-          // Mật khẩu sai
-          oldPasswordMessage.textContent = "Incorrect password";
-          oldPasswordMessage.classList.add('invalid');
-          oldPasswordMessage.classList.remove('valid');
-          newPasswordInput.disabled = true;
-        }
-        // Gọi hàm validatePassword để cập nhật trạng thái nút lưu
-        validatePassword();
-      })
-      .catch(error => {
-        console.error('Error checking password:', error);
-        oldPasswordMessage.textContent = "Error checking password";
-        oldPasswordMessage.classList.add('invalid');
-        oldPasswordMessage.classList.remove('valid');
-        newPasswordInput.disabled = true;
-      });
+              .then(response => response.json())
+              .then(data => {
+                if (data.valid) {
+                  // Mật khẩu đúng
+                  oldPasswordMessage.textContent = "Correct password";
+                  oldPasswordMessage.classList.add('valid');
+                  oldPasswordMessage.classList.remove('invalid');
+                  newPasswordInput.disabled = false;
+                } else {
+                  // Mật khẩu sai
+                  oldPasswordMessage.textContent = "Incorrect password";
+                  oldPasswordMessage.classList.add('invalid');
+                  oldPasswordMessage.classList.remove('valid');
+                  newPasswordInput.disabled = true;
+                }
+                // Gọi hàm validatePassword để cập nhật trạng thái nút lưu
+                validatePassword();
+              })
+              .catch(error => {
+                console.error('Error checking password:', error);
+                oldPasswordMessage.textContent = "Error checking password";
+                oldPasswordMessage.classList.add('invalid');
+                oldPasswordMessage.classList.remove('valid');
+                newPasswordInput.disabled = true;
+              });
     }
 
     function validatePassword() {
@@ -700,75 +699,75 @@
         },
         body: 'newEmail=' + encodeURIComponent(newEmail)
       })
-      .then(response => {
-        console.log("Response status: " + response.status);
+              .then(response => {
+                console.log("Response status: " + response.status);
 
-        // Check if response is ok (status in the range 200-299)
-        if (!response.ok) {
-          throw new Error("Server returned status " + response.status);
-        }
+                // Check if response is ok (status in the range 200-299)
+                if (!response.ok) {
+                  throw new Error("Server returned status " + response.status);
+                }
 
-        // Try to parse as JSON
-        return response.text().then(text => {
-          try {
-            return JSON.parse(text);
-          } catch (e) {
-            console.error("Failed to parse JSON response: ", text);
-            throw new Error("Invalid response from server");
-          }
-        });
-      })
-      .then(data => {
-        console.log("Response data: ", data);
+                // Try to parse as JSON
+                return response.text().then(text => {
+                  try {
+                    return JSON.parse(text);
+                  } catch (e) {
+                    console.error("Failed to parse JSON response: ", text);
+                    throw new Error("Invalid response from server");
+                  }
+                });
+              })
+              .then(data => {
+                console.log("Response data: ", data);
 
-        if (data.success) {
-          // Success case
-          otpMessage.textContent = data.message || "OTP sent to your email.";
-          otpMessage.classList.add('valid');
-          otpMessage.classList.remove('invalid');
-          otpCodeInput.disabled = false;
-          otpCodeInput.focus();
+                if (data.success) {
+                  // Success case
+                  otpMessage.textContent = data.message || "OTP sent to your email.";
+                  otpMessage.classList.add('valid');
+                  otpMessage.classList.remove('invalid');
+                  otpCodeInput.disabled = false;
+                  otpCodeInput.focus();
 
-          // Show success toast
-          const customSuccessMessage = document.getElementById('customSuccessMessage');
-          if (customSuccessMessage) {
-            customSuccessMessage.textContent = "OTP sent successfully. Please check your email.";
-            const toast = new bootstrap.Toast(document.getElementById('customSuccessToast'), {delay: 3000});
-            toast.show();
-          }
-        } else {
-          // Error case
-          otpMessage.textContent = data.message || "Failed to send OTP.";
-          otpMessage.classList.add('invalid');
-          otpMessage.classList.remove('valid');
+                  // Show success toast
+                  const customSuccessMessage = document.getElementById('customSuccessMessage');
+                  if (customSuccessMessage) {
+                    customSuccessMessage.textContent = "OTP sent successfully. Please check your email.";
+                    const toast = new bootstrap.Toast(document.getElementById('customSuccessToast'), {delay: 3000});
+                    toast.show();
+                  }
+                } else {
+                  // Error case
+                  otpMessage.textContent = data.message || "Failed to send OTP.";
+                  otpMessage.classList.add('invalid');
+                  otpMessage.classList.remove('valid');
 
-          // Show error toast
-          const customErrorMessage = document.getElementById('customErrorMessage');
-          if (customErrorMessage) {
-            customErrorMessage.textContent = data.message || "Failed to send OTP.";
-            const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
-            toast.show();
-          }
-        }
-      })
-      .catch(error => {
-        console.error("Error sending OTP: ", error);
-        otpMessage.textContent = "Error sending OTP: " + error.message;
-        otpMessage.classList.add('invalid');
+                  // Show error toast
+                  const customErrorMessage = document.getElementById('customErrorMessage');
+                  if (customErrorMessage) {
+                    customErrorMessage.textContent = data.message || "Failed to send OTP.";
+                    const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+                    toast.show();
+                  }
+                }
+              })
+              .catch(error => {
+                console.error("Error sending OTP: ", error);
+                otpMessage.textContent = "Error sending OTP: " + error.message;
+                otpMessage.classList.add('invalid');
 
-        // Show error toast
-        const customErrorMessage = document.getElementById('customErrorMessage');
-        if (customErrorMessage) {
-          customErrorMessage.textContent = "Error sending OTP: " + error.message;
-          const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
-          toast.show();
-        }
-      })
-      .finally(() => {
-        // Re-enable button
-        sendOtpBtn.disabled = false;
-        sendOtpBtn.textContent = "Send";
-      });
+                // Show error toast
+                const customErrorMessage = document.getElementById('customErrorMessage');
+                if (customErrorMessage) {
+                  customErrorMessage.textContent = "Error sending OTP: " + error.message;
+                  const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+                  toast.show();
+                }
+              })
+              .finally(() => {
+                // Re-enable button
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.textContent = "Send";
+              });
     });
 
     otpCodeInput.addEventListener('input', function () {
@@ -779,7 +778,6 @@
         saveEmailBtn.disabled = true;
       }
     });
-
 
     // Initialize toast notifications
     document.addEventListener('DOMContentLoaded', function () {
@@ -908,5 +906,7 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <%@include file="../../layout/footer.jsp" %>
 </body>
 </html>

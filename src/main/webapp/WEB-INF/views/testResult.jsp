@@ -19,29 +19,29 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             min-height: 80vh;
         }
-        
+
         .result-header {
             color: white;
             border-radius: 20px 20px 0 0;
             padding: 3rem 2rem;
             text-align: center;
         }
-        
+
         .result-header.passed {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
-        
+
         .result-header.failed {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
-        
+
         .result-score {
             font-size: 4rem;
             font-weight: 800;
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             margin: 1rem 0;
         }
-        
+
         .result-status {
             font-size: 2rem;
             font-weight: 600;
@@ -49,7 +49,7 @@
             letter-spacing: 2px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        
+
         .stats-container {
             background: white;
             border-radius: 15px;
@@ -58,24 +58,24 @@
             position: relative;
             z-index: 10;
         }
-        
+
         .stat-item {
             text-align: center;
             padding: 2rem 1rem;
             border-right: 1px solid #e9ecef;
         }
-        
+
         .stat-item:last-child {
             border-right: none;
         }
-        
+
         .stat-value {
             font-size: 2.5rem;
             font-weight: 700;
             color: #667eea;
             margin-bottom: 0.5rem;
         }
-        
+
         .stat-label {
             color: #6c757d;
             font-weight: 500;
@@ -83,7 +83,7 @@
             letter-spacing: 1px;
             font-size: 0.9rem;
         }
-        
+
         .question-review-card {
             background: white;
             border: none;
@@ -93,17 +93,17 @@
             overflow: hidden;
             transition: all 0.3s ease;
         }
-        
+
         .question-review-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
-        
+
         .question-review-header {
             padding: 1.5rem;
             border-bottom: 2px solid #f8f9fa;
         }
-        
+
         .question-number {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -116,11 +116,11 @@
             font-weight: bold;
             margin-right: 1rem;
         }
-        
+
         .answer-section {
             padding: 1.5rem;
         }
-        
+
         .answer-option {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
@@ -129,26 +129,26 @@
             margin-bottom: 0.8rem;
             transition: all 0.3s ease;
         }
-        
+
         .answer-option.user-choice {
             background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
             border-color: #e17055;
             color: #2d3436;
             font-weight: 600;
         }
-        
+
         .answer-option.correct-answer {
             background: linear-gradient(135deg, #55efc4, #00b894);
             border-color: #00a085;
             color: white;
             font-weight: 600;
         }
-        
+
         .answer-option.user-choice.correct-answer {
             background: linear-gradient(135deg, #a29bfe, #6c5ce7);
             border-color: #5f3dc4;
         }
-        
+
         .writing-answer {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
@@ -158,49 +158,49 @@
             white-space: pre-wrap;
             word-wrap: break-word;
         }
-        
+
         .user-writing-answer {
             background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
             border-color: #e17055;
             color: #2d3436;
         }
-        
+
         .points-badge {
             padding: 0.5rem 1rem;
             border-radius: 25px;
             font-weight: 600;
             font-size: 0.9rem;
         }
-        
+
         .points-earned {
             background: linear-gradient(135deg, #55efc4, #00b894);
             color: white;
         }
-        
+
         .points-lost {
             background: linear-gradient(135deg, #fd79a8, #e84393);
             color: white;
         }
-        
+
         .result-indicator {
             position: absolute;
             top: 1rem;
             right: 1rem;
             font-size: 1.5rem;
         }
-        
+
         .indicator-correct {
             color: #00b894;
         }
-        
+
         .indicator-incorrect {
             color: #e17055;
         }
-        
+
         .indicator-partial {
             color: #fdcb6e;
         }
-        
+
         .btn-action {
             border-radius: 50px;
             padding: 12px 30px;
@@ -209,37 +209,37 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-retake {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             color: white;
         }
-        
+
         .btn-retake:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             color: white;
         }
-        
+
         .btn-back {
             background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             border: none;
             color: white;
         }
-        
+
         .btn-back:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(132, 250, 176, 0.4);
             color: white;
         }
-        
+
         .no-answers-message {
             text-align: center;
             padding: 3rem;
             color: #6c757d;
         }
-        
+
         .summary-card {
             background: white;
             border-radius: 15px;
@@ -247,7 +247,7 @@
             padding: 2rem;
             margin-bottom: 2rem;
         }
-        
+
         .performance-meter {
             height: 20px;
             background: #e9ecef;
@@ -255,25 +255,25 @@
             overflow: hidden;
             margin: 1rem 0;
         }
-        
+
         .performance-fill {
             height: 100%;
             border-radius: 10px;
             transition: width 1s ease-in-out;
         }
-        
+
         .performance-fill.low {
             background: linear-gradient(90deg, #fa709a, #fee140);
         }
-        
+
         .performance-fill.medium {
             background: linear-gradient(90deg, #ffeaa7, #fdcb6e);
         }
-        
+
         .performance-fill.high {
             background: linear-gradient(90deg, #55efc4, #00b894);
         }
-        
+
         #main-body{
             background-color: white;
             padding: 0;
@@ -284,7 +284,7 @@
     </style>
 </head>
 <body>
-    <%@include file="../../layout/header_user.jsp" %>
+    <%@include file="../../layout/header.jsp" %>
     <%@include file="../../layout/sidebar_user.jsp"%>
 
     <main id="main-body" class="main d-flex">
@@ -300,13 +300,13 @@
                                     </h1>
                                     <h2 class="mb-2">${test.testName}</h2>
                                     <p class="mb-4 opacity-75">${test.module.course.courseName} - ${test.module.moduleName}</p>
-                                    
+
                                     <div class="result-score">${testResult.result}%</div>
                                     <div class="result-status">
                                         <i class="bi ${testResult.passed ? 'bi-check-circle' : 'bi-x-circle'} me-2"></i>
                                         ${testResult.passed ? 'PASSED' : 'FAILED'}
                                     </div>
-                                    
+
                                     <p class="mt-3 mb-0 opacity-75">
                                         Attempt #${testResult.attempt} • 
                                         Completed on <fmt:formatDate value="${testResult.dateTaken}" pattern="MMM dd, yyyy 'at' HH:mm"/>
@@ -391,7 +391,7 @@
                                                     <i class="bi bi-list-check text-primary me-2"></i>
                                                     Question Review
                                                 </h4>
-                                                
+
                                                 <c:forEach var="qa" items="${userAnswers}" varStatus="status">
                                                     <div class="question-review-card">
                                                         <div class="question-review-header position-relative">
@@ -410,7 +410,7 @@
                                                                     <h5 class="question-text mb-0">${qa.question.question}</h5>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                             <!-- Result Indicator -->
                                                             <div class="result-indicator">
                                                                 <c:choose>
@@ -423,7 +423,7 @@
                                                                 </c:choose>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="answer-section">
                                                             <c:choose>
                                                                 <c:when test="${qa.question.questionType == 'CHOICE'}">
@@ -518,7 +518,7 @@
                                                 </c:forEach>
                                             </div>
                                         </c:when>
-                                        
+
                                         <c:when test="${not test.showAnswer}">
                                             <div class="no-answers-message">
                                                 <i class="bi bi-eye-slash display-1 text-muted mb-3"></i>
@@ -565,7 +565,7 @@
                 }
             }, 500);
         });
-        
+
         // Add smooth scroll to question review
         function scrollToQuestionReview() {
             const questionReview = document.querySelector('.question-review-card');
@@ -573,7 +573,7 @@
                 questionReview.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
-        
+
         // Add confetti effect for passed tests (optional)
         <c:if test="${testResult.passed}">
         document.addEventListener('DOMContentLoaded', function() {
@@ -589,12 +589,12 @@
                 confetti.style.pointerEvents = 'none';
                 confetti.style.animation = 'fall 3s linear forwards';
                 document.body.appendChild(confetti);
-                
+
                 setTimeout(() => {
                     confetti.remove();
                 }, 3000);
             }
-            
+
             // Add CSS for confetti animation
             const style = document.createElement('style');
             style.textContent = `
@@ -606,7 +606,7 @@
                 }
             `;
             document.head.appendChild(style);
-            
+
             // Create multiple confetti pieces
             for (let i = 0; i < 20; i++) {
                 setTimeout(createConfetti, i * 100);

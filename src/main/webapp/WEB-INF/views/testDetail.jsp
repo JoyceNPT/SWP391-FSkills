@@ -20,19 +20,19 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
-        
+
         .test-detail-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
-        
+
         .test-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-radius: 20px 20px 0 0;
             padding: 1rem;
         }
-        
+
         .test-info-item {
             background: #f8f9fa;
             border-radius: 12px;
@@ -40,23 +40,23 @@
             margin-bottom: 1rem;
             border-left: 4px solid #667eea;
         }
-        
+
         .result-badge {
             font-size: 1rem;
             padding: 0.5rem 1rem;
             border-radius: 50px;
         }
-        
+
         .result-pass {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
         }
-        
+
         .result-fail {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             color: white;
         }
-        
+
         .btn-take-test {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -68,13 +68,13 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-take-test:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             color: white;
         }
-        
+
         .btn-back {
             background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             border: none;
@@ -84,46 +84,46 @@
             font-weight: 500;
             transition: all 0.3s ease;
         }
-        
+
         .btn-back:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(132, 250, 176, 0.4);
             color: white;
         }
-        
+
         .history-table {
             background: white;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
-        
+
         .history-table thead {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-        
+
         .history-table th {
             border: none;
             padding: 1rem;
             font-weight: 600;
         }
-        
+
         .history-table td {
             border: none;
             padding: 1rem;
             vertical-align: middle;
         }
-        
+
         .history-table tbody tr:nth-child(even) {
             background-color: #f8f9fa;
         }
-        
+
         .history-table tbody tr:hover {
             background-color: #e3f2fd;
             transition: background-color 0.3s ease;
         }
-        
+
         #main-body{
             background-color: white;
             padding: 0;
@@ -134,7 +134,7 @@
     </style>
 </head>
 <body>
-    <%@include file="../../layout/header_user.jsp" %>
+    <%@include file="../../layout/header.jsp" %>
     <%@include file="../../layout/sidebar_user.jsp"%>
 
     <main id="main-body" class="main d-flex">

@@ -62,7 +62,7 @@
 </head>
 <body>
 <jsp:include page="/layout/sidebar_user.jsp"/>
-<jsp:include page="/layout/header_user.jsp"/>
+<jsp:include page="/layout/header.jsp"/>
 
 <main class="main">
 <div class="px-5 py-6">
@@ -314,18 +314,18 @@
     function loadFilterModules() {
         const courseSelect = document.getElementById('filterCourse');
         const moduleSelect = document.getElementById('filterModule');
-        
+
         // Clear modules
         moduleSelect.innerHTML = '<option value="">All Modules</option>';
-        
+
         const courseId = courseSelect.value;
         if (!courseId) {
             return;
         }
-        
+
         // Show loading
         moduleSelect.innerHTML = '<option value="">Loading modules...</option>';
-        
+
         // Fetch modules for the selected course
         fetch('${pageContext.request.contextPath}/instructor/tests?action=getModules&courseId=' + courseId)
             .then(response => response.json())
@@ -351,14 +351,14 @@
                 formatUtcToVietnamese('.datetime');
             }
         }
-        
+
         // Load filter modules if course is already selected
         const filterCourse = document.getElementById('filterCourse');
         const filterModule = document.getElementById('filterModule');
-        
+
         if (filterCourse && filterCourse.value) {
             const selectedModuleId = filterModule.value || '${param.filterModuleId}';
-            
+
             // Load modules and then restore selected module
             fetch('${pageContext.request.contextPath}/instructor/tests?action=getModules&courseId=' + filterCourse.value)
                 .then(response => response.json())
