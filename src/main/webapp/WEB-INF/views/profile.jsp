@@ -147,6 +147,21 @@
         <label>Address</label>
         <input type="text" value="<c:out value="${profile.info}"/>" readonly>
       </div>
+
+      <c:if test="${!profile.isVerified}">
+        <div class="field email-verification-field">
+          <label>Email Verification</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 8px; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box;">
+            <span>Your email is not verified</span>
+            <div>
+              <a href="${pageContext.request.contextPath}/verifyemail" class="verification-link">
+                <i class="bi bi-check-square" style="font-size: 1.5rem; color: #007bff; cursor: pointer;"></i>
+              </a>
+              <i class="bi bi-exclamation-circle-fill" style="font-size: 1.5rem; color: #dc3545; margin-left: 10px;"></i>
+            </div>
+          </div>
+        </div>
+      </c:if>
     </div>
   </div>
 
