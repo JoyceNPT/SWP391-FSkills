@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 /**
  * Model class representing user feedback
  */
-public class Feedback_user {
+public class Feedback {
     private int feedbackId;
     private String feedbackType;
     private String feedbackTitle;
@@ -18,11 +18,11 @@ public class Feedback_user {
     private boolean isResolved;
 
     // Default constructor
-    public Feedback_user() {
+    public Feedback() {
     }
 
     // Constructor with all fields
-    public Feedback_user(int feedbackId, String feedbackType, String feedbackTitle, String feedbackContent, String firstName,
+    public Feedback(int feedbackId, String feedbackType, String feedbackTitle, String feedbackContent, String firstName,
                          String lastName, String email, int userId, Timestamp createdAt, boolean isResolved) {
         this.feedbackId = feedbackId;
         this.feedbackType = feedbackType;
@@ -37,7 +37,7 @@ public class Feedback_user {
     }
 
     // Constructor without ID (for new feedback)
-    public Feedback_user(String feedbackType, String feedbackTitle, String feedbackContent, String firstName,
+    public Feedback(String feedbackType, String feedbackTitle, String feedbackContent, String firstName,
                          String lastName, String email, int userId) {
         this.feedbackType = feedbackType;
         this.feedbackTitle = feedbackTitle;
@@ -119,6 +119,11 @@ public class Feedback_user {
         this.createdAt = createdAt;
     }
 
+    // Alias for getCreatedAt() to maintain compatibility with Feedback_admin
+    public Timestamp getTimestamp() {
+        return createdAt;
+    }
+
     public boolean isIsResolved() {
         return isResolved;
     }
@@ -127,9 +132,37 @@ public class Feedback_user {
         this.isResolved = isResolved;
     }
 
+    // Method to get status string from isResolved boolean
+    // to maintain compatibility with Feedback_admin
+    public String getStatus() {
+        return isResolved ? "resolved" : "new";
+    }
+
+    // Method to set status from string
+    // to maintain compatibility with Feedback_admin
+    public void setStatus(String status) {
+        this.isResolved = "resolved".equals(status);
+    }
+
+    // Add this method to provide compatibility with feedback_admin.jsp
+    public String getTitle() {
+        return feedbackTitle;
+    }
+
+    // Add this method to provide compatibility with feedback_admin.jsp
+    public String getContent() {
+        return feedbackContent;
+    }
+
+    // Add this method to provide compatibility with feedback_admin.jsp
+    public String getUserName() {
+        return (firstName != null ? firstName : "") + 
+               (lastName != null ? " " + lastName : "");
+    }
+
     @Override
     public String toString() {
-        return "Feedback_user{" + "feedbackId=" + feedbackId + ", feedbackType=" + feedbackType + 
+        return "Feedback{" + "feedbackId=" + feedbackId + ", feedbackType=" + feedbackType + 
                ", feedbackContent=" + feedbackContent + ", firstName=" + firstName + 
                ", lastName=" + lastName + ", email=" + email + ", userId=" + userId + 
                ", createdAt=" + createdAt + ", isResolved=" + isResolved + '}';

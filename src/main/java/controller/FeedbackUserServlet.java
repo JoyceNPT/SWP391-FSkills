@@ -1,6 +1,6 @@
 package controller;
 
-import dao.Feedback_userDAO;
+import dao.FeedbackDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Feedback_user;
+import model.Feedback;
 import model.User;
 
 /**
@@ -95,7 +95,7 @@ public class FeedbackUserServlet extends HttpServlet {
         }
 
         // Create feedback object
-        Feedback_user feedback = new Feedback_user(
+        Feedback feedback = new Feedback(
                 feedbackType,
                 feedbackTitle,
                 feedbackContent, 
@@ -109,7 +109,7 @@ public class FeedbackUserServlet extends HttpServlet {
         System.out.println("Attempting to save feedback: " + feedback.toString());
 
         // Save feedback to database
-        Feedback_userDAO dao = new Feedback_userDAO();
+        FeedbackDAO dao = new FeedbackDAO();
         try {
             int result = dao.insertFeedback(feedback);
 
