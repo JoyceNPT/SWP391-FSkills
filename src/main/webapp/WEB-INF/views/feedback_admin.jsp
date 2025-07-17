@@ -113,7 +113,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <jsp:include page="/layout/sidebar_admin.jsp" />
-    <jsp:include page="/layout/header_admin.jsp" />
+    <jsp:include page="/layout/header.jsp" />
 
     <div class="main-content">
         <div class="container mx-auto px-4 py-8">

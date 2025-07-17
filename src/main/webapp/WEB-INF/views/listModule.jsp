@@ -22,13 +22,6 @@
             text-align: center;
         }
 
-        .course-image {
-            width: 80px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
         .table thead {
             background-color: #4f46e5;
             color: white;
@@ -42,23 +35,20 @@
             background-color: #198754;
         }
 
-        .price-original {
-            color: #999;
-            text-decoration: line-through;
-        }
-
-        .price-sale {
-            color: #dc3545;
-            font-weight: bold;
-        }
-
         h2 {
             color: #343a40;
             margin-bottom: 25px;
         }
 
-        #jsToast {
-            z-index: 2000;
+        .link-hover {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .link-hover:hover {
+            color: #0d6efd;
+            text-decoration: none;
         }
 
         /* Ensure content adapts to available space */
@@ -71,7 +61,6 @@
 </head>
 <body>
 <jsp:include page="/layout/sidebar_user.jsp"/>
-<jsp:include page="/layout/header_user.jsp"/>
 
 <main class="main">
 <div class="px-5 py-6">
@@ -159,7 +148,12 @@
                 <tbody>
                 <c:forEach var="module" items="${listModule}">
                     <tr>
-                        <td>${module.moduleName}</td>
+                        <td>
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}"
+                               class="link-hover">
+                                    ${module.moduleName}
+                            </a>
+                        </td>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty module.moduleLastUpdate}">

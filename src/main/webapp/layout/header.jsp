@@ -79,5 +79,3 @@
         // Any JavaScript functionality can be added here if needed
     });
 </script>
-
-

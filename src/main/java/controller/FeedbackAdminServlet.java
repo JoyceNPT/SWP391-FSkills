@@ -1,6 +1,6 @@
 package controller;
 
-import dao.Feedback_adminDAO;
+import dao.FeedbackDAO;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -9,7 +9,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Feedback_admin;
+import model.Feedback;
+import model.Role;
 import model.User;
 
 /**
@@ -34,7 +35,13 @@ public class FeedbackAdminServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (user == null || !"ADMIN".equalsIgnoreCase(user.getRole().toString())) {
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
             return;
         }
@@ -52,8 +59,8 @@ public class FeedbackAdminServlet extends HttpServlet {
         }
 
         // Get feedback data
-        Feedback_adminDAO dao = new Feedback_adminDAO();
-        List<Feedback_admin> feedbackList;
+        FeedbackDAO dao = new FeedbackDAO();
+        List<Feedback> feedbackList;
 
         if ("all".equals(feedbackType)) {
             feedbackList = dao.getAllFeedback();
@@ -95,7 +102,13 @@ public class FeedbackAdminServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (user == null || !"ADMIN".equalsIgnoreCase(user.getRole().toString())) {
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
             return;
         }
@@ -108,7 +121,7 @@ public class FeedbackAdminServlet extends HttpServlet {
         }
 
         // Process the action
-        Feedback_adminDAO dao = new Feedback_adminDAO();
+        FeedbackDAO dao = new FeedbackDAO();
         int result = 0;
 
         // Special case for deleteAll action which doesn't require an ID

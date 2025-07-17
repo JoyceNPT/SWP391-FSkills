@@ -146,6 +146,20 @@ public class UpdateVoucherServlet extends HttpServlet {
                 errorMessages.add("Updated Failed: Invalid amount (must be an integer).");
             }
         }
+        
+        VoucherDAO voucherDAO = new VoucherDAO();
+        try {
+            Voucher originalVoucher = voucherDAO.getVoucherByID(voucherID); 
+            
+            if (originalVoucher != null && !originalVoucher.getVoucherCode().equals(voucherCode.trim())) {
+                if (voucherDAO.isVoucherCodeExistsForOtherVoucher(voucherCode.trim(), voucherID)) {
+                    errorMessages.add("Updated Failed: Voucher code '" + voucherCode.trim() + "' already exists for another voucher. Please choose a different code.");
+                }
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Database error checking for duplicate voucher code during update.", ex);
+            errorMessages.add("Updated Failed: An error occurred while checking voucher code existence. Please try again.");
+        }
 
         if (!errorMessages.isEmpty()) {
             globalMessage = "Updated Failed: Voucher update failed. Please check for errors.";
@@ -178,11 +192,10 @@ public class UpdateVoucherServlet extends HttpServlet {
         updatedVoucher.setMinPrice(minPrice);
         updatedVoucher.setAmount(amount);
 
-        VoucherDAO voucherDAO = new VoucherDAO();
         try {
             boolean success = voucherDAO.updateVoucher(updatedVoucher);
             if (success) {
-                request.setAttribute("success", "Voucher updated successfully!");
+                request.getSession().setAttribute("success", "Voucher updated successfully!");
                 request.setAttribute("successMessage", true);
                 response.sendRedirect(request.getContextPath() + "/voucherList");
             } else {

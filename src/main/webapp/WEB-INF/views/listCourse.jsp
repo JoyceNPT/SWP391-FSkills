@@ -40,24 +40,6 @@
                 color: white;
             }
 
-            .badge-pending {
-                background-color: #ffc107;
-            }
-
-            .badge-approved {
-                background-color: #198754;
-            }
-
-            .price-original {
-                color: #999;
-                text-decoration: line-through;
-            }
-
-            .price-sale {
-                color: #dc3545;
-                font-weight: bold;
-            }
-
             h2 {
                 color: #343a40;
                 margin-bottom: 25px;
@@ -84,7 +66,7 @@
     </head>
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
-        <jsp:include page="/layout/header_user.jsp"/>
+        <jsp:include page="/layout/header.jsp"/>
 
         <main class="main">
             <div class="px-5 py-6">
@@ -148,97 +130,133 @@
                                         <td>${course.category.name}</td>
                                         <td>${course.user.displayName}</td>
                                         <td>
-                                            <span class="badge
-                                                  ${course.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
-                                                ${course.approveStatus == 1 ? 'Approved' : 'Pending'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty course.publicDate}">
-                                                    <span class="datetime" data-utc="${course.publicDate}Z"></span>
-                                                </c:when>
-                                                <c:otherwise>N/A</c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty course.courseLastUpdate}">
-                                                    <span class="datetime" data-utc="${course.courseLastUpdate}Z"></span>
-                                                </c:when>
-                                                <c:otherwise>N/A</c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${course.originalPrice == 0}">
-                                                    <span class="text-success fw-bold">Free</span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="fw-bold fs-6">
-                                                        <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
-                                                    </span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td class="d-flex flex-column gap-1">
-                                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
-                                               class="btn btn-sm btn-info text-white">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
+                                            <span class="
+                                                  text-xs font-semibold px-2.5 py-0.5 rounded-full
+                                                  ${course.approveStatus == 1 ? 'bg-green-500 text-white'
+                                                    : course.approveStatus == 3 ? 'bg-amber-400 text-white'
+                                                    : course.approveStatus == 2 ? 'bg-red-500 text-white'
+                                                    : 'bg-gray-400 text-white'}">
+                                                      ${course.approveStatus == 1 ? 'Approved'
+                                                        : course.approveStatus == 3 ? 'Processing'
+                                                        : course.approveStatus == 2 ? 'Rejected'
+                                                        : 'Draft'}
+                                                  </span>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty course.publicDate}">
+                                                        <span class="datetime" data-utc="${course.publicDate}Z"></span>
+                                                    </c:when>
+                                                    <c:otherwise>N/A</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty course.courseLastUpdate}">
+                                                        <span class="datetime" data-utc="${course.courseLastUpdate}Z"></span>
+                                                    </c:when>
+                                                    <c:otherwise>N/A</c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${course.originalPrice == 0}">
+                                                        <span class="text-success fw-bold">Free</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="fw-bold fs-6">
+                                                            <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
+                                                        </span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td class="d-flex justify-content-center align-items-center gap-2" style="height: 100px;">
+                                                <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
+                                                   class="btn btn-info btn-sm d-flex align-items-center justify-content-center"
+                                                   style="height: 40px; width: 40px;">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
 
-                                            <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}" class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
+                                                <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
+                                                   class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                                                   style="height: 40px; width: 40px;">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
 
-                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteModal${course.courseID}">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </main>
-        <jsp:include page="/layout/footer.jsp"/>
+                                                <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
+                                                        style="height: 40px; width: 40px;"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal${course.courseID}">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
 
-        <c:forEach var="course" items="${listCourse}">
-            <!-- Delete Modal -->
-            <div class="modal fade" id="deleteModal${course.courseID}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <form action="${pageContext.request.contextPath}/instructor/courses?action=delete" method="POST" class="modal-content bg-white">
-                        <div class="modal-header">
-                            <h5 class="modal-title text-danger">Delete Course</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="userID" value="${user.userId}"/>
-                            <input type="hidden" name="courseID" value="${course.courseID}"/>
-                            <p>Are you sure you want to delete <strong>${course.courseName}</strong>?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
+                                                <c:if test="${course.approveStatus == 0}">
+                                                    <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
+                                                        <input type="hidden" name="action" value="approve">
+                                                        <input type="hidden" name="courseID" value="${course.courseID}">
+                                                        <input type="hidden" name="userID" value="${course.user.userId}">
+                                                        <button type="submit" class="btn btn-success btn-sm d-flex align-items-center justify-content-center"
+                                                                style="height: 40px; width: 40px;">
+                                                            <i class="fas fa-paper-plane"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:if>
+
+                                                <c:if test="${course.approveStatus == 3}">
+                                                    <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
+                                                        <input type="hidden" name="action" value="cancel">
+                                                        <input type="hidden" name="courseID" value="${course.courseID}">
+                                                        <input type="hidden" name="userID" value="${course.user.userId}">
+                                                        <button type="submit" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center"
+                                                                style="height: 40px; width: 40px;">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:if>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
-            </div>
-        </c:forEach>
+            </main>
+            <jsp:include page="/layout/footer.jsp"/>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                formatUtcToVietnamese(".datetime");
-            });
-        </script>
+            <c:forEach var="course" items="${listCourse}">
+                <!-- Delete Modal -->
+                <div class="modal fade" id="deleteModal${course.courseID}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <form action="${pageContext.request.contextPath}/instructor/courses?action=delete" method="POST" class="modal-content bg-white">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-danger">Delete Course</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" name="userID" value="${user.userId}"/>
+                                <input type="hidden" name="courseID" value="${course.courseID}"/>
+                                <p>Are you sure you want to delete <strong>${course.courseName}</strong>?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </c:forEach>
 
-        <jsp:include page="/layout/toast.jsp" />
-        <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    formatUtcToVietnamese(".datetime");
+                });
+            </script>
 
-    </body>
-</html>
+            <jsp:include page="/layout/toast.jsp" />
+            <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
+            <!-- Bootstrap JS -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        </body>
+    </html>
