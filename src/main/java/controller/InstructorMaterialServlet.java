@@ -326,6 +326,15 @@ public class InstructorMaterialServlet extends HttpServlet {
                     MaterialDAO dao = new MaterialDAO();
                     ModuleDAO moddao = new ModuleDAO();
                     CourseDAO coudao = new CourseDAO();
+                    int row = dao.countMaterialOrderConflict(moduleId, courseId);
+                    if (row > 10) {
+                        moduleId = Integer.parseInt(module);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "MaterialOrder must not be greater than 10.");
+                        request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                        return;
+                    }
                     int res = dao.insertMaterial(moduleId, materialName, type, materialOrder,
                             materialUrl, materialFile, fileName, videoTimeStr, materialDescription);
 
