@@ -11,13 +11,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Trang Quản Trị F-SKILL - Quản lý Người dùng</title>
-        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+        <link rel="icon" type="image/png" href="https://placehold.co/32x32/0284c7/ffffff?text=FS">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css"/>
         <script>
             tailwind.config = {
@@ -240,7 +241,7 @@
 
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp" />
-            <main class="flex-grow p-6 bg-white rounded-tl-lg overflow-y-auto">
+            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm">
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-2xl font-bold text-gray-800 m-0">Account List</h2>
@@ -268,7 +269,7 @@
                             <button type="submit" class="btn btn-primary bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200">
                                 <i class="fas fa-search mr-2"></i>Search
                             </button>
-                            <button type="button" class="btn btn-secondary bg-gray-200 text-gray-700 py-3 px-5 rounded-lg hover:bg-gray-300 transition duration-200" onclick="window.location.href = 'alluser'">
+                            <button type="button" class="btn btn-secondary bg-gray-200 text-gray-700 py-3 px-5 rounded-lg hover:bg-gray-300 transition duration-200" onclick="window.location.href = '${pageContext.request.contextPath}/alluser?searchName=&roleFilter=${param.roleFilter != null ? param.roleFilter : 'Learner'}'">
                                 Show All
                             </button>
                             <input type="hidden" name="roleFilter" id="currentRoleFilter" value="${param.roleFilter != null ? param.roleFilter : 'Learner'}">
@@ -488,9 +489,7 @@
         const instructorRadio = document.getElementById('filterInstructor');
         const searchForm = document.getElementById('searchForm');
         const currentRoleFilterInput = document.getElementById('currentRoleFilter');
-        const searchNameInput = document.getElementById('searchName'); // Lấy tham chiếu đến ô input searchName
-
-        // Đặt trạng thái ban đầu của radio button và hiển thị/ẩn bảng dựa trên URL params
+        const searchNameInput = document.getElementById('searchName');
         const urlParams = new URLSearchParams(window.location.search);
         const roleFilterParam = urlParams.get('roleFilter');
 
@@ -498,7 +497,7 @@
             instructorRadio.checked = true;
             document.getElementById('instructorTable').style.display = 'table';
             document.getElementById('learnerTable').style.display = 'none';
-        } else { // Mặc định là Learner
+        } else { // mặc định là Learner
             learnerRadio.checked = true;
             document.getElementById('learnerTable').style.display = 'table';
             document.getElementById('instructorTable').style.display = 'none';
@@ -523,5 +522,7 @@
         }
     });
 </script>
+    <jsp:include page="/layout/toast.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

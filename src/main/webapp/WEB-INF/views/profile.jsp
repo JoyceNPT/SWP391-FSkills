@@ -41,7 +41,6 @@
                 align-items: center;
                 z-index: 1000;
             }
-            /* Styles for change-password-container and change-email-container moved to profile.css */
             .avatar-modal-close {
                 float: right;
                 font-size: 1.5rem;
@@ -57,16 +56,30 @@
                 position: relative;
                 margin: 0 auto;
             }
-
             .change-email-container h1 {
                 text-align: center;
                 margin-bottom: 20px;
                 color: #333;
             }
-
             #sendOtpBtn {
                 margin-left: 10px;
                 width: auto;
+            }
+            .profile-edit-container {
+                padding: 20px;
+                margin-bottom: 40vh; /* Increased spacing to push footer out of view until scrolled */
+                margin-top: 60px;
+            }
+            header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1001;
+            }
+            #passwordModal header,
+            #emailModal header {
+                display: none !important; /* Hide header in password and email modals */
             }
         </style>
     </head>
@@ -80,13 +93,8 @@
                 <jsp:include page="/layout/sidebar_user.jsp"/>
             </c:otherwise>
         </c:choose>
+        <jsp:include page="/layout/header.jsp"/>
         <div class="profile-edit-container">
-
-            <div class="welcome-section">
-                <h1>Welcome back, <c:out
-                        value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/>!</h1>
-            </div>
-
             <c:if test="${not empty profile}">
                 <%-- Profile Display Card --%>
                 <div class="profile-card">
@@ -98,7 +106,6 @@
                             <h2><c:out value="${profile.displayName}"/></h2>
                             <p>
                                 <c:out value="${profile.email}"/>
-
                                 <c:choose>
                                     <c:when test="${profile.isVerified}">
                                         <span class="verified-badge" title="Confirmed">
@@ -116,7 +123,9 @@
                                 <button class="change-password">Change Password</button>
                                 <button class="change-email">Change Email</button>
                                 <button class="edit-btn">Edit Profile</button>
-                                <a class="edit-btn" href="${pageContext.request.contextPath}/instructor/profile/degree">Degree</a>
+                                <c:if test="${sessionScope.user.role eq 'INSTRUCTOR'}">
+                                    <a class="edit-btn" href="${pageContext.request.contextPath}/instructor/profile/degree">Degree</a>
+                                </c:if>
                             </div>
                         </div>
                     </div>
@@ -141,12 +150,10 @@
                             <input type="date" value="<fmt:formatDate value="${profile.dateOfBirth}" pattern="yyyy-MM-dd" />"
                                    readonly>
                         </div>
-
                         <div class="field address-field">
                             <label>Address</label>
                             <input type="text" value="<c:out value="${profile.info}"/>" readonly>
                         </div>
-
                         <c:if test="${!profile.isVerified}">
                             <div class="alert alert-warning d-flex justify-content-between align-items-center px-3 py-2 rounded" role="alert">
                                 <div>
@@ -175,7 +182,6 @@
                             Change Profile Picture
                         </button>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group name-group">
                             <label for="displayName">Full Name</label>
@@ -188,7 +194,6 @@
                                    required>
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group gender-group">
                             <label for="gender">Gender</label>
@@ -203,14 +208,12 @@
                                    value="<fmt:formatDate value="${profile.dateOfBirth}" pattern="yyyy-MM-dd" />">
                         </div>
                     </div>
-
                     <div class="form-row">
                         <div class="form-group address-group">
                             <label for="info">Address</label>
                             <input type="text" id="info" name="info" value="<c:out value="${profile.info}"/>">
                         </div>
                     </div>
-
                     <div class="button-group">
                         <button type="button" class="cancel-btn">Cancel</button>
                         <button type="submit" class="save-btn">Save Changes</button>
@@ -229,7 +232,6 @@
                 <div class="change-password-container">
                     <span class="avatar-modal-close password-modal-close">×</span>
                     <h1>Change Password</h1>
-
                     <form id="passwordForm"
                           action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=password"
                           method="POST">
@@ -262,7 +264,6 @@
                 <div class="change-email-container">
                     <span class="avatar-modal-close email-modal-close">×</span>
                     <h1>Change Email</h1>
-
                     <form id="emailForm"
                           action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/changeEmail' : sessionScope.user.role eq 'ADMIN' ? '/admin/changeEmail' : '/learner/changeEmail'}?action=changeEmail"
                           method="POST">
@@ -276,18 +277,15 @@
                                 <p class="requirement" id="email-format">Valid email format required</p>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="otpCode">OTP Code</label>
                             <input type="text" id="otpCode" name="otpCode" required>
                             <p id="otp-message" class="requirement"></p>
                         </div>
-
                         <button type="submit" id="saveEmailBtn" disabled>Save Change</button>
                     </form>
                 </div>
             </div>
-
 
             <!-- Toast Notification -->
             <div style="z-index: 2000;" class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -302,7 +300,6 @@
                                     aria-label="Close"></button>
                         </div>
                     </div>
-
                     <!-- Password Success Toast -->
                     <div id="passwordSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert"
                          aria-live="assertive" aria-atomic="true">
@@ -314,7 +311,6 @@
                                     aria-label="Close"></button>
                         </div>
                     </div>
-
                     <!-- Email Success Toast -->
                     <div id="emailSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert"
                          aria-live="assertive" aria-atomic="true">
@@ -326,7 +322,6 @@
                                     aria-label="Close"></button>
                         </div>
                     </div>
-
                     <!-- Profile Success Toast -->
                     <div id="profileSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert"
                          aria-live="assertive" aria-atomic="true">
@@ -338,7 +333,6 @@
                                     aria-label="Close"></button>
                         </div>
                     </div>
-
                     <!-- Profile Error Toast -->
                     <div id="profileErrorToast" class="toast align-items-center text-bg-danger border-0" role="alert"
                          aria-live="assertive" aria-atomic="true">
@@ -350,7 +344,6 @@
                                     aria-label="Close"></button>
                         </div>
                     </div>
-
                     <!-- Custom Error Toast -->
                     <div id="customErrorToast" class="toast align-items-center text-bg-danger border-0" role="alert"
                          aria-live="assertive" aria-atomic="true">
@@ -362,7 +355,6 @@
                                     aria-label="Close"></button>
                         </div>
                     </div>
-
                     <!-- Custom Success Toast -->
                     <div id="customSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert"
                          aria-live="assertive" aria-atomic="true">
@@ -407,7 +399,6 @@
                         document.getElementById('otp-message').textContent = '';
                         document.getElementById('saveEmailBtn').disabled = true;
                     });
-
 
                     // Preview avatar
                     document.getElementById('avatar-upload').addEventListener('change', function (e) {
@@ -466,7 +457,6 @@
                         document.getElementById('emailModal').style.display = "none";
                     });
 
-
                     // Auto-hide alerts after 3 seconds
                     window.addEventListener('load', function () {
                         const alerts = document.querySelectorAll('.alert');
@@ -499,16 +489,12 @@
                     // Hàm kiểm tra mật khẩu cũ
                     function validateOldPassword() {
                         const oldPassword = oldPasswordInput.value;
-
-                        // Nếu trường mật khẩu cũ trống, xóa thông báo và vô hiệu hóa trường mật khẩu mới
                         if (!oldPassword) {
                             oldPasswordMessage.textContent = "";
                             oldPasswordMessage.classList.remove('valid', 'invalid');
                             newPasswordInput.disabled = true;
                             return;
                         }
-
-                        // Gửi yêu cầu AJAX để kiểm tra mật khẩu
                         fetch('${pageContext.request.contextPath}/checkPassword', {
                             method: 'POST',
                             headers: {
@@ -519,19 +505,16 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.valid) {
-                                        // Mật khẩu đúng
                                         oldPasswordMessage.textContent = "Correct password";
                                         oldPasswordMessage.classList.add('valid');
                                         oldPasswordMessage.classList.remove('invalid');
                                         newPasswordInput.disabled = false;
                                     } else {
-                                        // Mật khẩu sai
                                         oldPasswordMessage.textContent = "Incorrect password";
                                         oldPasswordMessage.classList.add('invalid');
                                         oldPasswordMessage.classList.remove('valid');
                                         newPasswordInput.disabled = true;
                                     }
-                                    // Gọi hàm validatePassword để cập nhật trạng thái nút lưu
                                     validatePassword();
                                 })
                                 .catch(error => {
@@ -614,23 +597,17 @@
                     const emailFormatRequirement = document.getElementById('email-format');
                     const emailNumberRequirement = document.getElementById('email-number');
 
-                    // Add input event listener to validate email as user types
                     newEmailInput.addEventListener('input', validateEmail);
 
                     function validateEmail() {
                         const email = newEmailInput.value;
-
-                        // Validate email format
                         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|vn|io|me|net|edu|org|info|biz|co|xyz|gov|mil|asia|us|uk|ca|au|edu\.vn|fpt\.edu\.vn)$/;
                         const isValidFormat = emailRegex.test(email);
-
                         if (isValidFormat) {
                             emailFormatRequirement.classList.add('valid');
                         } else {
                             emailFormatRequirement.classList.remove('valid');
                         }
-
-                        // Check if email contains at least one number
                         let containsNumber = false;
                         for (let i = 0; i < email.length; i++) {
                             if (!isNaN(parseInt(email[i]))) {
@@ -638,29 +615,20 @@
                                 break;
                             }
                         }
-
                         if (containsNumber) {
                             emailNumberRequirement.classList.add('valid');
                         } else {
                             emailNumberRequirement.classList.remove('valid');
                         }
-
-                        // Enable/disable send OTP button based on validation
                         sendOtpBtn.disabled = !(isValidFormat && containsNumber);
                     }
 
                     sendOtpBtn.addEventListener('click', function () {
-                        // Disable button to prevent multiple clicks
                         sendOtpBtn.disabled = true;
                         sendOtpBtn.textContent = "Sending...";
-
-                        // Clear previous messages
                         otpMessage.textContent = "";
                         otpMessage.classList.remove('valid', 'invalid');
-
                         const newEmail = newEmailInput.value;
-
-                        // Validate email is not empty
                         if (!newEmail) {
                             otpMessage.textContent = "Please enter a new email.";
                             otpMessage.classList.add('invalid');
@@ -668,8 +636,6 @@
                             sendOtpBtn.textContent = "Send";
                             return;
                         }
-
-                        // Validate email format
                         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|vn|io|me|net|edu|org|info|biz|co|xyz|gov|mil|asia|us|uk|ca|au|edu\.vn|fpt\.edu\.vn)$/;
                         let containsNumber = false;
                         for (let i = 0; i < newEmail.length; i++) {
@@ -678,7 +644,6 @@
                                 break;
                             }
                         }
-
                         if (!emailRegex.test(newEmail) || !containsNumber) {
                             otpMessage.textContent = "Invalid email format or missing number.";
                             otpMessage.classList.add('invalid');
@@ -686,10 +651,7 @@
                             sendOtpBtn.textContent = "Send";
                             return;
                         }
-
                         console.log("Sending OTP request for email: " + newEmail);
-
-                        // Send OTP via AJAX
                         fetch('${pageContext.request.contextPath}${sessionScope.user.role eq "INSTRUCTOR" ? "/instructor/changeEmail" : sessionScope.user.role eq "ADMIN" ? "/admin/changeEmail" : "/learner/changeEmail"}?action=sendOtp', {
                             method: 'POST',
                             headers: {
@@ -699,13 +661,9 @@
                         })
                                 .then(response => {
                                     console.log("Response status: " + response.status);
-
-                                    // Check if response is ok (status in the range 200-299)
                                     if (!response.ok) {
                                         throw new Error("Server returned status " + response.status);
                                     }
-
-                                    // Try to parse as JSON
                                     return response.text().then(text => {
                                         try {
                                             return JSON.parse(text);
@@ -717,16 +675,12 @@
                                 })
                                 .then(data => {
                                     console.log("Response data: ", data);
-
                                     if (data.success) {
-                                        // Success case
                                         otpMessage.textContent = data.message || "OTP sent to your email.";
                                         otpMessage.classList.add('valid');
                                         otpMessage.classList.remove('invalid');
                                         otpCodeInput.disabled = false;
                                         otpCodeInput.focus();
-
-                                        // Show success toast
                                         const customSuccessMessage = document.getElementById('customSuccessMessage');
                                         if (customSuccessMessage) {
                                             customSuccessMessage.textContent = "OTP sent successfully. Please check your email.";
@@ -734,12 +688,9 @@
                                             toast.show();
                                         }
                                     } else {
-                                        // Error case
                                         otpMessage.textContent = data.message || "Failed to send OTP.";
                                         otpMessage.classList.add('invalid');
                                         otpMessage.classList.remove('valid');
-
-                                        // Show error toast
                                         const customErrorMessage = document.getElementById('customErrorMessage');
                                         if (customErrorMessage) {
                                             customErrorMessage.textContent = data.message || "Failed to send OTP.";
@@ -752,8 +703,6 @@
                                     console.error("Error sending OTP: ", error);
                                     otpMessage.textContent = "Error sending OTP: " + error.message;
                                     otpMessage.classList.add('invalid');
-
-                                    // Show error toast
                                     const customErrorMessage = document.getElementById('customErrorMessage');
                                     if (customErrorMessage) {
                                         customErrorMessage.textContent = "Error sending OTP: " + error.message;
@@ -762,7 +711,6 @@
                                     }
                                 })
                                 .finally(() => {
-                                    // Re-enable button
                                     sendOtpBtn.disabled = false;
                                     sendOtpBtn.textContent = "Send";
                                 });
@@ -777,8 +725,6 @@
                         }
                     });
 
-
-                    // Initialize toast notifications
                     document.addEventListener('DOMContentLoaded', function () {
                         if ('${not empty err}' === 'true') {
                             const toastEl = document.getElementById('serverToast');
@@ -793,7 +739,6 @@
                                 document.getElementById('emailModal').style.display = 'block';
                             }
                         }
-
                         const urlParams = new URLSearchParams(window.location.search);
                         if (urlParams.has('passwordSuccess')) {
                             const passwordSuccessToastEl = document.getElementById('passwordSuccessToast');
@@ -825,7 +770,6 @@
                         }
                     });
 
-                    // Form validation for profile edit
                     document.getElementById('profileEditForm').addEventListener('submit', function (event) {
                         const displayName = document.getElementById('displayName').value;
                         const phoneNumber = document.getElementById('phoneNumber').value;
@@ -905,5 +849,67 @@
             </script>
 
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const sidebar = document.querySelector('.sidebar');
+                    const profileContainer = document.querySelector('.profile-edit-container');
+                    const header = document.querySelector('header');
+
+                    function handleSidebarMouseEnter() {
+                        const windowWidth = window.innerWidth;
+                        profileContainer.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+                        if (windowWidth <= 768) {
+                            profileContainer.style.marginLeft = '250px';
+                            profileContainer.style.width = 'calc(100% - 250px)';
+                            if (header) {
+                                header.style.left = '250px';
+                                header.style.width = 'calc(100% - 266px)';
+                            }
+                        } else {
+                            profileContainer.style.marginLeft = '250px';
+                            profileContainer.style.width = 'calc(100% - 250px)';
+                            if (header) {
+                                header.style.left = '250px';
+                                header.style.width = 'calc(100% - 266px)';
+                            }
+                        }
+                    }
+
+                    function handleSidebarMouseLeave() {
+                        const windowWidth = window.innerWidth;
+                        profileContainer.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+                        if (windowWidth <= 768) {
+                            profileContainer.style.marginLeft = '0';
+                            profileContainer.style.width = '100%';
+                            if (header) {
+                                header.style.left = '0';
+                                header.style.width = 'calc(100% - 16px)';
+                            }
+                        } else {
+                            profileContainer.style.marginLeft = '80px';
+                            profileContainer.style.width = 'calc(100% - 80px)';
+                            if (header) {
+                                header.style.left = '80px';
+                                header.style.width = 'calc(100% - 96px)';
+                            }
+                        }
+                    }
+
+                    sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+                    sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+                    handleSidebarMouseLeave();
+
+                    window.addEventListener('resize', function () {
+                        if (sidebar.matches(':hover')) {
+                            handleSidebarMouseEnter();
+                        } else {
+                            handleSidebarMouseLeave();
+                        }
+                    });
+                });
+            </script>
+
+            <%@include file="../../layout/footer.jsp" %>
     </body>
 </html>
