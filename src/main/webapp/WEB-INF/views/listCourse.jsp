@@ -177,18 +177,22 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
 
-                                                <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
-                                                   class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
-                                                   style="height: 40px; width: 40px;">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
+                                                <c:if test="${course.approveStatus != 2}">
+                                                    <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
+                                                       class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                                                       style="height: 40px; width: 40px;">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </c:if>
 
-                                                <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                                                        style="height: 40px; width: 40px;"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal${course.courseID}">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
+                                                <c:if test="${course.approveStatus != 3}">
+                                                    <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
+                                                            style="height: 40px; width: 40px;"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteModal${course.courseID}">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </c:if>
 
                                                 <c:if test="${course.approveStatus == 0}">
                                                     <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
@@ -257,6 +261,5 @@
             <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
             <!-- Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
         </body>
     </html>
