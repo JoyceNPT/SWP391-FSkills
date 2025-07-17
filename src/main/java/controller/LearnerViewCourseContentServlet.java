@@ -167,15 +167,27 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
             switch (role) {
                 case "LEARNER":
                     String courseParam = request.getParameter("Enroll");
+                    String addCourseParam = request.getParameter("AddEnroll");
                     try {
-                    int courseID = Integer.parseInt(courseParam);
-                    if (eDAO.setEnrollDate(user.getUserId(), courseID) > 0) {
-                        response.sendRedirect(request.getContextPath() + "/learner/course?courseID=" + courseID);
+                        if (courseParam != null) {
+                            int courseID = Integer.parseInt(courseParam);
+                            if (eDAO.setEnrollDate(user.getUserId(), courseID) != 0) {
+                                response.sendRedirect(request.getContextPath() + "/learner/course?courseID=" + courseID);
+                            }
+                        } else if (addCourseParam != null) {
+                            int courseID = Integer.parseInt(addCourseParam);
+                            if (eDAO.addLearnerEnrollment(user.getUserId(), courseID) != 0) {
+                                if (eDAO.setEnrollDate(user.getUserId(), courseID) != 0) {
+                                    response.sendRedirect(request.getContextPath() + "/learner/course?courseID=" + courseID);
+                                }
+                            }
+                        } else {
+                            response.sendRedirect(request.getContextPath() + "/learner/courselist");
+                        }
+                    } catch (Exception E) {
+                        System.out.println("Can't Enroll User");
                     }
-                } catch (Exception E) {
-                    System.out.println("Can't Enroll User");
-                }
-                break;
+                    break;
                 case "INSTRUCTOR":
                     response.sendRedirect(request.getContextPath() + "/instructor");
                     break;
