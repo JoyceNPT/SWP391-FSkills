@@ -30,7 +30,7 @@
     </head>
     <body class="bg-gray-50">
         <jsp:include page="/layout/sidebar_user.jsp"/>
-        <jsp:include page="/layout/header_user.jsp"/>
+        <jsp:include page="/layout/header.jsp"/>
         <div class="main mx-auto px-4 py-8 md:py-12">
             <!-- Degree Table Section -->
             <div class="bg-white p-4 rounded-4 shadow-lg">

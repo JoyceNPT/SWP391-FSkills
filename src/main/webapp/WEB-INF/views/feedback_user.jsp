@@ -46,10 +46,11 @@
   <style>
     body {
       background-color: #f8fafc;
-      height: 100vh;
+      min-height: 100vh; /* Đảm bảo body ít nhất bằng chiều cao viewport */
       display: flex;
+      flex-direction: column; /* Sắp xếp các phần tử con theo chiều dọc */
       font-family: 'Inter', sans-serif;
-      overflow: hidden;
+      overflow-y: auto; /* Cho phép cuộn trang tổng thể khi nội dung dài */
       margin: 0;
       padding: 0;
     }
@@ -91,11 +92,11 @@
       outline: none;
       box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
     }
+    /* Điều chỉnh main-content để nó chiếm hết không gian còn lại và cho phép cuộn */
     .main-content {
       flex: 1; /* Cho phép main-content chiếm hết không gian còn lại */
       display: flex;
       flex-direction: column; /* Sắp xếp header và feedback-container theo chiều dọc */
-      height: 100vh; /* Quan trọng để flex-direction: column hoạt động đúng cách */
       transition: margin-left 0.3s ease;
       box-sizing: border-box;
       margin-left: 80px; /* sidebar ban đầu */
@@ -103,23 +104,21 @@
     }
     .header {
       flex-shrink: 0; /* Ngăn header bị co lại */
-      /* Các style khác của header */
     }
     .feedback-container {
       flex: 1; /* Cho phép feedback-container chiếm hết không gian còn lại trong main-content */
       display: flex;
       align-items: center; /* Căn giữa theo chiều dọc */
       justify-content: center; /* Căn giữa theo chiều ngang */
-      padding: 10px; /* Giảm padding để tối đa hóa không gian */
-      overflow-y: auto; /* Cho phép cuộn chỉ trong phần feedback-container nếu nội dung quá lớn */
+      padding: 20px; /* Giữ padding này */
+      /* Bỏ padding-bottom để loại bỏ khoảng trống không cần thiết */
       box-sizing: border-box;
-      height: 100%; /* Đảm bảo chiếm toàn bộ chiều cao */
     }
     /* Make the feedback form responsive and use maximum available space */
     .feedback-container > div { /* Target the div with w-[1300px] */
       width: 100%; /* Đảm bảo nó không vượt quá 1300px nhưng vẫn responsive */
       max-width: 1300px; /* Giới hạn chiều rộng tối đa */
-      height: 100%; /* Chiếm toàn bộ chiều cao có sẵn */
+      height: auto; /* Cho phép chiều cao tự động điều chỉnh */
       min-height: 500px; /* Đảm bảo chiều cao tối thiểu */
       display: flex;
       flex-direction: column;
@@ -132,19 +131,21 @@
     }
     .grid.grid-cols-2.gap-6 {
       flex: 1; /* Cho phép grid chiếm hết không gian còn lại trong form */
-      height: 100% !important; /* Đảm bảo grid chiếm toàn bộ chiều cao */
+      height: 100%; /* Đảm bảo grid chiếm toàn bộ chiều cao */
       min-height: 0; /* Cho phép grid co lại khi cần thiết */
     }
+    /* Thêm style để đảm bảo cột chiếm hết chiều cao */
     .col-span-1.flex.flex-col.h-full {
-      height: 100%; /* Đảm bảo chiếm toàn bộ chiều cao của grid */
-      min-height: 0; /* Cho phép co lại khi cần thiết */
+      height: 100%;
+      min-height: 0; /* Cho phép co lại */
     }
+
     textarea#feedbackContent {
       flex: 1; /* Cho textarea chiếm hết chiều cao còn lại trong cột của nó */
-      min-height: 150px; /* Chiều cao tối thiểu cho textarea */
-      height: 100%; /* Đảm bảo chiếm toàn bộ chiều cao có sẵn */
+      min-height: 150px; /* Giữ nguyên chiều cao tối thiểu cho textarea */
+      height: auto; /* Đặt lại thành auto để nó giãn nở */
       box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
-      resize: none; /* Ngăn người dùng thay đổi kích thước, để tránh phá vỡ layout */
+      resize: vertical; /* Cho phép người dùng thay đổi kích thước theo chiều dọc */
     }
 
     /* Slide effect for sidebar - main content and header */
@@ -152,27 +153,39 @@
       margin-left: 250px; /* Chiều rộng sidebar khi hover */
       width: calc(100% - 250px); /* Điều chỉnh chiều rộng của main-content */
     }
+
+    /* Cải thiện responsive cho grid trên màn hình nhỏ */
+    @media (max-width: 1024px) {
+      .grid.grid-cols-2.gap-6 {
+        grid-template-columns: 1fr; /* Chuyển sang 1 cột trên màn hình nhỏ */
+        flex-direction: column; /* Xếp chồng các cột */
+      }
+      .col-span-1:first-child {
+        margin-right: 0; /* Bỏ khoảng cách ngang */
+        margin-bottom: 1.5rem; /* Thêm khoảng cách dọc giữa các cột */
+      }
+    }
   </style>
 </head>
 <body>
 <jsp:include page="/layout/sidebar_user.jsp" />
+<jsp:include page="/layout/header.jsp" />
 
 <div class="main-content">
-  <%--  <jsp:include page="/layout/header_user.jsp" />--%>
 
   <div class="feedback-container">
 
-    <div class="w-[1300px] mx-auto bg-white shadow-xl rounded-xl p-6 border border-green-100" style="box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); height: calc(100% - 20px);">
+    <div class="w-[1300px] mx-auto bg-white shadow-xl rounded-xl p-6 border border-green-100" style="box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); height: auto;">
       <div class="text-center mb-4">
         <h1 class="text-3xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">Share Your Feedback</h1>
         <p class="text-sm text-gray-600 max-w-2xl mx-auto">We value your input! Help us improve by sharing your thoughts, suggestions, or questions.</p>
       </div>
       <form id="feedbackForm" action="${pageContext.request.contextPath}/feedback" method="POST" class="h-full flex flex-col">
-        <div class="grid grid-cols-2 gap-6 flex-grow"> <%-- Added flex-grow to ensure it takes available space --%>
+        <div class="grid grid-cols-2 gap-6 flex-grow">
           <div class="col-span-1 flex flex-col h-full">
             <div class="space-y-4">
               <p class="text-sm font-medium text-gray-800 mb-2">Feedback Type:</p>
-              <div class="flex gap-4">
+              <div class="flex flex-wrap gap-4">
                 <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
                   <input type="radio" name="feedbackType" value="comments" class="custom-radio-input" checked>
                   <span class="text-sm font-medium text-gray-700">Comments</span>
@@ -207,13 +220,13 @@
               </button>
             </div>
           </div>
-          <div class="col-span-1 flex flex-col h-full"> <%-- Added h-full to ensure full height --%>
+          <div class="col-span-1 flex flex-col h-full">
             <div class="mb-3">
               <label for="feedbackTitle" class="block text-sm font-medium text-gray-800 mb-1">Title Name:</label>
               <input type="text" id="feedbackTitle" name="feedbackTitle" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Enter a title for your feedback">
             </div>
             <label for="feedbackContent" class="block text-sm font-medium text-gray-800 mb-1">Describe Your Feedback:</label>
-            <textarea id="feedbackContent" name="feedbackContent" class="w-full flex-grow border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Please share your feedback details here..." style="min-height: 200px; height: 100%;"></textarea>
+            <textarea id="feedbackContent" name="feedbackContent" class="w-full flex-grow border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Please share your feedback details here..."></textarea>
           </div>
         </div>
       </form>
@@ -221,9 +234,7 @@
   </div>
 </div>
 
-<!-- Toast Notification -->
 <div style="z-index: 2000;" class="toast-container position-fixed bottom-0 end-0 p-3">
-  <!-- Success Toast -->
   <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body">
@@ -233,7 +244,6 @@
     </div>
   </div>
 
-  <!-- Error Toast -->
   <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body" id="errorToastMessage">
@@ -243,7 +253,6 @@
     </div>
   </div>
 
-  <!-- Validation Error Toast -->
   <div id="validationErrorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
       <div class="toast-body" id="validationErrorMessage">
@@ -254,6 +263,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // Initialize toast notifications
@@ -275,7 +285,6 @@
 
     const form = document.getElementById("feedbackForm");
     const feedbackContent = document.getElementById("feedbackContent");
-    // const questionTips = document.getElementById("questionTips"); // Giữ nguyên bị comment nếu không dùng trong HTML
     const feedbackTypeRadios = document.querySelectorAll('input[name="feedbackType"]');
 
     function updatePlaceholder(type) {
@@ -313,7 +322,7 @@
     }
 
     form.addEventListener("submit", function (e) {
-      const feedbackContentValue = feedbackContent.value.trim(); // Dùng biến mới để tránh nhầm lẫn với element
+      const feedbackContentValue = feedbackContent.value.trim();
       const email = document.getElementById("email").value.trim();
 
       if (!feedbackContentValue) {
@@ -328,19 +337,16 @@
         return;
       }
 
-      // Thêm validation email cơ bản
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(email)) {
         e.preventDefault();
         showValidationError("Please enter a valid email address.");
         return;
       }
-
-      // Form will submit if validation passes
     });
   });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<%@include file="../../layout/footer.jsp" %>
 </body>
 </html>

@@ -311,7 +311,7 @@
         </style>
     </head>
     <body>
-        <%@include file="../../layout/header_user.jsp" %>
+        <%@include file="../../layout/header.jsp" %>
         <%@include file="../../layout/sidebar_user.jsp"%>
 
         <main id="main-body" class="main d-flex">

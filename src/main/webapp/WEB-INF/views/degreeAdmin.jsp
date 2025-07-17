@@ -61,7 +61,7 @@
         </style>
     </head>
     <body class="flex flex-col h-screen">
-        <jsp:include page="/layout/header_admin.jsp" />
+        <jsp:include page="/layout/header.jsp" />
 
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp"/>
@@ -233,7 +233,7 @@
                             <input type="hidden" name="status" id="statusField${deg.degreeId}" value="">
                             <input type="hidden" name="receiverId" value="${deg.userId.userId}">                     
                             <input type="hidden" name="sender" value="${sessionScope.user.userName}">
-                            
+
                             <div class="modal-body">
                                 <div class="mb-3 row">
                                     <div class="col-md-2">

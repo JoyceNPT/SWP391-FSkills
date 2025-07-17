@@ -234,7 +234,7 @@
         <button class="sidebar-toggle hidden md:hidden">
             <i class="bi bi-list text-lg"></i>
         </button>
-        <jsp:include page="/layout/header_admin.jsp" />
+        <jsp:include page="/layout/header.jsp" />
 
 
 

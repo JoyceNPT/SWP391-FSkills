@@ -79,15 +79,15 @@
         </c:if>
         <c:choose>
             <c:when test="${isAdmin}">
-                <%@include file="../../layout/header_admin.jsp" %>
+                <%@include file="../../layout/header.jsp" %>
                 <%@include file="../../layout/sidebar_admin.jsp" %>
             </c:when>
             <c:otherwise>
-                <%@include file="../../layout/header_user.jsp" %>
+                <%@include file="../../layout/header.jsp" %>
                 <%@include file="../../layout/sidebar_user.jsp" %>
             </c:otherwise>
         </c:choose>
-        
+
         <main class="main">
             <p class="h1">My Bills</p>
 

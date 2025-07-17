@@ -167,7 +167,7 @@
         </style>
     </head>
     <body>
-        <%@include file="../../layout/header_user.jsp" %>
+        <%@include file="../../layout/header.jsp" %>
         <%@include file="../../layout/sidebar_user.jsp"%>
 
         <main id="main-body" class="main d-flex">
@@ -311,23 +311,23 @@
 
         <%@include file="../../layout/footer.jsp" %>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        
+
         <script>
             function loadModules() {
                 const courseSelect = document.getElementById('courseSelect');
                 const moduleSelect = document.getElementById('moduleSelect');
-                
+
                 // Clear modules
                 moduleSelect.innerHTML = '<option value="">All Modules</option>';
-                
+
                 const courseId = courseSelect.value;
                 if (!courseId) {
                     return;
                 }
-                
+
                 // Show loading
                 moduleSelect.innerHTML = '<option value="">Loading modules...</option>';
-                
+
                 // Fetch modules for the selected course
                 fetch('${pageContext.request.contextPath}/learner/tests?action=getModules&courseId=' + courseId)
                     .then(response => response.json())
