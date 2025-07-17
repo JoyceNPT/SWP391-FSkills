@@ -250,9 +250,9 @@ public class CheckoutServlet extends HttpServlet {
                 for (Course c : receipt.getCourse()) {
                     cartDAO.setCartBuyDate(cartDAO.getCartByCourseID(user.getUserId(), c.getCourseID()).getCartID());
                     enrollDAO.addLearnerEnrollment(user.getUserId(), c.getCourseID());
-                    voucherDAO.useVoucher(receipt.getVoucherCode());
 
                 }
+                voucherDAO.useVoucher(receipt.getVoucherCode());
                 request.setAttribute("user", user);
                 request.setAttribute("selectedCourses", receipt.getCourse());
                 request.setAttribute("finalPrice", receipt.getPrice());

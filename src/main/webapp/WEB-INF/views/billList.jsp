@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -71,6 +72,11 @@
             .modal-table {
                 margin-bottom: 0;
             }
+
+            .summary-btn-container {
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
         </style>
     </head>
     <body>
@@ -100,17 +106,23 @@
                     <p class="text-center">No bills found.</p>
                 </c:when>
                 <c:otherwise>
+                    <c:if test="${isAdmin}">
+                    <div class="summary-btn-container">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#summaryModal">
+                            View Total Summary
+                        </button>
+                    </div>
+                    </c:if>
                     <div class="table-container">
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <c:if test="${isAdmin}">
-                                <th>User ID</th>   
+                                    <th>User ID</th>   
                                 </c:if> 
-                            <th>Receipt ID</th>
-                            <th>Payment Date</th>
-                            <th>Total Price</th>
-                            <th>Action</th>
-                            </tr>
+                                <th>Receipt ID</th>
+                                <th>Payment Date</th>
+                                <th>Total Price</th>
+                                <th>Action</th>
                             </thead>
                             <tbody>
                                 <c:forEach var="receipt" items="${receipts}">
@@ -131,7 +143,50 @@
                             </tbody>
                         </table>
                     </div>
-
+                    
+                    <c:if test="${isAdmin}">
+                    <!-- Total Summary Modal -->
+                    <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="summaryModalLabel">Total Billing Summary</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table modal-table">
+                                        <tr>
+                                            <th>Total Amount</th>
+                                            <td>
+                                                <c:set var="totalAmount" value="${0}"/>
+                                                <c:forEach var="receipt" items="${receipts}">
+                                                    <c:set var="totalAmount" value="${totalAmount + receipt.price}"/>
+                                                </c:forEach>
+                                                <fmt:formatNumber value="${totalAmount}" type="number" groupingUsed="true"/> VND
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Platform Cut (15%)</th>
+                                            <td>
+                                                <c:set var="platformCut" value="${totalAmount * 0.15}"/>
+                                                <fmt:formatNumber value="${platformCut}" type="number" groupingUsed="true"/> VND
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Net Amount</th>
+                                            <td>
+                                                <fmt:formatNumber value="${totalAmount - platformCut}" type="number" groupingUsed="true"/> VND
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </c:if>
                     <!-- Receipt Detail Modals -->
                     <c:forEach var="receipt" items="${receipts}">
                         <div class="modal fade" id="receiptModal${receipt.receiptID}" tabindex="-1" aria-labelledby="receiptModalLabel${receipt.receiptID}" aria-hidden="true">
@@ -166,7 +221,7 @@
                                                             <ul class="list-unstyled">
                                                                 <c:forEach var="course" items="${receipt.course}">
                                                                     <li><c:out value="${course.courseName}"/></li>
-                                                                    </c:forEach>
+                                                                </c:forEach>
                                                             </ul>
                                                         </c:otherwise>
                                                     </c:choose>

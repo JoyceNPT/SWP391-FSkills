@@ -153,11 +153,11 @@
 
         <script>
             let isSuccess = false;
-            const price = ${totalPrice};
+            let price = ${totalPrice};
             let content = "${addInfo}";
             document.addEventListener("DOMContentLoaded", () => {
                 setInterval(() => {
-                    checkPaid(price, window.content || '');
+                    checkPaid(window.price, window.content || '');
                 }, 1000);
             });
 
@@ -214,6 +214,7 @@
                             $('#voucherCodeHidden').val(voucherCode);
 
                             const addInfo = userID + ' ' + courseIDs + ' ' + newPrice + ' ' + encodeURIComponent(voucherCode);
+                            window.price = newPrice;
                             window.content = userID + ' ' + courseIDs + ' ' + newPrice + ' ' + voucherCode;
                             window.contentBefore = window.content;
 
