@@ -70,7 +70,7 @@
         <!-- ======================= Main Content ======================= -->
         <main class="main mx-auto px-4 py-8 md:py-12">
             <section id="dashboard" class="mb-12">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome Back, ${user.displayName}</h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
                 <p class="text-gray-500 text-lg">Here's your teaching dashboard for today.</p>
             </section>
 
@@ -175,6 +175,75 @@
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 formatUtcToVietnamese(".datetime");
+            });
+        </script>
+
+        <script>
+            // Script to ensure proper sidebar hover behavior
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebar = document.querySelector('.sidebar');
+                const mainContent = document.querySelector('.main');
+                const header = document.querySelector('header');
+
+                // Event handler functions defined outside to allow removal
+                function handleSidebarMouseEnter() {
+                    const windowWidth = window.innerWidth;
+                    mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                    if (windowWidth <= 768) {
+                        // Mobile layout
+                        mainContent.style.marginLeft = '250px';
+                        if (header) {
+                            header.style.left = '250px';
+                            header.style.width = 'calc(100% - 266px)';
+                        }
+                    } else {
+                        // Desktop layout
+                        mainContent.style.marginLeft = '250px';
+                        if (header) {
+                            header.style.left = '250px';
+                            header.style.width = 'calc(100% - 266px)';
+                        }
+                    }
+                }
+
+                function handleSidebarMouseLeave() {
+                    const windowWidth = window.innerWidth;
+                    mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                    if (windowWidth <= 768) {
+                        // Mobile layout
+                        mainContent.style.marginLeft = '0';
+                        if (header) {
+                            header.style.left = '0';
+                            header.style.width = 'calc(100% - 16px)';
+                        }
+                    } else {
+                        // Desktop layout
+                        mainContent.style.marginLeft = '80px';
+                        if (header) {
+                            header.style.left = '80px';
+                            header.style.width = 'calc(100% - 96px)';
+                        }
+                    }
+                }
+
+                // Add event listeners
+                sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+                sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+
+                // Set initial state based on window width
+                handleSidebarMouseLeave();
+
+                // Add resize event listener to handle window size changes
+                window.addEventListener('resize', function() {
+                    // Update layout based on current sidebar state
+                    if (sidebar.matches(':hover')) {
+                        handleSidebarMouseEnter();
+                    } else {
+                        handleSidebarMouseLeave();
+                    }
+                });
             });
         </script>
 

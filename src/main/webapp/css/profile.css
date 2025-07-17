@@ -22,9 +22,12 @@ body {
     background-color: #ffffff; /* Nền trắng toàn trang */
     min-height: auto;
     box-sizing: border-box;
-    transition: margin-left 0.3s ease, max-width 0.3s ease; /* Thêm transition cho max-width */
+    /* Use the same transition as in sidebar.css for consistency */
+    transition: margin-left 0.2s ease, max-width 0.2s ease, width 0.2s ease;
     overflow-y: auto; /* Allow vertical scrolling */
     max-width: 100%; /* Ensure it doesn't exceed the viewport width */
+    position: relative; /* Ensure proper stacking context */
+    z-index: 1; /* Lower than sidebar but higher than default */
 }
 
 

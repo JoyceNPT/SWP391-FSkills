@@ -5,9 +5,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/transition.css">
 <script src="${pageContext.request.contextPath}/js/transition.js"></script>
 
-<!-- Header Section -->
-<header style="background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 1rem 1.5rem; position: fixed !important; top: 0 !important; left: 80px; right: 0; width: calc(100% - 96px) !important; z-index: 1001 !important; border-radius: 12px; margin: 8px; transition: left 0.3s ease, width 0.3s ease;">
-    <div style="max-width: 100%; margin: 0 auto; display: flex; justify-content: flex-end; align-items: center; border-radius: 8px;" class="header-container">
+<header style="background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 1rem 1.5rem; position: fixed; top: 0; left: 80px; right: 0; z-index: 1001; border-radius: 12px; margin: 0 8px; transition: left 0.3s ease, width 0.3s ease;">
+    <div style="max-width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; border-radius: 8px;" class="header-container">
         <div style="white-space: nowrap; overflow: hidden; position: relative; width: 100%;" class="header-text">
             <div style="display: inline-block; padding-left: 100%; animation: scroll 10s linear infinite;" class="scrolling-text">
                 <p style="margin: 0; font-weight: 600; color: #111; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
@@ -15,9 +14,13 @@
                         <c:choose>
                             <c:when test="${not empty sessionScope.user.displayName}">
                                 ${sessionScope.user.displayName}
+                                <c:if test="${sessionScope.user.role eq 'INSTRUCTOR'}">
+                                    <span class="instructor-indicator" style="display:none;"></span>
+                                </c:if>
                             </c:when>
                             <c:when test="${not empty sessionScope.adminUser.displayName}">
                                 ${sessionScope.adminUser.displayName}
+                                <span class="admin-indicator" style="display:none;"></span>
                             </c:when>
                             <c:otherwise>
                                 Guest
@@ -27,6 +30,13 @@
                 </p>
             </div>
         </div>
+
+        <c:if test="${empty sessionScope.user}">
+            <div class="auth-buttons" style="display: flex; gap: 10px; margin-left: 20px;">
+                <a href="${pageContext.request.contextPath}/login" style="text-decoration: none; color: #475569; font-weight: 600; transition: color 0.3s ease; padding: 8px 12px; white-space: nowrap;">Log In</a>
+                <a href="${pageContext.request.contextPath}/signup.jsp" style="text-decoration: none; background-color: #0284c7; color: white; font-weight: 600; padding: 8px 16px; border-radius: 20px; transition: background-color 0.3s ease; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Sign Up</a>
+            </div>
+        </c:if>
     </div>
 </header>
 
@@ -45,17 +55,31 @@
         }
     }
 
-    /* Add padding to body to prevent content from appearing under fixed header */
-    body {
-        padding-top: 60px !important; /* Reduced padding to minimize gap below header */
+    /* Spacing for content below header */
+    .main, 
+    .main-content, 
+    .admin-content, 
+    .profile-edit-container {
+        margin-top: 60px !important; /* Same as profile page */
+        padding-top: 20px !important; /* Additional padding for better spacing */
     }
 
-    /* Handle header position when sidebar expands */
-    .sidebar:hover ~ header, 
-    .sidebar:hover + div header,
-    .sidebar:hover + header {
-        left: 250px !important;
-        width: calc(100% - 266px) !important; /* Adjust width to account for sidebar width (250px) and margins */
+    /* Instructor and learner role specific spacing */
+    body.instructor-role .main,
+    body.instructor-role .main-content,
+    body.instructor-role .profile-edit-container,
+    body.learner-role .main,
+    body.learner-role .main-content,
+    body.learner-role .profile-edit-container {
+        margin-top: 60px !important; /* Same as profile page */
+    }
+
+    /* Admin role specific spacing */
+    body.admin-role .main,
+    body.admin-role .main-content,
+    body.admin-role .admin-content,
+    main.flex-grow {
+        margin-top: 60px !important; /* Same as profile page */
     }
 
     /* Responsive adjustments for smaller screens */
@@ -64,18 +88,5 @@
             left: 0 !important; /* Start with no left margin on small screens */
             width: calc(100% - 16px) !important; /* Full width minus margins */
         }
-
-        .sidebar:hover ~ header, 
-        .sidebar:hover + div header,
-        .sidebar:hover + header {
-            left: 250px !important; /* When sidebar is expanded */
-            width: calc(100% - 266px) !important; /* Adjust width to account for sidebar width and margins */
-        }
     }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Any JavaScript functionality can be added here if needed
-    });
-</script>

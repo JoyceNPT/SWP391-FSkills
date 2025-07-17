@@ -65,7 +65,7 @@
 
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp"/>
-            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
+            <main class="flex-grow p-6 bg-white rounded-tl-lg overflow-y-auto">
                 <!-- Degree Table Section -->
                 <div class="bg-white p-4 rounded shadow-sm">
                     <c:choose>
