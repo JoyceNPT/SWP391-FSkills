@@ -1,0 +1,75 @@
+/* Transition effects for sidebar and header interactions */
+
+/* Common transition properties for smooth animations */
+.sidebar,
+header,
+.main,
+.main-content,
+.admin-content,
+.profile-edit-container,
+.container {
+    transition: all 0.3s ease;
+}
+
+/* Spacing between header and content for all roles */
+.main,
+.main-content,
+.admin-content,
+.profile-edit-container {
+    margin-top: 60px; /* Clear space from fixed header - same as profile page */
+    padding-top: 20px; /* Additional padding for better spacing */
+}
+
+/* Test-related pages transition effects */
+/* For Take test, Detail test, submit test pages */
+body.test-page header,
+body.test-detail-page header,
+body.test-submit-page header {
+    transition: left 0.3s ease, width 0.3s ease;
+}
+
+/* Admin pages transition effects */
+/* For dashboard, voucher, announcement, degree, manage accounts, report, feedback */
+body.admin-dashboard-page header,
+body.admin-voucher-page header,
+body.admin-announcement-page header,
+body.admin-degree-page header,
+body.admin-accounts-page header,
+body.admin-report-page header,
+body.admin-feedback-page header {
+    transition: left 0.3s ease, width 0.3s ease;
+}
+
+/* Instructor role specific spacing */
+body.instructor-role .main,
+body.instructor-role .main-content,
+body.instructor-role .admin-content,
+body.instructor-role .profile-edit-container {
+    margin-top: 60px; /* Same as profile page */
+}
+
+/* Learner role specific spacing */
+body.learner-role .main,
+body.learner-role .main-content,
+body.learner-role .admin-content,
+body.learner-role .profile-edit-container {
+    margin-top: 60px; /* Same as profile page */
+}
+
+/* Admin role specific spacing */
+body.admin-role .main,
+body.admin-role .main-content,
+body.admin-role .admin-content,
+body.admin-role .profile-edit-container {
+    margin-top: 60px; /* Same as profile page */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main,
+    .main-content,
+    .admin-content,
+    .profile-edit-container {
+        margin-top: 60px; /* Maintain consistent spacing on mobile */
+    }
+}

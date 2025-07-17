@@ -288,7 +288,7 @@
     <%@include file="../../layout/sidebar_user.jsp"%>
 
     <main id="main-body" class="main d-flex">
-        <div class="mt-5 flex-fill">
+        <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
             <div class="container-fluid px-4 py-4">
                             <!-- Result Container -->
                             <div class="result-container">
