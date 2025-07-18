@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
@@ -77,6 +78,21 @@
                     </ol>
                 </nav>
 
+                <form class="mb-4 d-flex justify-content-center"
+                      action="${pageContext.request.contextPath}/instructor/courses" method="POST" style="max-width: 500px; margin: 0 auto;">
+                    <input type="hidden" name="action" value="search">
+                    <input type="hidden" name="userId" value="${user.userId}">
+
+                    <input type="text" name="searchCourse"
+                           class="form-control form-control-sm me-2"
+                           placeholder="Search by course name or ID"
+                           value="${param.search}" style="height: 32px; font-size: 0.9rem;">
+
+                    <button type="submit" class="btn btn-sm btn-primary" style="height: 32px;">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back
@@ -89,7 +105,21 @@
 
                 <c:choose>
                     <c:when test="${empty listCourse}">
-                        <div class="alert alert-warning text-center">No courses available.</div>
+                        <c:choose>
+                            <c:when test="${not empty param.search}">
+                                <div class="alert alert-warning text-center">
+                                    No matching courses found for "<strong>${fn:escapeXml(param.search)}</strong>".
+                                </div>
+                                <div class="text-center">
+                                    <a href="${pageContext.request.contextPath}/instructor/courses" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Go Back
+                                    </a>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="alert alert-warning text-center">No courses available.</div>
+                            </c:otherwise>
+                        </c:choose>
                     </c:when>
                     <c:otherwise>
                         <table class="table table-bordered table-hover shadow-sm bg-white rounded">

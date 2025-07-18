@@ -124,7 +124,7 @@
                 const summaryInput = document.getElementById("updateCourseSummary" + courseID);
                 const highlightInput = document.getElementById("updateCourseHighlight" + courseID);
 
-                const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
+                const regexValid = /^(?!.* {2,}).+$/u;
                 const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
                 form.addEventListener("submit", function (e) {
@@ -142,8 +142,8 @@
                         return;
                     }
 
-                    if (name.length > 30) {
-                        showJsToast("Course name cannot be longer than 30 characters.");
+                    if (name.length > 30 || name.length < 10) {
+                        showJsToast("Course Name must be between 10 and 30 characters.");
                         nameInput.focus();
                         e.preventDefault();
                         return;
