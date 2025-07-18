@@ -69,19 +69,11 @@
         <jsp:include page="/layout/header.jsp"/>
 
         <main class="main">
-            <div class="px-5 py-6">
-                <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
-                    <ol class="list-none p-0 inline-flex space-x-2">
-                        <li class="inline-flex items-center">
-                            <a href="${pageContext.request.contextPath}/instructor"
-                               class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
-                        </li>
-                        <li class="inline-flex items-center">
-                            <span class="mx-2 text-gray-400">/</span>
-                        </li>
-                        <li class="inline-flex items-center">
-                            <span class="text-gray-800 font-semibold">Manage Course</span>
-                        </li>
+            <div class="px-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor">Dashboard</a></li>
+                        <li class="breadcrumb-item inline-flex active" aria-current="page">All Courses</li>
                     </ol>
                 </nav>
 
@@ -263,7 +255,7 @@
 
             <script>
                 // Script to ensure proper sidebar hover behavior
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     const sidebar = document.querySelector('.sidebar');
                     const mainContent = document.querySelector('.main');
                     const header = document.querySelector('header');
@@ -319,7 +311,7 @@
                     handleSidebarMouseLeave();
 
                     // Add resize event listener to handle window size changes
-                    window.addEventListener('resize', function() {
+                    window.addEventListener('resize', function () {
                         // Update layout based on current sidebar state
                         if (sidebar.matches(':hover')) {
                             handleSidebarMouseEnter();
