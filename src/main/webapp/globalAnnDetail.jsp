@@ -14,22 +14,28 @@
             font-family: Arial, sans-serif;
             background-color: #f0f2f5;
             word-break: break-word;
+            padding-top: 60px;
+            padding-left: 80px;
         }
 
         .container-detail {
             max-width: 900px;
-            margin: 20px auto;
+            margin: 20px auto; 
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,.08);
             overflow-wrap: anywhere;
+            position: unset;
+            z-index: unset;
         }
 
         .announcement-header {
             border-bottom: 1px solid #eee;
             padding-bottom: 15px;
             margin-bottom: 20px;
+            position: unset;
+            z-index: unset;
         }
 
         .announcement-header h1 {
@@ -39,6 +45,7 @@
             font-weight: bold;
             word-break: break-word;
             overflow-wrap: break-word;
+            margin-top: 5px; 
         }
 
         .announcement-meta {
@@ -111,6 +118,7 @@
             margin-right: 10px;
             display: inline-block;
             font-weight: bold;
+            margin-bottom: 8px; 
         }
     </style>
 </head>
@@ -120,7 +128,7 @@
     <jsp:include page="/layout/header.jsp" />
     <jsp:include page="/layout/sidebar_user.jsp" />
     <c:if test="${empty announcement}">
-        <p class="text-center text-gray-600 text-xl py-10">No announcement found with the given ID.</p>
+        <p class="text-center text-gray-600 text-xl py-10">No announcement.</p>
     </c:if>
 
     <c:if test="${not empty announcement}">
@@ -130,13 +138,6 @@
             <div class="announcement-meta">
                 <span>Posted by: ${announcement.userId.displayName != null ? announcement.userId.displayName : announcement.userId.userName}</span>
                 <span>- <fmt:formatDate value="${announcement.createDate}" pattern="dd/MM/yyyy HH:mm"/></span>
-                <span class="icon-text">
-                    <i class="fa-regular fa-comment text-base"></i> 0 comments
-                </span>
-                <span class="icon-text">
-                    <i class="fa-regular fa-eye text-base"></i> 
-                    <fmt:formatNumber value="4000" type="number" pattern="#,###"/> views
-                </span>
             </div>
         </div>
 
@@ -151,12 +152,6 @@
             <p class="text-gray-800">
                 <c:out value="${announcement.announcementText}" escapeXml="false"/>
             </p>
-        </div>
-
-        <div class="announcement-footer">
-            <span class="text-gray-600">
-                <span role="img" aria-label="like" class="text-2xl mr-2">👍</span>Khôi đã like Announcement này
-            </span>
         </div>
     </c:if>
 </div>
