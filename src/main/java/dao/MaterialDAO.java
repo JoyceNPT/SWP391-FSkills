@@ -372,30 +372,6 @@ public class MaterialDAO extends DBContext {
         }
 	return count;
     }
-
-
-    public int countMaterialOrderConflict(int moduleId, int courseId) {
-        int count = 0;
-        String sql = "SELECT COUNT(*) FROM Materials m \n"
-                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID \n"
-                + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
-                + "WHERE mo.ModuleID = ?\n"
-                + "AND c.CourseID = ?";
-
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, moduleId);
-            ps.setInt(2, courseId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
-
-        } catch (SQLException e) {
-        }
-
-        return count;
-    }
     
     public int checkMaterialInCourse(int CourseID) {
         String sql = "SELECT TOP 1\n" +
@@ -418,9 +394,5 @@ public class MaterialDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return 0;
-    }
-
-    public int checkMaterialInCourse(int courseID) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
