@@ -236,9 +236,6 @@
             <i class="bi bi-list text-lg"></i>
         </button>
         <jsp:include page="/layout/header.jsp" />
-
-
-
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp" />
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
@@ -489,9 +486,7 @@
         const instructorRadio = document.getElementById('filterInstructor');
         const searchForm = document.getElementById('searchForm');
         const currentRoleFilterInput = document.getElementById('currentRoleFilter');
-        const searchNameInput = document.getElementById('searchName'); // Lấy tham chiếu đến ô input searchName
-
-        // Đặt trạng thái ban đầu của radio button và hiển thị/ẩn bảng dựa trên URL params
+        const searchNameInput = document.getElementById('searchName');
         const urlParams = new URLSearchParams(window.location.search);
         const roleFilterParam = urlParams.get('roleFilter');
 
@@ -499,7 +494,7 @@
             instructorRadio.checked = true;
             document.getElementById('instructorTable').style.display = 'table';
             document.getElementById('learnerTable').style.display = 'none';
-        } else { // Mặc định là Learner
+        } else { // mặc định là Learner
             learnerRadio.checked = true;
             document.getElementById('learnerTable').style.display = 'table';
             document.getElementById('instructorTable').style.display = 'none';

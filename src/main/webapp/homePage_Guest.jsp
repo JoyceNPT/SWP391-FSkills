@@ -269,6 +269,75 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+    <script>
+        // Script to ensure proper sidebar hover behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('main');
+            const header = document.querySelector('header');
+
+            // Event handler functions defined outside to allow removal
+            function handleSidebarMouseEnter() {
+                const windowWidth = window.innerWidth;
+                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                if (windowWidth <= 768) {
+                    // Mobile layout
+                    mainContent.style.marginLeft = '250px';
+                    if (header) {
+                        header.style.left = '250px';
+                        header.style.width = 'calc(100% - 266px)';
+                    }
+                } else {
+                    // Desktop layout
+                    mainContent.style.marginLeft = '250px';
+                    if (header) {
+                        header.style.left = '250px';
+                        header.style.width = 'calc(100% - 266px)';
+                    }
+                }
+            }
+
+            function handleSidebarMouseLeave() {
+                const windowWidth = window.innerWidth;
+                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                if (windowWidth <= 768) {
+                    // Mobile layout
+                    mainContent.style.marginLeft = '0';
+                    if (header) {
+                        header.style.left = '0';
+                        header.style.width = 'calc(100% - 16px)';
+                    }
+                } else {
+                    // Desktop layout
+                    mainContent.style.marginLeft = '80px';
+                    if (header) {
+                        header.style.left = '80px';
+                        header.style.width = 'calc(100% - 96px)';
+                    }
+                }
+            }
+
+            // Add event listeners
+            sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+            sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+
+            // Set initial state based on window width
+            handleSidebarMouseLeave();
+
+            // Add resize event listener to handle window size changes
+            window.addEventListener('resize', function() {
+                // Update layout based on current sidebar state
+                if (sidebar.matches(':hover')) {
+                    handleSidebarMouseEnter();
+                } else {
+                    handleSidebarMouseLeave();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
