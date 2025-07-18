@@ -29,7 +29,7 @@
 
         <style>
             body {
-                font-family: 'Inter', sans-serif;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 background-color: #f8f9fa;
                 overflow-x: hidden; /* Prevent horizontal scrollbar */
             }
@@ -106,7 +106,7 @@
 
             <section id="my-courses">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">My Courses</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Top 3 Most Enrolled Courses of Yours</h2>
                     <a href="${pageContext.request.contextPath}/instructor/courses"
                        class="text-indigo-600 font-semibold hover:underline">View All</a>
                 </div>

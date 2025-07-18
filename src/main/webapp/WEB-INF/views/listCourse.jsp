@@ -165,7 +165,7 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="fw-bold fs-6">
-                                                            <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
+                                                            <fmt:formatNumber value="${course.originalPrice}" pattern="#,##0"/> VND
                                                         </span>
                                                     </c:otherwise>
                                                 </c:choose>
@@ -243,7 +243,7 @@
                                 <p>Are you sure you want to delete <strong>${course.courseName}</strong>?</p>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             </div>
                         </form>

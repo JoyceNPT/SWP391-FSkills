@@ -82,9 +82,11 @@
                 <span class="mx-2 text-gray-400">/</span>
             </li>
 
-            <li class="inline-flex items-center">
-                <span class="text-gray-800 font-semibold">Manage Module</span>
-            </li>
+            <c:if test="${not empty course}">
+                <li class="inline-flex items-center">
+                    <span class="text-gray-800 font-semibold">${course.courseName}</span>
+                </li>
+            </c:if>
         </ol>
     </nav>
 
@@ -195,7 +197,7 @@
             <form id="createModuleForm"
                   action="${pageContext.request.contextPath}/instructor/courses/modules?action=create" method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createModuleModalLabel">Create New Module</h5>
+                    <h1 class="modal-title" id="createModuleModalLabel">Create New Module</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -224,7 +226,7 @@
                   action="${pageContext.request.contextPath}/instructor/courses/modules?action=update" method="POST"
                   class="modal-content bg-white">
                 <div class="modal-header">
-                    <h5 class="modal-title">Update Module</h5>
+                    <h1 class="modal-title">Update Module</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -260,7 +262,7 @@
                     <p>Are you sure you want to delete <strong>${module.moduleName}</strong>?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
@@ -268,80 +270,80 @@
     </div>
 </c:forEach>
 
-<!-- Check Create Input-->
-<%--<script>--%>
-<%--    document.addEventListener("DOMContentLoaded", function () {--%>
-<%--        const form = document.getElementById("createModuleForm");--%>
+<%--<!-- Check Create Input-->--%>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("createModuleForm");
 
-<%--        form.addEventListener("submit", function (e) {--%>
-<%--            const nameInput = document.getElementById("moduleName");--%>
-<%--            const name = nameInput.value.trim();--%>
+        form.addEventListener("submit", function (e) {
+            const nameInput = document.getElementById("moduleName");
+            const name = nameInput.value.trim();
 
-<%--            const spaceOnlyRegex = /^(?!.* {2,}).+$/u;--%>
+            const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
-<%--            if (!spaceOnlyRegex.test(name)) {--%>
-<%--                showJsToast("Module name must not contain consecutive spaces.");--%>
-<%--                nameInput.focus();--%>
-<%--                e.preventDefault();--%>
-<%--                return;--%>
-<%--            }--%>
+            if (!spaceOnlyRegex.test(name)) {
+                showJsToast("Module name must not contain consecutive spaces.");
+                nameInput.focus();
+                e.preventDefault();
+                return;
+            }
 
-<%--            if (!name) {--%>
-<%--                showJsToast("Module Name is required.");--%>
-<%--                nameInput.focus();--%>
-<%--                e.preventDefault();--%>
-<%--                return;--%>
-<%--            }--%>
+            if (!name) {
+                showJsToast("Module Name is required.");
+                nameInput.focus();
+                e.preventDefault();
+                return;
+            }
 
-<%--            if (name.length > 30) {--%>
-<%--                showJsToast("Content must not exceed 30 characters.");--%>
-<%--                nameInput.focus();--%>
-<%--                e.preventDefault();--%>
-<%--                return;--%>
-<%--            }--%>
+            if (name.length > 30) {
+                showJsToast("Content must not exceed 30 characters.");
+                nameInput.focus();
+                e.preventDefault();
+                return;
+            }
 
-<%--            nameInput.value = name;--%>
-<%--        });--%>
-<%--    });--%>
-<%--</script>--%>
+            nameInput.value = name;
+        });
+    });
+</script>
 
-<%--<!-- Check Update Input-->--%>
-<%--<script>--%>
-<%--    document.addEventListener("DOMContentLoaded", function () {--%>
-<%--        document.querySelectorAll("form[id^='updateModuleForm']").forEach(function (form) {--%>
-<%--            form.addEventListener("submit", function (e) {--%>
-<%--                const moduleID = form.id.replace("updateModuleForm", "");--%>
-<%--                const nameInput = document.getElementById("updateModuleName" + moduleID);--%>
-<%--                const name = nameInput.value.trim();--%>
+<!-- Check Update Input-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("form[id^='updateModuleForm']").forEach(function (form) {
+            form.addEventListener("submit", function (e) {
+                const moduleID = form.id.replace("updateModuleForm", "");
+                const nameInput = document.getElementById("updateModuleName" + moduleID);
+                const name = nameInput.value.trim();
 
-<%--                const spaceOnlyRegex = /^(?!.* {2,}).+$/u;--%>
+                const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
-<%--                if (!spaceOnlyRegex.test(name)) {--%>
-<%--                    showJsToast("Module name must not contain consecutive spaces.");--%>
-<%--                    nameInput.focus();--%>
-<%--                    e.preventDefault();--%>
-<%--                    return;--%>
-<%--                }--%>
+                if (!spaceOnlyRegex.test(name)) {
+                    showJsToast("Module name must not contain consecutive spaces.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
 
-<%--                if (!name) {--%>
-<%--                    showJsToast("Course Name is required.");--%>
-<%--                    nameInput.focus();--%>
-<%--                    e.preventDefault();--%>
-<%--                    return;--%>
-<%--                }--%>
+                if (!name) {
+                    showJsToast("Course Name is required.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
 
-<%--                if (name.length > 30) {--%>
-<%--                    showJsToast("Content must not exceed 30 characters.");--%>
-<%--                    nameInput.focus();--%>
-<%--                    e.preventDefault();--%>
-<%--                    return;--%>
-<%--                }--%>
+                if (name.length > 30) {
+                    showJsToast("Content must not exceed 30 characters.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
 
-<%--                nameInput.value = name;--%>
-<%--            });--%>
-<%--        });--%>
-<%--    });--%>
-<%--</script>--%>
+                nameInput.value = name;
+            });
+        });
+    });
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
