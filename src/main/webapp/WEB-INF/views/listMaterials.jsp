@@ -36,8 +36,7 @@
                 padding-left: 0;
                 padding-right: 0;
                 margin-left: 0;
-            }
-
+            };
         </style>
     </head>
     <body>

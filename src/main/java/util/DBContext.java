@@ -24,7 +24,7 @@ public class DBContext {
 //                    + "password=Group3SWP391!;"
 //                    + "encrypt=true;trustServerCertificate=false;loginTimeout=30;";
             String dbURL = "jdbc:sqlserver://localhost:1433;"
-                    + "databaseName=FLearn;"
+                    + "databaseName=FLearn1;"
                     + "user=sa;"
                     + "password=123456;"
                     + "encrypt=false;trustServerCertificate=true;loginTimeout=30;";

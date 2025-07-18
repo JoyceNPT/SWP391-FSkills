@@ -152,31 +152,7 @@
                 </div>
             </section>
         </main>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const userBtn = document.getElementById("userMenuBtn");
-                const dropdown = document.getElementById("userDropdownMenu");
-
-                userBtn.addEventListener("click", function (e) {
-                    e.stopPropagation();
-                    dropdown.classList.toggle("dropdown-open");
-                });
-
-                window.addEventListener("click", function () {
-                    dropdown.classList.remove("dropdown-open");
-                });
-
-                dropdown.addEventListener("click", function (e) {
-                    e.stopPropagation();
-                });
-            });
-        </script>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                formatUtcToVietnamese(".datetime");
-            });
-        </script>
+        
 
         <script>
             // Script to ensure proper sidebar hover behavior
