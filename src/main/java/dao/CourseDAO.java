@@ -702,6 +702,20 @@ public class CourseDAO extends DBContext {
         return course;
     }
 
+    public int getTotalCoursesCountAdmin() {
+        String sql = "SELECT COUNT(*) as total FROM Courses";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
     public Course getCourseByCourseIDAdmin(int courseID) throws SQLException {
         String sql = "SELECT c.*, "
                 + "cat.category_id, cat.category_name, "
@@ -725,7 +739,6 @@ public class CourseDAO extends DBContext {
                 ModuleDAO moduleDAO = new ModuleDAO();
                 List<Module> modules = moduleDAO.getModulesByCourseIDAdmin(courseID);
                 course.setModules(modules);
-
                 return course;
             }
         } catch (SQLException e) {
@@ -738,7 +751,7 @@ public class CourseDAO extends DBContext {
         String checkEnrollmentSql = "SELECT COUNT(*) AS enrolledCount FROM Enroll WHERE CourseID = ?";
         String deleteCourseSql = "DELETE FROM Courses WHERE CourseID = ?";
 
-        try (PreparedStatement checkPs = conn.prepareStatement(checkEnrollmentSql)) {
+        try ( PreparedStatement checkPs = conn.prepareStatement(checkEnrollmentSql)) {
             checkPs.setInt(1, courseID);
             ResultSet rs = checkPs.executeQuery();
 
@@ -782,7 +795,8 @@ public class CourseDAO extends DBContext {
                 + "ORDER BY c.PublicDate DESC "
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, offset);
             ps.setInt(2, pageSize);
             ResultSet rs = ps.executeQuery();
@@ -801,7 +815,7 @@ public class CourseDAO extends DBContext {
     public boolean updateCourseStatus(int courseID, int status) {
         String sql = "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE() WHERE CourseID = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, status);
             ps.setInt(2, courseID);
 
@@ -812,7 +826,6 @@ public class CourseDAO extends DBContext {
             return false;
         }
     }
-
 
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
