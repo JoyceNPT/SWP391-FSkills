@@ -249,7 +249,10 @@ public class MaterialDAO extends DBContext {
                     Material material = new Material();
                     material.setMaterialId(rs.getInt("materialId"));
                     material.setMaterialName(rs.getString("materialName"));
-                    material.setModule(new Module(rs.getInt("moduleID"), rs.getString("moduleName"), null));
+		    // Create a simple module object with just the ID since module name is not needed here
+                    Module module = new Module();
+                    module.setModuleID(rs.getInt("moduleID"));
+                    material.setModule(module);
                     material.setType(rs.getString("type"));
                     material.setMaterialLastUpdate(rs.getTimestamp("materialLastUpdate"));
                     material.setMaterialOrder(rs.getInt("materialOrder"));
@@ -258,13 +261,11 @@ public class MaterialDAO extends DBContext {
                     material.setMaterialUrl(rs.getString("materialUrl"));
                     material.setMaterialFile(rs.getBytes("materialFile"));
                     material.setFileName(rs.getString("fileName"));
-
                     // Encode PDF file to base64 (nếu cần)
                     if ("pdf".equalsIgnoreCase(material.getType()) && material.getMaterialFile() != null) {
                         String base64 = java.util.Base64.getEncoder().encodeToString(material.getMaterialFile());
                         material.setPdfDataURI("data:application/pdf;base64," + base64);
                     }
-
                     materials.add(material);
                 }
             }
@@ -358,19 +359,19 @@ public class MaterialDAO extends DBContext {
                 + "WHERE mo.ModuleID = ?\n"
                 + "AND c.CourseID = ?";
 
-        try {
+	try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, moduleId);
+	    ps.setInt(1, moduleId);
             ps.setInt(2, courseId);
-            ResultSet rs = ps.executeQuery();
+	    ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                count = rs.getInt(1);
+	    count = rs.getInt(1);
             }
 
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
-        return count;
+	return count;
     }
 
 
