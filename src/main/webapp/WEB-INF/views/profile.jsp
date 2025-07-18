@@ -100,7 +100,17 @@
                 <div class="profile-card">
                     <div class="profile-header">
                         <div class="avatar">
-                            <img src="${profile.imageDataURI}" alt="Avatar">
+                            <c:choose>
+                                <c:when test="${not empty profile.imageDataURI}">
+                                    <img src="${profile.imageDataURI}" alt="Avatar">
+                                </c:when>
+                                <c:when test="${not empty profile.avatarUrl}">
+                                    <img src="${profile.avatarUrl}" alt="Avatar">
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/images/default-avatar.png" alt="Default Avatar">
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                         <div class="user-info">
                             <h2><c:out value="${profile.displayName}"/></h2>
