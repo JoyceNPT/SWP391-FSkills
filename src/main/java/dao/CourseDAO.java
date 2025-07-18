@@ -702,20 +702,6 @@ public class CourseDAO extends DBContext {
         return course;
     }
 
-    public int getTotalCoursesCountAdmin() {
-        String sql = "SELECT COUNT(*) as total FROM Courses";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("total");
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return 0;
-    }
-
     public Course getCourseByCourseIDAdmin(int courseID) throws SQLException {
         String sql = "SELECT c.*, "
                 + "cat.category_id, cat.category_name, "
