@@ -61,8 +61,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="originalPrice" class="form-label">Original Price (Thousand VND)</label>
-                    <input type="number" class="form-control" id="originalPrice" name="originalPrice" min="0" max="10000" required>
+                    <label for="originalPrice" class="form-label">Original Price</label>
+                    <input type="number" class="form-control" id="originalPrice" name="originalPrice" min="0" max="10000000" required>
                 </div>
 
                 <%--        <div class="mb-3">--%>
@@ -183,8 +183,8 @@
                         return;
                     }
 
-                    if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000) {
-                        showJsToast("Original Price must be between 0 and 10,000 (Thousand VND).");
+                    if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000000) {
+                        showJsToast("Original Price must be between 0 and 10,000,000.");
                         originalPriceInput.focus();
                         e.preventDefault();
                         return;
