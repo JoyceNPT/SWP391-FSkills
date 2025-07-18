@@ -582,6 +582,20 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
+    public int getTotalCoursesCountAdmin() {
+        String sql = "SELECT COUNT(*) as total FROM Courses";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
     public int getSearchCoursesCount(String keyword) {
         String sql = "SELECT COUNT(*) as total FROM Courses c "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
@@ -713,7 +727,7 @@ public class CourseDAO extends DBContext {
                 + "LEFT JOIN (SELECT CourseID, COUNT(*) AS TotalEnrolled FROM Enroll GROUP BY CourseID) e ON c.CourseID = e.CourseID "
                 + "WHERE c.CourseID = ?";
 
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
 
@@ -744,7 +758,7 @@ public class CourseDAO extends DBContext {
             if (rs.next()) {
                 int enrolledCount = rs.getInt("enrolledCount");
                 if (enrolledCount > 0) {
-                    return -1;
+                    return -1; // Course has enrollments
                 }
             }
 
@@ -752,15 +766,16 @@ public class CourseDAO extends DBContext {
             ModuleDAO moduleDAO = new ModuleDAO();
             moduleDAO.deleteModulesByCourseIDAdmin(courseID);
 
-            try ( PreparedStatement deletePs = conn.prepareStatement(deleteCourseSql)) {
+            // Then delete the course
+            try (PreparedStatement deletePs = conn.prepareStatement(deleteCourseSql)) {
                 deletePs.setInt(1, courseID);
                 int rowsAffected = deletePs.executeUpdate();
-                return rowsAffected > 0 ? 1 : 0;
+                return rowsAffected > 0 ? 1 : 0; // 1 if deleted, 0 if not found
             }
 
         } catch (SQLException e) {
             System.out.println("Error in deleteCourseAdmin: " + e.getMessage());
-            return -2;
+            return -2; // SQL error
         }
     }
 
@@ -781,6 +796,7 @@ public class CourseDAO extends DBContext {
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, offset);
             ps.setInt(2, pageSize);
             ResultSet rs = ps.executeQuery();
@@ -788,7 +804,6 @@ public class CourseDAO extends DBContext {
             while (rs.next()) {
                 Course course = buildCourseFromResultSet(rs);
                 course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
-                //course.setStatus(rs.getInt("Status"));
                 list.add(course);
             }
         } catch (Exception e) {

@@ -237,7 +237,7 @@ public class MaterialDAO extends DBContext {
         return 0;
     }
 
-    public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
+     public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
         List<Material> materials = new ArrayList<>();
         String query = "SELECT materialId, materialName, moduleID, type, materialLastUpdate, "
                 + "materialOrder, time, materialDescription, materialUrl, materialFile, fileName "
@@ -249,7 +249,8 @@ public class MaterialDAO extends DBContext {
                     Material material = new Material();
                     material.setMaterialId(rs.getInt("materialId"));
                     material.setMaterialName(rs.getString("materialName"));
-		    // Create a simple module object with just the ID since module name is not needed here
+
+                    // Create a simple module object with just the ID since module name is not needed here
                     Module module = new Module();
                     module.setModuleID(rs.getInt("moduleID"));
                     material.setModule(module);
@@ -308,7 +309,6 @@ public class MaterialDAO extends DBContext {
             throw e;
         }
     }
-
     public boolean checkMaterialOrderExists(int materialOrder, int moduleId, int courseId) {
         boolean exists = false;
 
@@ -329,8 +329,8 @@ public class MaterialDAO extends DBContext {
         return exists;
     }
 
-    public boolean checkMaterialOrderExistsForUpdate(int materialOrder, int moduleId, 
-            int courseId,int materialId) {
+    public boolean checkMaterialOrderExistsForUpdate(int materialOrder, int moduleId,
+            int courseId, int materialId) {
         boolean exists = false;
         String sql = "SELECT 1 FROM Materials m JOIN Modules mo ON m.ModuleID = mo.ModuleID "
                 + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
@@ -344,8 +344,7 @@ public class MaterialDAO extends DBContext {
             ps.setInt(4, materialId);
             ResultSet rs = ps.executeQuery();
             exists = rs.next();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
         }
 
         return exists;
@@ -375,26 +374,30 @@ public class MaterialDAO extends DBContext {
     }
 
 
-    public int checkMaterialInCourse(int CourseID) {
-        String sql = "SELECT TOP 1\n" +
-                "m.MaterialID\n" +
-                "FROM Materials m\n" +
-                "JOIN Modules mo ON m.ModuleID = mo.ModuleID\n" +
-                "WHERE mo.CourseID = ?";
+    public int countMaterialOrderConflict(int moduleId, int courseId) {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM Materials m \n"
+                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID \n"
+                + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
+                + "WHERE mo.ModuleID = ?\n"
+                + "AND c.CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, CourseID);
+            ps.setInt(1, moduleId);
+            ps.setInt(2, courseId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return 1;
-            } else {
-                return 0;
+                count = rs.getInt(1);
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
         }
-        return 0;
+
+        return count;
+    }
+
+    public int checkMaterialInCourse(int courseID) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
