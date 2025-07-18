@@ -195,6 +195,8 @@
                                                         <input type="hidden" name="action" value="approve">
                                                         <input type="hidden" name="courseID" value="${course.courseID}">
                                                         <input type="hidden" name="userID" value="${course.user.userId}">
+                                                        <input type="hidden" name="userName" value="${course.user.userName}">
+                                                        <input type="hidden" name="displayName" value="${course.user.displayName}">
                                                         <button type="submit" class="btn btn-success btn-sm d-flex align-items-center justify-content-center"
                                                                 style="height: 40px; width: 40px;">
                                                             <i class="fas fa-paper-plane"></i>
@@ -207,6 +209,8 @@
                                                         <input type="hidden" name="action" value="cancel">
                                                         <input type="hidden" name="courseID" value="${course.courseID}">
                                                         <input type="hidden" name="userID" value="${course.user.userId}">
+                                                        <input type="hidden" name="userName" value="${course.user.userName}">
+                                                        <input type="hidden" name="displayName" value="${course.user.displayName}">
                                                         <button type="submit" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center"
                                                                 style="height: 40px; width: 40px;">
                                                             <i class="fas fa-ban"></i>

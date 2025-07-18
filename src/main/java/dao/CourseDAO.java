@@ -27,7 +27,7 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
 
         String sql = "SELECT\n"
-                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
+                + "u.UserName, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
                 + "c.*,\n"
                 + "cat.category_id, cat.category_name\n"
                 + "FROM Courses c\n"
@@ -42,6 +42,7 @@ public class CourseDAO extends DBContext {
             while (rs.next()) {
                 User user = new User();
                 user.setUserId(userID);
+                user.setUserName(rs.getString("UserName"));
                 user.setDisplayName(rs.getString("DisplayName"));
                 user.setEmail(rs.getString("Email"));
                 user.setPhone(rs.getString("PhoneNumber"));
