@@ -215,12 +215,11 @@
             <i class="bi bi-list text-lg"></i>
         </button>
 
-        <jsp:include page="/layout/sidebar_admin.jsp" />
         <jsp:include page="/layout/header.jsp" />
 
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp" />
-            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
+            <main class="flex-grow p-6 bg-white rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm w-full">
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-2xl font-bold text-gray-800 m-0">List of Vouchers</h2>

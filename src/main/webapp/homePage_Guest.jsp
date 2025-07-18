@@ -57,27 +57,7 @@
     <jsp:include page="/layout/sidebar_user.jsp" />
     <jsp:include page="/layout/header.jsp" />
 
-    <div class="container mx-auto px-4 mt-4">
-        <div class="flex items-center justify-between">
-            <div class="flex-grow flex justify-center">
-                <div class="relative w-full max-w-xl"> 
-                    <input type="search" placeholder="Search for courses..."
-                           class="w-full pl-4 pr-10 py-2.5 border border-gray-200 rounded-full focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all duration-300 ease-in-out">
-                    <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-4">
-                <a href="login" class="hidden sm:inline-block text-secondary hover:text-primary font-semibold transition-colors">Sign In</a>
-                <a href="signup.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
-                    Sign Up
-                </a>
-            </div>
-        </div>
-    </div>
-
     <main>
-
         <section id="home" class="hero-gradient">
             <div class="container mx-auto px-4 py-20 lg:py-32">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
@@ -269,6 +249,75 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+    <script>
+        // Script to ensure proper sidebar hover behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('main');
+            const header = document.querySelector('header');
+
+            // Event handler functions defined outside to allow removal
+            function handleSidebarMouseEnter() {
+                const windowWidth = window.innerWidth;
+                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                if (windowWidth <= 768) {
+                    // Mobile layout
+                    mainContent.style.marginLeft = '250px';
+                    if (header) {
+                        header.style.left = '250px';
+                        header.style.width = 'calc(100% - 266px)';
+                    }
+                } else {
+                    // Desktop layout
+                    mainContent.style.marginLeft = '250px';
+                    if (header) {
+                        header.style.left = '250px';
+                        header.style.width = 'calc(100% - 266px)';
+                    }
+                }
+            }
+
+            function handleSidebarMouseLeave() {
+                const windowWidth = window.innerWidth;
+                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                if (windowWidth <= 768) {
+                    // Mobile layout
+                    mainContent.style.marginLeft = '0';
+                    if (header) {
+                        header.style.left = '0';
+                        header.style.width = 'calc(100% - 16px)';
+                    }
+                } else {
+                    // Desktop layout
+                    mainContent.style.marginLeft = '80px';
+                    if (header) {
+                        header.style.left = '80px';
+                        header.style.width = 'calc(100% - 96px)';
+                    }
+                }
+            }
+
+            // Add event listeners
+            sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+            sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+
+            // Set initial state based on window width
+            handleSidebarMouseLeave();
+
+            // Add resize event listener to handle window size changes
+            window.addEventListener('resize', function() {
+                // Update layout based on current sidebar state
+                if (sidebar.matches(':hover')) {
+                    handleSidebarMouseEnter();
+                } else {
+                    handleSidebarMouseLeave();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

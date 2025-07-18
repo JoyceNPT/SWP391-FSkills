@@ -10,7 +10,7 @@
     z-index: 1000;
     overflow-y: auto;
     transition: width 0.3s ease;
-    padding: 15px 0;
+    padding: 0;
 }
 
 .sidebar:hover {
@@ -21,7 +21,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 0 15px;
+    padding: 15px 15px;
 }
 
 /* Logo styles */
@@ -142,13 +142,25 @@
     margin: 10px 0;
 }
 
-/* Container adjustments for sidebar */
-.profile-edit-container, .header, main, .admin-content, .main, .container, footer {
+/* Container adjustments for sidebar and header */
+/* Áp dụng margin-left cho tất cả các phần tử nội dung chính và header */
+.profile-edit-container,
+.header, /* Đảm bảo .header được bao gồm */
+main,
+.admin-content,
+.main,
+.container,
+footer,
+.main-content {
     margin-left: 80px !important; /* Initial distance from sidebar */
-    transition: margin-left 0.2s ease, max-width 0.2s ease, width 0.2s ease;
+    width: calc(100% - 96px); /* Initial width for fixed header and content based on sidebar */
+    transition: margin-left 0.3s ease, width 0.3s ease; /* Smooth transition */
 }
 
-.sidebar:hover + .profile-edit-container,
+/* Khi sidebar hover, điều chỉnh margin-left và width của header và các phần tử nội dung chính */
+.sidebar:hover + .profile-edit-container, /* Thêm vào đây */
+.sidebar:hover ~ .profile-edit-container, /* Thêm vào đây */
+.sidebar:hover ~ body .profile-edit-container, /* Thêm vào đây */
 .sidebar:hover ~ .header,
 .sidebar:hover ~ main,
 .sidebar:hover ~ .admin-content,
@@ -156,6 +168,7 @@
 .sidebar:hover ~ .main,
 .sidebar:hover ~ .container,
 .sidebar:hover ~ footer,
+    /* Các selector cho trường hợp header/main-content là sibling trực tiếp của div (ví dụ: layout cha chứa cả sidebar và main-content) */
 .sidebar:hover + div .header,
 .sidebar:hover + div main,
 .sidebar:hover + div .admin-content,
@@ -163,11 +176,10 @@
 .sidebar:hover + div .main,
 .sidebar:hover + div .container,
 .sidebar:hover + div footer,
-.sidebar:hover + header,
-.sidebar:hover ~ header {
+    /* Selector cho trường hợp header là sibling trực tiếp của sidebar */
+.sidebar:hover + header {
     margin-left: 250px !important; /* Move right when sidebar expands */
-    width: calc(100% - 250px) !important; /* Use width instead of max-width to prevent scaling */
-    transition: margin-left 0.2s ease, width 0.2s ease; /* Smooth transition */
+    width: calc(100% - 266px) !important; /* 100% - (250px sidebar width + 8px*2 header margin) = 100% - 266px */
 }
 
 /* Hide bell icon in admin header */
@@ -210,13 +222,15 @@
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
-    .profile-edit-container, .header, main, .admin-content, .main, .container, footer {
+    .profile-edit-container, .header, main, .admin-content, .main, .container, footer, .main-content {
         margin-left: 80px !important;
-        max-width: calc(100% - 80px);
-        transition: margin-left 0.2s ease, max-width 0.2s ease, width 0.2s ease;
+        width: calc(100% - 96px); /* Adjusted width for smaller screens */
+        transition: margin-left 0.3s ease, width 0.3s ease;
     }
 
-    .sidebar:hover + .profile-edit-container,
+    .sidebar:hover + .profile-edit-container, /* Thêm vào đây */
+    .sidebar:hover ~ .profile-edit-container, /* Thêm vào đây */
+    .sidebar:hover ~ body .profile-edit-container, /* Thêm vào đây */
     .sidebar:hover ~ .header,
     .sidebar:hover ~ main,
     .sidebar:hover ~ .admin-content,
@@ -229,12 +243,9 @@
     .sidebar:hover + div .main,
     .sidebar:hover + div .container,
     .sidebar:hover + div footer,
-    .sidebar:hover + header,
-    .sidebar:hover ~ header {
+    .sidebar:hover + header {
         margin-left: 250px !important;
-        max-width: calc(100% - 250px);
-        width: calc(100% - 250px) !important;
-        transition: margin-left 0.2s ease, max-width 0.2s ease, width 0.2s ease;
+        width: calc(100% - 266px) !important;
     }
 }
 
@@ -248,13 +259,15 @@
         width: 250px;
     }
 
-    .profile-edit-container, .header, main, .admin-content, .main, .container, footer {
-        margin-left: 0 !important;
-        max-width: 100%;
-        transition: margin-left 0.2s ease, max-width 0.2s ease, width 0.2s ease;
+    .profile-edit-container, .header, main, .admin-content, .main, .container, footer, .main-content {
+        margin-left: 0 !important; /* No left margin when sidebar is hidden */
+        width: calc(100% - 16px) !important; /* Full width minus only the 8px margins on header */
+        transition: margin-left 0.3s ease, width 0.3s ease;
     }
 
-    .sidebar:hover + .profile-edit-container,
+    .sidebar:hover + .profile-edit-container, /* Thêm vào đây */
+    .sidebar:hover ~ .profile-edit-container, /* Thêm vào đây */
+    .sidebar:hover ~ body .profile-edit-container, /* Thêm vào đây */
     .sidebar:hover ~ .header,
     .sidebar:hover ~ main,
     .sidebar:hover ~ .admin-content,
@@ -267,12 +280,9 @@
     .sidebar:hover + div .main,
     .sidebar:hover + div .container,
     .sidebar:hover + div footer,
-    .sidebar:hover + header,
-    .sidebar:hover ~ header {
+    .sidebar:hover + header {
         margin-left: 250px !important;
-        max-width: calc(100% - 250px);
-        width: calc(100% - 250px) !important;
-        transition: margin-left 0.2s ease, max-width 0.2s ease, width 0.2s ease;
+        width: calc(100% - 266px) !important;
     }
 }
 

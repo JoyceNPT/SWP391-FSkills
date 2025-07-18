@@ -65,7 +65,7 @@
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp" />
 
-            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
+            <main class="flex-grow p-6 bg-white rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h2 class="text-xl font-semibold mb-4 text-gray-800">Tạo Thông Báo Công Khai</h2>
                     <div class="flex items-center space-x-4 mb-4">

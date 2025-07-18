@@ -66,7 +66,7 @@
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp"/>
 
-            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
+            <main class="flex-grow p-6 bg-white rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm">
                     <div class=" text-end">
                         <button type="button"

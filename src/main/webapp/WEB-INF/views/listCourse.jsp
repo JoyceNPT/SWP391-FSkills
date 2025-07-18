@@ -165,7 +165,7 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="fw-bold fs-6">
-                                                            <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
+                                                            <fmt:formatNumber value="${course.originalPrice}" pattern="#,##0"/> VND
                                                         </span>
                                                     </c:otherwise>
                                                 </c:choose>
@@ -177,18 +177,22 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
 
-                                                <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
-                                                   class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
-                                                   style="height: 40px; width: 40px;">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
+                                                <c:if test="${course.approveStatus != 2}">
+                                                    <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
+                                                       class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                                                       style="height: 40px; width: 40px;">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </c:if>
 
-                                                <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                                                        style="height: 40px; width: 40px;"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal${course.courseID}">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
+                                                <c:if test="${course.approveStatus != 3}">
+                                                    <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
+                                                            style="height: 40px; width: 40px;"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deleteModal${course.courseID}">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </c:if>
 
                                                 <c:if test="${course.approveStatus == 0}">
                                                     <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
@@ -243,7 +247,7 @@
                                 <p>Are you sure you want to delete <strong>${course.courseName}</strong>?</p>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             </div>
                         </form>
@@ -257,10 +261,78 @@
                 });
             </script>
 
+            <script>
+                // Script to ensure proper sidebar hover behavior
+                document.addEventListener('DOMContentLoaded', function() {
+                    const sidebar = document.querySelector('.sidebar');
+                    const mainContent = document.querySelector('.main');
+                    const header = document.querySelector('header');
+
+                    // Event handler functions defined outside to allow removal
+                    function handleSidebarMouseEnter() {
+                        const windowWidth = window.innerWidth;
+                        mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                        if (windowWidth <= 768) {
+                            // Mobile layout
+                            mainContent.style.marginLeft = '250px';
+                            if (header) {
+                                header.style.left = '250px';
+                                header.style.width = 'calc(100% - 266px)';
+                            }
+                        } else {
+                            // Desktop layout
+                            mainContent.style.marginLeft = '250px';
+                            if (header) {
+                                header.style.left = '250px';
+                                header.style.width = 'calc(100% - 266px)';
+                            }
+                        }
+                    }
+
+                    function handleSidebarMouseLeave() {
+                        const windowWidth = window.innerWidth;
+                        mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+                        if (windowWidth <= 768) {
+                            // Mobile layout
+                            mainContent.style.marginLeft = '0';
+                            if (header) {
+                                header.style.left = '0';
+                                header.style.width = 'calc(100% - 16px)';
+                            }
+                        } else {
+                            // Desktop layout
+                            mainContent.style.marginLeft = '80px';
+                            if (header) {
+                                header.style.left = '80px';
+                                header.style.width = 'calc(100% - 96px)';
+                            }
+                        }
+                    }
+
+                    // Add event listeners
+                    sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+                    sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+
+                    // Set initial state based on window width
+                    handleSidebarMouseLeave();
+
+                    // Add resize event listener to handle window size changes
+                    window.addEventListener('resize', function() {
+                        // Update layout based on current sidebar state
+                        if (sidebar.matches(':hover')) {
+                            handleSidebarMouseEnter();
+                        } else {
+                            handleSidebarMouseLeave();
+                        }
+                    });
+                });
+            </script>
+
             <jsp:include page="/layout/toast.jsp" />
             <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
             <!-- Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
         </body>
     </html>

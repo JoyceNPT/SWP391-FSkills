@@ -209,11 +209,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (originalPrice > 10000) {
+                if (originalPrice > 10000000) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Original Price is not greater than 10,000 (Ten million)!");
+                    request.setAttribute("err", "Create failed: Original Price is not greater than 10,000,000!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -336,7 +336,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (originalPrice > 10000) {
+                if (originalPrice > 10000000) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);

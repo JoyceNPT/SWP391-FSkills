@@ -114,7 +114,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                 moduleId = Integer.parseInt(module);
                 Module mo = mdao.getModuleByID(moduleId);
                 String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
-
+                
                 request.setAttribute("module", mo);
                 session.setAttribute("apiKey", YOUTUBE_API_KEY);
                 request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
@@ -124,7 +124,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                 Material ma = madao.getMaterialById(materialId);
                 Module mo = mdao.getModuleByID(moduleId);
                 String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
-
+                
                 session.setAttribute("apiKey", YOUTUBE_API_KEY);
                 request.setAttribute("material", ma);
                 request.setAttribute("module", mo);
@@ -477,8 +477,8 @@ public class InstructorMaterialServlet extends HttpServlet {
                         return;
                     }
 
-                    boolean isExisted = madao.checkMaterialOrderExistsForUpdate(materialOrder,
-                            moduleId, courseId, materialId);
+                    boolean isExisted = madao.checkMaterialOrderExistsForUpdate(materialOrder, 
+                            moduleId, courseId,materialId);
 
                     if (isExisted) {
                         moduleId = Integer.parseInt(module);
@@ -491,7 +491,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                         request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
                         return;
                     }
-
+                    
                 } catch (NumberFormatException e) {
                     moduleId = Integer.parseInt(module);
                     materialId = Integer.parseInt(material);
