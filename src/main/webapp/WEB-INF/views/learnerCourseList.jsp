@@ -11,9 +11,6 @@
     <link rel="stylesheet" href="/FSkills/css/sidebar.css">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #2ecc71;
             --background-color: #f8f9fa;
             --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
@@ -29,7 +26,7 @@
         .h1 {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: #2c3e50;
             text-align: center;
             margin: 2rem 0 1.5rem;
         }
@@ -37,7 +34,7 @@
         .section-title {
             font-size: 1.8rem;
             font-weight: 600;
-            color: var(--primary-color);
+            color: #2c3e50;
             margin: 2rem 0 1rem;
         }
 
@@ -68,7 +65,7 @@
 
         .progress-bar-fill {
             height: 100%;
-            background-color: var(--success-color);
+            background-color: #2ecc71;
             transition: width 0.3s ease;
         }
 
@@ -91,6 +88,37 @@
         .course-card .w-8 {
             width: 24px;
             height: 24px;
+        }
+
+        .course-card .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .course-card .btn-detail {
+            background-color: #e5e7eb; /* bg-gray-200 */
+            color: #1f2937; /* text-gray-800 */
+            border: none;
+        }
+
+        .course-card .btn-detail:hover {
+            background-color: #d1d5db; /* hover:bg-gray-300 */
+        }
+
+        .course-card .btn-resume,
+        .course-card .btn-enroll,
+        .course-card .btn-revisit {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+            border: none;
+        }
+
+        .course-card .btn-resume:hover,
+        .course-card .btn-enroll:hover,
+        .course-card .btn-revisit:hover {
+            background-color: #1e40af; /* hover:bg-blue-700 */
         }
     </style>
 </head>
@@ -122,16 +150,16 @@
                 <c:otherwise>
                     <div class="course-grid">
                         <c:forEach var="course" items="${inProgressCourses}" varStatus="loop">
-                            <a href="${pageContext.request.contextPath}/learner/course?courseID=${course.courseID}" class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden group flex flex-col course-card">
+                            <div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col course-card">
                                 <div class="overflow-hidden">
                                     <img src="${course.imageDataURI}"
                                          alt="${course.courseName}"
-                                         class="w-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                         class="w-full object-cover transition-transform duration-500"
                                          onerror="this.src='https://placehold.co/600x400/38bdf8/ffffff?text=Course'">
                                 </div>
                                 <div class="p-5 flex flex-col flex-grow">
                                     <p class="text-sm font-semibold text-primary mb-2">${course.category.name}</p>
-                                    <h3 class="font-bold leading-tight text-gray-800 group-hover:text-primary-dark transition-colors flex-grow">
+                                    <h3 class="font-bold leading-tight text-gray-800 flex-grow">
                                         ${course.courseName}
                                     </h3>
                                     <div class="progress-bar">
@@ -156,8 +184,12 @@
                                             <span class="text-gray-600">${course.user.displayName}</span>
                                         </div>
                                     </div>
+                                    <div class="mt-3 d-flex gap-2">
+                                        <a href="${pageContext.request.contextPath}/courseDetail?id=${course.courseID}" class="btn btn-detail">Course Detail</a>
+                                        <a href="${pageContext.request.contextPath}/learner/course?courseID=${course.courseID}" class="btn btn-resume">Resume</a>
+                                    </div>
                                 </div>
-                            </a>
+                            </div>
                         </c:forEach>
                     </div>
                 </c:otherwise>
@@ -174,16 +206,16 @@
                 <c:otherwise>
                     <div class="course-grid">
                         <c:forEach var="course" items="${availableCourses}">
-                            <a href="${pageContext.request.contextPath}/courseDetail?id=${course.courseID}" class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden group flex flex-col course-card">
+                            <div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col course-card">
                                 <div class="overflow-hidden">
                                     <img src="${course.imageDataURI}"
                                          alt="${course.courseName}"
-                                         class="w-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                         class="w-full object-cover transition-transform duration-500"
                                          onerror="this.src='https://placehold.co/600x400/38bdf8/ffffff?text=Course'">
                                 </div>
                                 <div class="p-5 flex flex-col flex-grow">
                                     <p class="text-sm font-semibold text-primary mb-2">${course.category.name}</p>
-                                    <h3 class="font-bold leading-tight text-gray-800 group-hover:text-primary-dark transition-colors flex-grow">
+                                    <h3 class="font-bold leading-tight text-gray-800 flex-grow">
                                         ${course.courseName}
                                     </h3>
                                     <div class="mt-4 pt-4 border-t border-gray-100 flex items-center">
@@ -204,8 +236,14 @@
                                             <span class="text-gray-600">${course.user.displayName}</span>
                                         </div>
                                     </div>
+                                    <div class="mt-3 d-flex gap-2">
+                                        <a href="${pageContext.request.contextPath}/courseDetail?id=${course.courseID}" class="btn btn-detail">Course Detail</a>
+                                        <form method="POST" action="<%= request.getContextPath()%>/learner/course">
+                                            <button type="submit" name="AddEnroll" value="${course.courseID}" class="btn btn-enroll">Enroll</button>
+                                        </form>
+                                    </div>
                                 </div>
-                            </a>
+                            </div>
                         </c:forEach>
                     </div>
                 </c:otherwise>
@@ -222,16 +260,16 @@
                 <c:otherwise>
                     <div class="course-grid">
                         <c:forEach var="course" items="${completedCourses}">
-                            <a href="${pageContext.request.contextPath}/learner/course?courseID=${course.courseID}" class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden group flex flex-col course-card">
+                            <div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col course-card">
                                 <div class="overflow-hidden">
                                     <img src="${course.imageDataURI}"
                                          alt="${course.courseName}"
-                                         class="w-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                         class="w-full object-cover transition-transform duration-500"
                                          onerror="this.src='https://placehold.co/600x400/38bdf8/ffffff?text=Course'">
                                 </div>
                                 <div class="p-5 flex flex-col flex-grow">
                                     <p class="text-sm font-semibold text-primary mb-2">${course.category.name}</p>
-                                    <h3 class="font-bold leading-tight text-gray-800 group-hover:text-primary-dark transition-colors flex-grow">
+                                    <h3 class="font-bold leading-tight text-gray-800 flex-grow">
                                         ${course.courseName}
                                     </h3>
                                     <p class="text-gray-600 mt-1">Completed</p>
@@ -253,8 +291,12 @@
                                             <span class="text-gray-600">${course.user.displayName}</span>
                                         </div>
                                     </div>
+                                    <div class="mt-3 d-flex gap-2">
+                                        <a href="${pageContext.request.contextPath}/courseDetail?id=${course.courseID}" class="btn btn-detail">Course Detail</a>
+                                        <a href="${pageContext.request.contextPath}/learner/course?courseID=${course.courseID}" class="btn btn-revisit">Revisit</a>
+                                    </div>
                                 </div>
-                            </a>
+                            </div>
                         </c:forEach>
                     </div>
                 </c:otherwise>

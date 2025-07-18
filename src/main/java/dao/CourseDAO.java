@@ -27,7 +27,7 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
 
         String sql = "SELECT\n"
-                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
+                + "u.UserName, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
                 + "c.*,\n"
                 + "cat.category_id, cat.category_name\n"
                 + "FROM Courses c\n"
@@ -42,6 +42,7 @@ public class CourseDAO extends DBContext {
             while (rs.next()) {
                 User user = new User();
                 user.setUserId(userID);
+                user.setUserName(rs.getString("UserName"));
                 user.setDisplayName(rs.getString("DisplayName"));
                 user.setEmail(rs.getString("Email"));
                 user.setPhone(rs.getString("PhoneNumber"));
@@ -170,12 +171,11 @@ public class CourseDAO extends DBContext {
     public Course getCourseByCourseID(int courseID) {
 
         String sql = "SELECT c.*,\n"
-                + "cat.category_name,\n"
-                + "u.DisplayName\n"
+                + "cat.category_name\n"
                 + "FROM Courses c\n"
-                + "JOIN Users u ON c.UserID = u.UserID\n"
                 + "JOIN Category cat ON c.category_id = cat.category_id\n"
                 + "WHERE c.CourseID = ?";
+        UserDAO userDAO = new UserDAO();
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -183,8 +183,7 @@ public class CourseDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                User user = new User();
-                user.setDisplayName(rs.getNString("DisplayName"));
+                User user = userDAO.getByUserID(rs.getInt("UserID"));
 
                 Category category = new Category();
                 category.setId(rs.getInt("category_id"));

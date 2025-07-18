@@ -143,6 +143,7 @@ public class InstructorCourseServlet extends HttpServlet {
         UserDAO uDao = new UserDAO();
         ModuleDAO mDao = new ModuleDAO();
         MaterialDAO matDao = new MaterialDAO();
+        NotificationDAO notiDao = new NotificationDAO();
 
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String action = request.getParameter("action");
@@ -459,11 +460,11 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 Course course = cDao.getCourseByCourseID(courseID);
 
-                if (course  != null) {
+                if (course != null) {
                     int hasModule = mDao.checkModuleByCourseID(courseID);
                     int hasMaterial = matDao.checkMaterialInCourse(courseID);
 
-                    if(hasModule < 1 || hasMaterial < 1){
+                    if (hasModule < 1 || hasMaterial < 1) {
                         List<Course> list = cDao.getCourseByUserID(userID);
 
                         request.setAttribute("listCourse", list);
@@ -475,8 +476,14 @@ public class InstructorCourseServlet extends HttpServlet {
                     int submit = cDao.submitCourseApprove(courseID);
 
                     if (submit > 0) {
+                        String sender = request.getParameter("userName");
+                        String displayName = request.getParameter("displayName");
+                        String notiMess = displayName + "(" + sender + ") has created a new course is " + courseID;
+                        String type = "addCourse";//max10
+                        String link = "http://";
+                        int idAdmin = 5;
+                        notiDao.sendNofication(idAdmin, sender, link, notiMess, type);
                         List<Course> list = cDao.getCourseByUserID(userID);
-
                         request.setAttribute("success", "Submit Course successfully!!!");
                         request.setAttribute("listCourse", list);
                         request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
@@ -500,13 +507,22 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 Course course = cDao.getCourseByCourseID(courseID);
 
-                if (course  != null) {
+                if (course != null) {
 
                     int cancel = cDao.cancelCourseApprove(courseID);
 
                     if (cancel > 0) {
+                        String sender = request.getParameter("userName");
+                        String displayName = request.getParameter("displayName");
+                        String notiMess = displayName + "(" + sender + ") has created a new course is " + courseID;
+                        int deleteId = notiDao.getNotiIdByNotiMess(notiMess);
+                        int row = notiDao.delete(deleteId);
+                        if (row == 0) {
+                            request.setAttribute("err", notiMess + deleteId);
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        }
                         List<Course> list = cDao.getCourseByUserID(userID);
-
                         request.setAttribute("success", "Cancel Course successfully!!!");
                         request.setAttribute("listCourse", list);
                         request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);

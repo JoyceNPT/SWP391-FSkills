@@ -60,8 +60,10 @@
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
+                                    <th></th>
                                     <th>Course Name</th>
+                                    <th>Category</th>
+                                    <th>Instructor Name</th>
                                     <th>Price</th>
                                 </tr>
                             </thead>
@@ -75,6 +77,12 @@
                                         </td>
                                         <td class="align-middle">
                                             <a href="${pageContext.request.contextPath}/courseDetail?id=${course.courseID}">${course.courseName}</a>
+                                        </td>
+                                        <td class="align-middle">
+                                            ${course.category.name}
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="${pageContext.request.contextPath}/userDetail?id=${courseUser[course.courseID].userId}">${courseUser[course.courseID].displayName}</a>
                                         </td>
                                         <td class="align-middle">
                                             <c:choose>

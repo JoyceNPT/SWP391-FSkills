@@ -4,6 +4,7 @@ import dao.CartDAO;
 import dao.CourseDAO;
 import dao.EnrollDAO;
 import dao.ReceiptDAO;
+import dao.UserDAO;
 import dao.VoucherDAO;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -22,6 +23,7 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,6 +42,7 @@ public class CheckoutServlet extends HttpServlet {
     private ReceiptDAO receiptDAO;
     private EnrollDAO enrollDAO;
     private String payCon;
+    private UserDAO userDAO;
 
     @Override
     public void init() throws ServletException {
@@ -139,6 +142,7 @@ public class CheckoutServlet extends HttpServlet {
         }
         List<Course> selectedCourses = new ArrayList<>();
         List<Integer> courseIDs = new ArrayList<>();
+        HashMap<Integer, User> courseUser = new HashMap<>();
         int totalPrice = 0;
 
         if (selectedCartIDs == null || selectedCartIDs.length == 0) {
@@ -155,6 +159,8 @@ public class CheckoutServlet extends HttpServlet {
                     if (course != null) {
                         selectedCourses.add(course);
                         courseIDs.add(course.getCourseID());
+                        courseUser.put(course.getCourseID() ,course.getUser());
+                        System.out.println(course.getUser());
                         totalPrice += (course.getIsSale() == 1) ? course.getSalePrice() : course.getOriginalPrice();
                     }
                 }
@@ -168,6 +174,7 @@ public class CheckoutServlet extends HttpServlet {
         request.setAttribute("selectedCourses", selectedCourses);
         request.setAttribute("totalPrice", totalPrice);
         request.setAttribute("selectedCourseIDs", String.join("-", courseIDs.stream().map(String::valueOf).toArray(String[]::new)));
+        request.setAttribute("courseUser", courseUser);
         payCon = user.getUserId() + " " + String.join("-", courseIDs.stream().map(String::valueOf).toArray(String[]::new)) + " " + totalPrice + " 0";
         request.setAttribute("paymentContent", payCon);
 

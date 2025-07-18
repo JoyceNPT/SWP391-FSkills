@@ -372,8 +372,27 @@ public class MaterialDAO extends DBContext {
         }
 	return count;
     }
+    
+    public int checkMaterialInCourse(int CourseID) {
+        String sql = "SELECT TOP 1\n" +
+                "m.MaterialID\n" +
+                "FROM Materials m\n" +
+                "JOIN Modules mo ON m.ModuleID = mo.ModuleID\n" +
+                "WHERE mo.CourseID = ?";
 
-    public int checkMaterialInCourse(int courseID) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, CourseID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return 1;
+            } else {
+                return 0;
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 }

@@ -186,7 +186,7 @@
 
                                 <div class="mb-6">
                                     <c:choose>  
-                                        <c:when test="${course.salePrice == 0}">
+                                        <c:when test="${course.salePrice == 0 && course.isSale == 1}">
                                             <span class="text-lg font-bold text-green-600">Free</span>
                                         </c:when>
                                         <c:when test="${course.isSale == 1}">                                     
@@ -200,7 +200,7 @@
                                                 </span>
                                             </div>
                                         </c:when>
-                                        <c:when test="${course.originalPrice == 0}">
+                                        <c:when test="${course.originalPrice == 0 && course.isSale == 0}">
                                             <span class="text-3xl font-bold text-green-600">Free</span>
                                         </c:when>
                                         <c:otherwise>
@@ -225,13 +225,6 @@
                                                 </button>
                                             </form>
                                         </c:when>
-                                        <c:when test="${course.salePrice == 0}">
-                                            <form method="POST" action="<%= request.getContextPath()%>/learner/course">
-                                                <button type="submit" name="AddEnroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                                                    Enroll Now
-                                                </button>
-                                            </form>
-                                        </c:when>
                                         <c:when test="${isInCart}">
                                             <form method="POST" action="<%= request.getContextPath()%>/checkout">
                                                 <button type="submit" name="buynowid" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
@@ -241,6 +234,13 @@
                                             <button onclick="location.href='<%= request.getContextPath()%>/cart'" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
                                                 To Cart
                                             </button>
+                                        </c:when>
+                                        <c:when test="${(course.salePrice == 0 && course.isSale == 0) || (course.originalPrice == 0 && course.isSale == 0)}">
+                                            <form method="POST" action="<%= request.getContextPath()%>/learner/course">
+                                                <button type="submit" name="AddEnroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                    Enroll Now
+                                                </button>
+                                            </form>
                                         </c:when>
                                         <c:otherwise>
                                             <form method="POST" action="<%= request.getContextPath()%>/checkout">
