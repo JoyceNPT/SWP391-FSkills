@@ -412,6 +412,55 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
+    public List<Course> searchCourseByName(String input) {
+        List<Course> list = new ArrayList<>();
+        CategoryDAO categoryDAO = new CategoryDAO();
+        UserDAO userDAO = new UserDAO();
+
+        String sql = "SELECT * FROM Courses WHERE CourseName  LIKE ? OR CourseID = ?";
+
+        int courseId;
+        try {
+            courseId = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            courseId = -1;
+        }
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + input + "%");
+            ps.setInt(2, courseId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int categoryId = rs.getInt("category_id");
+                Category category = categoryDAO.getCategoryById(categoryId);
+
+                int userId = rs.getInt("UserID");
+                User user = userDAO.getByUserID(userId);
+
+                Course course = new Course();
+                course.setCourseID(rs.getInt("CourseID"));
+                course.setCourseName(rs.getNString("CourseName"));
+                course.setUser(user);
+                course.setCategory(category);
+                course.setApproveStatus(rs.getInt("ApproveStatus"));
+                course.setPublicDate(rs.getTimestamp("PublicDate"));
+                course.setCourseLastUpdate(rs.getTimestamp("CourseLastUpdate"));
+                course.setSalePrice(rs.getInt("SalePrice"));
+                course.setOriginalPrice(rs.getInt("OriginalPrice"));
+                course.setIsSale(rs.getInt("IsSale"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
+                course.setCourseSummary(rs.getNString("CourseSummary"));
+                course.setCourseHighlight(rs.getNString("CourseHighlight"));
+
+                list.add(course);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
     public int courseUpdateTime(int id) {
         String updateSql = "  UPDATE [dbo].[Courses] SET [CourseLastUpdate] = GETDATE() WHERE [CourseID] = ?;";
         try {
@@ -813,14 +862,14 @@ public class CourseDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        List<Course> list = new ArrayList<>();
+//        List<Course> list = new ArrayList<>();
         CourseDAO dao = new CourseDAO();
-
-        list = dao.getCourseByUserID(3);
-        for (Course course : list) {
-            System.out.println(course);
-        }
-
+//
+//        list = dao.getCourseByUserID(3);
+//        for (Course course : list) {
+//            System.out.println(course);
+//        }
+//
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         System.out.println("UTC time: " + now);
 
@@ -840,7 +889,7 @@ public class CourseDAO extends DBContext {
         Instant nowInstant = Instant.now();
         System.out.println("Instant.now(): " + now);
 
-        List<Course> courseList = dao.getCourseByUserID(3);
+        List<Course> courseList = dao.searchCourseByName("S");
         for (Course course : courseList) {
             System.out.println(course);
         }

@@ -182,11 +182,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (courseName.length() > 30) {
+                if (courseName.length() > 30 || courseName.length() < 10) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
+                    request.setAttribute("err", "Create failed: Course Name must be between 10 and 30 characters.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -196,15 +196,6 @@ public class InstructorCourseServlet extends HttpServlet {
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not contain consecutive spaces.");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
-
-                if (courseName.matches(".*\\d.*")) {
-                    List<Course> list = cDao.getCourseByUserID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -309,11 +300,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (courseName.length() > 30) {
+                if (courseName.length() > 30 || courseName.length() < 10) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
+                    request.setAttribute("err", "Create failed: Course Name must be between 10 and 30 characters.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -323,15 +314,6 @@ public class InstructorCourseServlet extends HttpServlet {
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not contain consecutive spaces.");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
-
-                if (courseName.matches(".*\\d.*")) {
-                    List<Course> list = cDao.getCourseByUserID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -539,6 +521,20 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.setAttribute("err", "Cancel failed: CourseID does not exist!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                 }
+            } else if (action.equalsIgnoreCase("search")) {
+                String inputSearch = request.getParameter("searchCourse");
+                int userId = Integer.parseInt(request.getParameter("userId"));
+
+                List<Course> listCourse;
+
+                if(inputSearch != null && !inputSearch.trim().isEmpty()) {
+                    listCourse = cDao.searchCourseByName(inputSearch.trim());
+                } else {
+                    listCourse = cDao.getCourseByUserID(userId);
+                }
+
+                request.setAttribute("listCourse", listCourse);
+                request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
             }
         }
     }

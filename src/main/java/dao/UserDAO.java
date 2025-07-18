@@ -1142,7 +1142,7 @@ public class UserDAO extends DBContext {
                 boolean isVerified = rs.getBoolean("IsVerified");
                 String GoogleID = rs.getString("GoogleID");
 
-                User acc = new User(userID, userName, displayName, email, password, role, gender, timeCreate, timeCreate, avatar, info, Ban, reportAmount, info, isVerified, GoogleID);
+                User acc = new User(userID, userName, displayName, email, password, role, gender, birthOfDay, timeCreate, avatar, info, Ban, reportAmount, info, isVerified, GoogleID);
                 return acc;
             }
         } catch (Exception e) {
