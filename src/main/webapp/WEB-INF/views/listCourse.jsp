@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
@@ -69,21 +70,28 @@
         <jsp:include page="/layout/header.jsp"/>
 
         <main class="main">
-            <div class="px-5 py-6">
-                <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
-                    <ol class="list-none p-0 inline-flex space-x-2">
-                        <li class="inline-flex items-center">
-                            <a href="${pageContext.request.contextPath}/instructor"
-                               class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
-                        </li>
-                        <li class="inline-flex items-center">
-                            <span class="mx-2 text-gray-400">/</span>
-                        </li>
-                        <li class="inline-flex items-center">
-                            <span class="text-gray-800 font-semibold">Manage Course</span>
-                        </li>
+            <div class="px-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor">Dashboard</a></li>
+                        <li class="breadcrumb-item inline-flex active" aria-current="page">All Courses</li>
                     </ol>
                 </nav>
+
+                <form class="mb-4 d-flex justify-content-center"
+                      action="${pageContext.request.contextPath}/instructor/courses" method="POST" style="max-width: 500px; margin: 0 auto;">
+                    <input type="hidden" name="action" value="search">
+                    <input type="hidden" name="userId" value="${user.userId}">
+
+                    <input type="text" name="searchCourse"
+                           class="form-control form-control-sm me-2"
+                           placeholder="Search by course name or ID"
+                           value="${param.search}" style="height: 32px; font-size: 0.9rem;">
+
+                    <button type="submit" class="btn btn-sm btn-primary" style="height: 32px;">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
@@ -97,7 +105,21 @@
 
                 <c:choose>
                     <c:when test="${empty listCourse}">
-                        <div class="alert alert-warning text-center">No courses available.</div>
+                        <c:choose>
+                            <c:when test="${not empty param.search}">
+                                <div class="alert alert-warning text-center">
+                                    No matching courses found for "<strong>${fn:escapeXml(param.search)}</strong>".
+                                </div>
+                                <div class="text-center">
+                                    <a href="${pageContext.request.contextPath}/instructor/courses" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left"></i> Go Back
+                                    </a>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="alert alert-warning text-center">No courses available.</div>
+                            </c:otherwise>
+                        </c:choose>
                     </c:when>
                     <c:otherwise>
                         <table class="table table-bordered table-hover shadow-sm bg-white rounded">
@@ -263,7 +285,7 @@
 
             <script>
                 // Script to ensure proper sidebar hover behavior
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     const sidebar = document.querySelector('.sidebar');
                     const mainContent = document.querySelector('.main');
                     const header = document.querySelector('header');
@@ -319,7 +341,7 @@
                     handleSidebarMouseLeave();
 
                     // Add resize event listener to handle window size changes
-                    window.addEventListener('resize', function() {
+                    window.addEventListener('resize', function () {
                         // Update layout based on current sidebar state
                         if (sidebar.matches(':hover')) {
                             handleSidebarMouseEnter();

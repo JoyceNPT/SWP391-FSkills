@@ -87,13 +87,14 @@ public class LoginServlet extends HttpServlet {
             UserGoogle userGoogle = googleLogin.getUserInfo(accessToken);
 
             UserDAO dao = new UserDAO();
-            User user = dao.findByGoogleID(userGoogle.getId());
+            User user = dao.findByGoogleIDWithAvatar(userGoogle.getId());
+
 
             if (user == null) {
                 user = dao.findByEmail(userGoogle.getEmail());
                 if (user == null) {
                     dao.insertGoogle(userGoogle);
-                    user = dao.findByGoogleID(userGoogle.getId());
+                    user = dao.findByGoogleIDWithAvatar(userGoogle.getId());
                 } else {
                     user.setGoogleID(userGoogle.getId());
                     dao.updateGoogleID(user);

@@ -13,12 +13,13 @@ public class Profile {
     private byte[] avatar;
     private boolean gender; // Giữ boolean cho gender như trong Profile cũ
     private boolean isVerified; // Add isVerified field
+    private String avatarUrl;
 
     public Profile() {
     }
 
     public Profile(int userId, String displayName, String email, String phoneNumber,
-                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender, boolean isVerified) {
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender, boolean isVerified, String avatarUrl) {
         this.userId = userId;
         this.displayName = displayName;
         this.email = email;
@@ -28,11 +29,12 @@ public class Profile {
         this.avatar = avatar;
         this.gender = gender;
         this.isVerified = isVerified;
+        this.avatarUrl = avatarUrl;
     }
 
     public Profile(int userId, String displayName, String email, String phoneNumber,
-                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender) {
-        this(userId, displayName, email, phoneNumber, info, dateOfBirth, avatar, gender, false);
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender, String avatarUrl) {
+        this(userId, displayName, email, phoneNumber, info, dateOfBirth, avatar, gender, false, avatarUrl);
     }
 
     // Getters và Setters
@@ -117,6 +119,14 @@ public class Profile {
 
     public boolean validateDisplayName() {
         return displayName != null && displayName.length() >= 2;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     @Override

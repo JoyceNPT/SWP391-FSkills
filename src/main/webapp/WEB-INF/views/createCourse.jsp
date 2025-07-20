@@ -152,7 +152,7 @@
                     const summary = summaryInput.value.trim();
                     const highlight = highlightInput.value.trim();
 
-                    const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
+                    const regexValid = /^(?!.* {2,}).+$/u;
                     const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
                     if (!name) {
@@ -162,8 +162,8 @@
                         return;
                     }
 
-                    if (name.length > 30) {
-                        showJsToast("Course name cannot be longer than 30 characters.");
+                    if (name.length > 30 || name.length < 10) {
+                        showJsToast("Course Name must be between 10 and 30 characters.");
                         nameInput.focus();
                         e.preventDefault();
                         return;
