@@ -420,7 +420,7 @@ public class UserDAO extends DBContext {
                         System.err.println("Invalid role value from DB: " + roleInt);
                 }
                 int gender = rs.getInt("Gender");
-                Timestamp birthOfDay = rs.getTimestamp("DateOfBirth");
+                Timestamp birthOfDate = rs.getTimestamp("DateOfBirth");
                 Timestamp timeCreate = rs.getTimestamp("UserCreateDate");
                 byte[] avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
@@ -442,7 +442,7 @@ public class UserDAO extends DBContext {
                 String GoogleID = rs.getString("GoogleID");
                 String avatarGoogleUrl = rs.getString("AvatarGoogle");
 
-                User acc = new User(userID, userName, displayName, email, password, role, gender, timeCreate, timeCreate, avatar, info, Ban, reportAmount, info, isVerified, GoogleID);
+                User acc = new User(userID, userName, displayName, email, password, role, gender, birthOfDate, timeCreate, avatar, info, Ban, reportAmount, phoneNumber, isVerified, GoogleID);
                 acc.setAvatarUrl(avatarGoogleUrl);
                 return acc;
             }

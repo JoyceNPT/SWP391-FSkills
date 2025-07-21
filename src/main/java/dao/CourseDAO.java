@@ -183,7 +183,7 @@ public class CourseDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                User user = userDAO.getByUserID(rs.getInt("UserID"));
+                User user = userDAO.getByUserIDWithAvatar(rs.getInt("UserID"));
 
                 Category category = new Category();
                 category.setId(rs.getInt("category_id"));

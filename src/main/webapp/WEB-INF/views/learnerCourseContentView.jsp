@@ -338,7 +338,7 @@
                                         <span class="flex-grow-1">${mol.moduleName}</span>
                                         <c:if test="${totalStudyMap[mol.moduleID]}">
                                             <span class="check-icon"><i class="fa-solid fa-circle-check"></i></span>
-                                        </c:if>
+                                            </c:if>
                                     </button>
                                 </h2>
                                 <div id="list${loop.index}" class="accordion-collapse collapse" data-bs-parent="#moduleAccordion">
@@ -363,8 +363,8 @@
                                                 </c:when>
                                                 <c:otherwise>
                                                     <li>No materials available for this module.</li>
-                                                </c:otherwise>
-                                            </c:choose>
+                                                    </c:otherwise>
+                                                </c:choose>
                                         </ul>
                                     </div>
                                 </div>
@@ -378,7 +378,11 @@
                         <img id="courseImage" src="${Course.imageDataURI}" alt="Course Image"/>
                     </c:if>
                     <div class="mt-4 text">
-                        <p><b>Author:</b> ${Course.user.userName}</p>
+                        <p><b>Author:</b> 
+                            <a class="link-opacity-100-hover" href="${pageContext.request.contextPath}/viewprofile?id=${Course.user.userId}">
+                                ${Course.user.displayName}
+                            </a>
+                        </p>
                         <p><b>Category:</b> ${Course.category.name}</p>
                         <p><b>Last update:</b> <fmt:formatDate value="${Course.courseLastUpdate}" pattern="dd/MM/yyyy"/></p>
                         <p><b>Progress:</b></p>

@@ -82,7 +82,9 @@
                                             ${course.category.name}
                                         </td>
                                         <td class="align-middle">
-                                            <a href="${pageContext.request.contextPath}/userDetail?id=${courseUser[course.courseID].userId}">${courseUser[course.courseID].displayName}</a>
+                                            <a class="link-opacity-100-hover" href="${pageContext.request.contextPath}/viewprofile?id=${courseUser[course.courseID].userId}">
+                                                ${courseUser[course.courseID].displayName}
+                                            </a>
                                         </td>
                                         <td class="align-middle">
                                             <c:choose>
