@@ -315,11 +315,11 @@
                     }
                 }
                 .container-fluid {
-                width: 100%;
-                padding-left: 0;
-                padding-right: 0;
-                margin-left: 0;
-            }
+                    width: 100%;
+                    padding-left: 0;
+                    padding-right: 0;
+                    margin-left: 0;
+                }
             </style>
         </head>
         <body>
@@ -349,6 +349,21 @@
                         </c:if>
 
                     </h2>
+
+                    <c:forEach var="user" items="${allInform}" begin="0" end="0">
+                        <div class="flex justify-center mb-6">
+                            <img
+                                src="<c:choose>
+                                    <c:when test='${not empty user.avatarUrl}'>${user.avatarUrl}</c:when>
+                                    <c:otherwise>${user.imageDataURI}</c:otherwise>
+                                </c:choose>"
+                                alt="Avatar"
+                                class="rounded-full border-2 border-blue-400 shadow-md"
+                                style="width: 120px; height: 120px; object-fit: cover;"
+                                />
+                        </div>
+                    </c:forEach>
+
                     <c:if test="${not empty globalMessage}">
                         <p class="global-message <c:if test="${not empty successMessage}">success-message</c:if> <c:if test="${not empty errorMessages}">error-global-message</c:if>">
                             ${globalMessage}

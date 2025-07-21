@@ -89,6 +89,10 @@ public class AddVoucherServlet extends HttpServlet {
             errorMessages.add("Not null here.");
         }
 
+        if (voucherCode.length() > 30) {
+            errorMessages.add("Voucher code is too long");
+        }
+
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
             errorMessages.add("Not null here.");
         } else {

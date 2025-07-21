@@ -870,7 +870,7 @@ public class UserDAO extends DBContext {
 
     public List<User> showAllInform(String informUser) throws SQLException {
         List<User> us = new ArrayList<>();
-        String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, info, BanStatus, ReportAmount, PhoneNumber FROM Users WHERE UserName = ?";
+        String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, info, BanStatus, ReportAmount, PhoneNumber, Avatar, AvatarGoogle FROM Users WHERE UserName = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, informUser);
         ResultSet rs = ps.executeQuery();
@@ -906,10 +906,13 @@ public class UserDAO extends DBContext {
             }
             u.setPhone(rs.getString("PhoneNumber"));
             u.setReports(rs.getInt("ReportAmount"));
+            u.setAvatar(rs.getBytes("Avatar"));
+            u.setAvatarUrl(rs.getString("AvatarGoogle"));
             us.add(u);
         }
         return us;
     }
+
 
     public boolean updateUser(User user) throws SQLException {
         String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, ReportAmount = ?, DateOfBirth = ?, info = ?, PhoneNumber = ? WHERE UserName = ?";
