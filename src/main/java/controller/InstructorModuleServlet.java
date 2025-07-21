@@ -7,17 +7,24 @@ import java.util.List;
 import dao.CategoryDAO;
 import dao.CourseDAO;
 import dao.ModuleDAO;
+import dao.EnrollDAO;
+import dao.StudyDAO;
+import dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import model.Category;
 import model.Module;
 import model.Course;
 import model.Role;
 import model.User;
+import model.Enroll;
 
 /**
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
@@ -69,6 +76,9 @@ public class InstructorModuleServlet extends HttpServlet {
         ModuleDAO mDao = new ModuleDAO();
         CourseDAO cDao = new CourseDAO();
         CategoryDAO catDao = new CategoryDAO();
+        EnrollDAO enrollDAO = new EnrollDAO();
+        UserDAO userDAO = new UserDAO();
+        StudyDAO studyDAO = new StudyDAO();
 
         Course course = null;
 
@@ -105,9 +115,30 @@ public class InstructorModuleServlet extends HttpServlet {
                 case "list":
                     List<Category> listCat = catDao.getAllCategory();
                     List<Module> list = mDao.getAllModuleByCourseID(courseId);
+                    
+                    List<Enroll> enrollments = enrollDAO.getEnrolledCourseByCourseID(courseId);
+                    List<Map<String, Object>> enrolledUsers = new ArrayList<>();
+                    int totalStudents = enrollments.size();
+                    int completedStudents = 0;
+
+                    for (Enroll enrollment : enrollments) {
+                        if (enrollment.getCompleteDate() != null && enrollment.getEnrollDate() != null) {
+                            completedStudents++;
+                        }
+                        User user = userDAO.getByUserID(enrollment.getUserID());
+                        if (user != null) {
+                            Map<String, Object> userData = new HashMap<>();
+                            userData.put("user", user);
+                            userData.put("progress", studyDAO.returnStudyProgress(user.getUserId(), courseId));
+                            enrolledUsers.add(userData);
+                        }
+                    }
 
                     request.setAttribute("listModule", list);
                     request.setAttribute("listCategory", listCat);
+                    request.setAttribute("enrolledUsers", enrolledUsers);
+                    request.setAttribute("totalStudents", totalStudents);
+                    request.setAttribute("completedStudents", completedStudents);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                 default:
             }

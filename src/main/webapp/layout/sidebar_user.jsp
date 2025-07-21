@@ -43,6 +43,7 @@
         <a href="${pageContext.request.contextPath}/instructor"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
         <a href="${pageContext.request.contextPath}/instructor/courses?action=list"><i class="bi bi-laptop"></i> <span>Manage Courses</span></a>
         <a href="${pageContext.request.contextPath}/instructor/tests?action=list"><i class="bi bi-journal-text"></i> <span>Manage Tests</span></a>
+        <a href="${pageContext.request.contextPath}/bills"><i class="bi bi-receipt"></i> <span>Bills</span></a>
         <a href="analytics.jsp"><i class="bi bi-graph-up"></i> <span>Analytics</span></a>
         <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
