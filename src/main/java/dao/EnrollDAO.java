@@ -7,6 +7,8 @@ package dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
+import model.Course;
 import model.Enroll;
 import util.DBContext;
 
@@ -108,6 +110,23 @@ public class EnrollDAO extends DBContext {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Enroll(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4)));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+    
+    public List<Enroll> getEnrolledCourseByCourseID(int CourseID){
+        String sql = "Select * From Enroll Where CourseID = ?";
+        ArrayList<Enroll> list = new ArrayList<Enroll>();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, CourseID);
             try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new Enroll(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4)));

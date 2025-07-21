@@ -43,6 +43,7 @@ public class BillListServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
         } else {
             Boolean isAdmin = false;
+            Boolean showModal = false;
             switch (role) {
                 case "LEARNER":
                 try {
@@ -57,19 +58,31 @@ public class BillListServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/billList.jsp").forward(request, response);
                 break;
                 case "INSTRUCTOR":
-                    response.sendRedirect(request.getContextPath() + "/instructor");
-                    break;
+                    try {
+                    ArrayList<Receipt> receipts = receiptDAO.getReceipt();
+                    request.setAttribute("receipts", receipts);
+                    showModal = true;
+                    request.setAttribute("showModal", showModal);
+                    request.setAttribute("isAdmin", isAdmin);
+                } catch (Exception e) {
+                    System.err.println("Error fetching receipts for userID: " + user.getUserId() + ", error: " + e.getMessage());
+                    request.setAttribute("errorMessage", "Failed to load bill list. Please try again or contact support.");
+                }
+                request.getRequestDispatcher("/WEB-INF/views/billList.jsp").forward(request, response);
+                break;
                 case "ADMIN":
                     try {
                     ArrayList<Receipt> receipts = receiptDAO.getReceipt();
                     request.setAttribute("receipts", receipts);
+                    showModal = true;
+                    request.setAttribute("showModal", showModal);
                     isAdmin = true;
                     request.setAttribute("isAdmin", isAdmin);
                 } catch (Exception e) {
                     System.err.println("Error fetching receipts for userID: " + user.getUserId() + ", error: " + e.getMessage());
                     request.setAttribute("errorMessage", "Failed to load bill list. Please try again or contact support.");
                 }
-                    request.getRequestDispatcher("/WEB-INF/views/billList.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/billList.jsp").forward(request, response);
                 break;
                 default:
                     response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");

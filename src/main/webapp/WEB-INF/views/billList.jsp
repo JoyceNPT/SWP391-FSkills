@@ -145,7 +145,7 @@
                         </table>
                     </div>
                     
-                    <c:if test="${isAdmin}">
+                    <c:if test="${showModal}">
                     <!-- Total Summary Modal -->
                     <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -164,6 +164,13 @@
                                                     <c:set var="totalAmount" value="${totalAmount + receipt.price}"/>
                                                 </c:forEach>
                                                 <fmt:formatNumber value="${totalAmount}" type="number" groupingUsed="true"/> VND
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Instructor Earning (85%)</th>
+                                            <td>
+                                                <c:set var="platformCut" value="${totalAmount * 0.85}"/>
+                                                <fmt:formatNumber value="${platformCut}" type="number" groupingUsed="true"/> VND
                                             </td>
                                         </tr>
                                         <tr>
