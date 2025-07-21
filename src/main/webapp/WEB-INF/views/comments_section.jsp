@@ -126,11 +126,7 @@
 
                 <div class="comment-content-area">
                     <c:if test="${comment.user != null}">
-                        <p class="comment-author">
-                            <a class="link-opacity-100-hover" href="${pageContext.request.contextPath}/viewprofile?id=${comment.user.userId}">
-                                ${comment.user.displayName}
-                            </a>
-                        </p>
+                        <p class="comment-author">${comment.user.displayName}</p>
 
                         <c:if test="${sessionScope.user != null && sessionScope.user.userId != comment.userId}">
                             <button class="btn btn-outline-danger btn-sm report-comment-btn"
@@ -341,4 +337,3 @@
         });
     });
 </script>
-
