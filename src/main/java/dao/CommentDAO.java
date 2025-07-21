@@ -1,10 +1,6 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import model.Comment;
@@ -13,14 +9,13 @@ import util.DBContext;
 
 public class CommentDAO {
 
-    //hien chua có dùng 
     public List<Comment> getAllComments() {
         List<Comment> comments = new ArrayList<>();
-        String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, "
-                + "u.DisplayName, u.Avatar, u.GoogleID "
-                + "FROM Comments c "
-                + "JOIN Users u ON c.UserId = u.UserId "
-                + "ORDER BY c.CommentDate DESC";
+        String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, " +
+                "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
+                "FROM Comments c " +
+                "JOIN Users u ON c.UserId = u.UserId " +
+                "ORDER BY c.CommentDate DESC";
         try (Connection conn = new DBContext().conn;
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -37,7 +32,9 @@ public class CommentDAO {
                 user.setDisplayName(rs.getString("DisplayName"));
                 user.setAvatar(rs.getBytes("Avatar"));
                 user.setGoogleID(rs.getString("GoogleID"));
+                user.setAvatarUrl(rs.getString("AvatarGoogle"));
                 comment.setUser(user);
+
                 comments.add(comment);
             }
         } catch (SQLException e) {
@@ -89,15 +86,15 @@ public class CommentDAO {
         }
         return false;
     }
-    
+
     public List<Comment> getCommentsByMaterialId(int materialId) {
         List<Comment> comments = new ArrayList<>();
-        String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, c.MaterialId, "
-                + "u.DisplayName, u.Avatar, u.GoogleID "
-                + "FROM Comments c "
-                + "JOIN Users u ON c.UserId = u.UserId "
-                + "WHERE c.MaterialId = ? "
-                + "ORDER BY c.CommentDate DESC";
+        String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, c.MaterialId, " +
+                "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
+                "FROM Comments c " +
+                "JOIN Users u ON c.UserId = u.UserId " +
+                "WHERE c.MaterialId = ? " +
+                "ORDER BY c.CommentDate DESC";
         try (Connection conn = new DBContext().conn;
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, materialId);
@@ -115,8 +112,10 @@ public class CommentDAO {
                     user.setUserId(rs.getInt("UserId"));
                     user.setDisplayName(rs.getString("DisplayName"));
                     user.setAvatar(rs.getBytes("Avatar"));
-                    user.setGoogleID(rs.getString("GoogleID")); 
+                    user.setGoogleID(rs.getString("GoogleID"));
+                    user.setAvatarUrl(rs.getString("AvatarGoogle"));
                     comment.setUser(user);
+
                     comments.add(comment);
                 }
             }
@@ -127,11 +126,11 @@ public class CommentDAO {
     }
 
     public Comment getCommentById(int commentId) {
-        String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, "
-                + "u.DisplayName, u.Avatar, u.GoogleID " 
-                + "FROM Comments c "
-                + "JOIN Users u ON c.UserId = u.UserId "
-                + "WHERE c.CommentId = ?";
+        String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, " +
+                "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
+                "FROM Comments c " +
+                "JOIN Users u ON c.UserId = u.UserId " +
+                "WHERE c.CommentId = ?";
         try (Connection conn = new DBContext().conn;
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, commentId);
@@ -149,7 +148,9 @@ public class CommentDAO {
                     user.setDisplayName(rs.getString("DisplayName"));
                     user.setAvatar(rs.getBytes("Avatar"));
                     user.setGoogleID(rs.getString("GoogleID"));
+                    user.setAvatarUrl(rs.getString("AvatarGoogle"));
                     comment.setUser(user);
+
                     return comment;
                 }
             }
