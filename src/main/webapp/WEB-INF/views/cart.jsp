@@ -270,7 +270,10 @@
                                                 <td class="align-middle">
                                                     <a href="${pageContext.request.contextPath}/courseDetail?id=${course.courseID}">${course.courseName}</a>
                                                 </td>
-                                                <td class="align-middle">${course.user.displayName}</td>
+                                                <td class="align-middle">
+                                                    <a class="link-opacity-100-hover" href="${pageContext.request.contextPath}/viewprofile?id=${course.user.userId}">
+                                                        ${course.user.displayName}
+                                                    </a></td>
                                                 <td class="align-middle">
                                                     <fmt:formatNumber value="${price}" type="number" groupingUsed="true"/> VND
                                                 </td>

@@ -166,8 +166,8 @@
 
                                 <div class="flex items-center mb-4">
                                     <c:choose>
-                                        <c:when test="${not empty course.user.avatar}">
-                                            <img src="${course.user.avatar}"
+                                        <c:when test="${not empty course.user.imageDataURI}">
+                                            <img src="${course.user.imageDataURI}"
                                                  alt="${course.user.displayName}"
                                                  class="w-12 h-12 rounded-full mr-3 object-cover"
                                                  onerror="this.src='https://i.pravatar.cc/48?u=${course.user.displayName}'">
@@ -179,8 +179,10 @@
                                         </c:otherwise>
                                     </c:choose>
                                     <div>
-                                        <p class="text-gray-900 font-semibold">Instructor: ${course.user.displayName}</p>
-                                        <p class="text-gray-600 text-sm">Course Creator</p>
+                                        <a class="link-opacity-100-hover" href="${pageContext.request.contextPath}/viewprofile?id=${course.user.userId}">
+                                            <p class="text-gray-900 font-semibold">Instructor: ${course.user.displayName}</p>
+                                            <p class="text-gray-600 text-sm">Course Creator</p>
+                                        </a>
                                     </div>
                                 </div>
 
@@ -214,7 +216,7 @@
                                 <div class="flex space-x-4">
                                     <c:choose>
                                         <c:when test="${isEnroll}">
-                                            <button onclick="location.href='<%= request.getContextPath()%>/learner/course?courseID=${course.courseID}'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                            <button onclick="location.href = '<%= request.getContextPath()%>/learner/course?courseID=${course.courseID}'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                                                 To Course
                                             </button>
                                         </c:when>
@@ -231,13 +233,13 @@
                                                     Buy Now
                                                 </button>
                                             </form>
-                                            <button onclick="location.href='<%= request.getContextPath()%>/cart'" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
+                                            <button onclick="location.href = '<%= request.getContextPath()%>/cart'" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
                                                 To Cart
                                             </button>
                                         </c:when>
-                                        <c:when test="${(course.salePrice == 0 && course.isSale == 0) || (course.originalPrice == 0 && course.isSale == 0)}">
+                                        <c:when test="${(course.salePrice == 0 && course.isSale == 1) || (course.originalPrice == 0 && course.isSale == 0)}">
                                             <form method="POST" action="<%= request.getContextPath()%>/learner/course">
-                                                <button type="submit" name="AddEnroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                <button type="submit" name="Enroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                                                     Enroll Now
                                                 </button>
                                             </form>
@@ -374,7 +376,9 @@
                                                             </c:otherwise>
                                                         </c:choose>
                                                         <div>
-                                                            <p class="text-gray-900 font-semibold">${review.user.displayName}</p>
+                                                            <a class="link-opacity-100-hover text-gray-900 font-semibold text-body text-decoration-none" href="${pageContext.request.contextPath}/viewprofile?id=${review.user.userId}">
+                                                                ${review.user.displayName}
+                                                            </a>
                                                             <div class="review-stars text-sm">
                                                                 <c:forEach begin="1" end="5" var="i">
                                                                     <i class="fas fa-star ${review.rate >= i ? 'text-yellow-400' : 'text-gray-300'}"></i>
