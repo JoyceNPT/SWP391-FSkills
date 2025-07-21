@@ -12,10 +12,10 @@ public class CommentDAO {
     public List<Comment> getAllComments() {
         List<Comment> comments = new ArrayList<>();
         String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, " +
-                "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
-                "FROM Comments c " +
-                "JOIN Users u ON c.UserId = u.UserId " +
-                "ORDER BY c.CommentDate DESC";
+                     "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
+                     "FROM Comments c " +
+                     "JOIN Users u ON c.UserId = u.UserId " +
+                     "ORDER BY c.CommentDate DESC";
         try (Connection conn = new DBContext().conn;
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -90,11 +90,11 @@ public class CommentDAO {
     public List<Comment> getCommentsByMaterialId(int materialId) {
         List<Comment> comments = new ArrayList<>();
         String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, c.MaterialId, " +
-                "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
-                "FROM Comments c " +
-                "JOIN Users u ON c.UserId = u.UserId " +
-                "WHERE c.MaterialId = ? " +
-                "ORDER BY c.CommentDate DESC";
+                     "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
+                     "FROM Comments c " +
+                     "JOIN Users u ON c.UserId = u.UserId " +
+                     "WHERE c.MaterialId = ? " +
+                     "ORDER BY c.CommentDate DESC";
         try (Connection conn = new DBContext().conn;
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, materialId);
@@ -127,10 +127,10 @@ public class CommentDAO {
 
     public Comment getCommentById(int commentId) {
         String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, " +
-                "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
-                "FROM Comments c " +
-                "JOIN Users u ON c.UserId = u.UserId " +
-                "WHERE c.CommentId = ?";
+                     "u.DisplayName, u.Avatar, u.GoogleID, u.AvatarGoogle " +
+                     "FROM Comments c " +
+                     "JOIN Users u ON c.UserId = u.UserId " +
+                     "WHERE c.CommentId = ?";
         try (Connection conn = new DBContext().conn;
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, commentId);
