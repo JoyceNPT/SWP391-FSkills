@@ -1265,7 +1265,7 @@ public class UserDAO extends DBContext {
                 String avatarGoogleUrl = rs.getString("AvatarGoogle");
 
                 User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, BirthOfDay, TimeCreate, Avatar, info, Ban, ReportAmount, PhoneNumber, isVerified, GoogleID, avatarGoogleUrl);
-                
+
                 return acc;
             }
         } catch (Exception e) {

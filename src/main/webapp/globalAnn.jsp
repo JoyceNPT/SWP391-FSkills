@@ -57,7 +57,7 @@
     <body class="font-sans bg-gray-100">
         <jsp:include page="/layout/header.jsp" />
         <jsp:include page="/layout/sidebar_user.jsp" />
-        <div class="container mx-auto p-8">
+        <div class="container mx-auto p-8 pt-20">
             <h1 class="text-4xl font-bold text-center text-gray-800 mb-10">Global Announcements</h1>
 
             <div class="mb-8 p-6 bg-white rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between">
