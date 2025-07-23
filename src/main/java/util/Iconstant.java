@@ -11,8 +11,8 @@ public class Iconstant {
     // public static final String GOOGLE_CLIENT_SECRET = "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";
     public static final String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
 
-    //public static final String GOOGLE_REDIRECT_URI = "http://localhost:8080/FSkills/login";
-    public static final String GOOGLE_REDIRECT_URI = "https://fskills.onrender.com/login";
+    public static final String GOOGLE_REDIRECT_URI = "http://localhost:8080/FSkills/login";
+//    public static final String GOOGLE_REDIRECT_URI = "https://fskills.onrender.com/login";
 
     public static final String GOOGLE_GRANT_TYPE = "authorization_code";
 
