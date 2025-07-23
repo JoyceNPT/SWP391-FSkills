@@ -258,7 +258,6 @@
                             </form>
                         </div>
                         <div class="action-buttons flex gap-3 ml-3" style="flex-shrink: 0;">
-                            <%-- Add a button to delete all expired vouchers --%>
                             <button id="deleteExpiredBtn" class="action-btn-delete-all flex items-center gap-2" title="Delete all expired vouchers">
                                 <i class="fas fa-trash-alt"></i> Delete Expired
                             </button>
@@ -304,6 +303,9 @@
                                                     <c:choose>
                                                         <c:when test="${voucher.saleType eq 'FIXED'}">
                                                             <fmt:formatNumber value="${voucher.saleAmount}" pattern="#,###"/> VND
+                                                        </c:when>
+                                                        <c:when test="${voucher.saleType eq 'PERCENT'}">
+                                                            <fmt:formatNumber value="${voucher.saleAmount}" pattern="#,##0"/>%
                                                         </c:when>
                                                         <c:otherwise>
                                                             ${voucher.saleAmount}
