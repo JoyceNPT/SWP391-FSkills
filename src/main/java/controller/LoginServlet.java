@@ -173,8 +173,8 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        String secretKey = "0x4AAAAAABgts4-8Q8nhLD8g5wGXEaXXDT4";
-//        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
+        // String secretKey = "0x4AAAAAABgts4-8Q8nhLD8g5wGXEaXXDT4";
+        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
         URL url = new URL("https://challenges.cloudflare.com/turnstile/v0/siteverify");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
