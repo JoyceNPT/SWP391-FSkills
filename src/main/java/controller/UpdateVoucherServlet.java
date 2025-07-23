@@ -67,83 +67,86 @@ public class UpdateVoucherServlet extends HttpServlet {
         int amount = 0;
 
         if (voucherIDStr == null || voucherIDStr.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Voucher ID can not be null.");
+            errorMessages.add("Voucher ID can not be null.");
         } else {
             try {
                 voucherID = Integer.parseInt(voucherIDStr.trim());
             } catch (NumberFormatException e) {
-                errorMessages.add("Updated Failed: Voucher ID must be an integer.");
+                errorMessages.add("Voucher ID must be an integer.");
             }
         }
         
         if (voucherName == null || voucherName.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Voucher name cannot be empty.");
+            errorMessages.add("Voucher name cannot be empty.");
         }
         
         if (voucherCode == null || voucherCode.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Voucher code cannot be empty.");
+            errorMessages.add("Voucher code cannot be empty.");
         }
 
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Please enter this value.");
+            errorMessages.add("Please enter this value.");
         } else {
             try {
                 LocalDateTime inaddDateTime = LocalDateTime.parse(expiredDateStr);
                 expiredDate = Timestamp.valueOf(inaddDateTime); 
                 if (inaddDateTime.isBefore(LocalDateTime.now())) {
-                    errorMessages.add("Updated Failed: The expired day must be in the future.");
+                    errorMessages.add("The expired day must be in the future.");
                 }
             } catch (DateTimeParseException e) {
                 LOGGER.log(Level.WARNING, "Invalid Expiration Date format: " + expiredDateStr, e);
-                errorMessages.add("Updated Failed: Invalid format. Use YYYY-MM-DDTHH:MM (e.g., 2025-06-23T14:30).");
+                errorMessages.add("Invalid date format.");
             }
         }
 
         if (saleType == null || saleType.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Please enter for this value.");
+            errorMessages.add("Sale type: Please enter for this value.");
         } else if (!saleType.equals("PERCENT") && !saleType.equals("FIXED")) {
-            errorMessages.add("Updated Failed: Not valid sale.");
+            errorMessages.add("Sale type: Not valid sale.");
         }
 
         if (saleAmountStr == null || saleAmountStr.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Not null here.");
+            errorMessages.add("Sale amount: Not null here.");
         } else {
             try {
                 saleAmount = Integer.parseInt(saleAmountStr.trim());
                 if (saleAmount <= 0) {
-                    errorMessages.add("Updated Failed: Must be >0.");
+                    errorMessages.add("Sale Amount Must be >0.");
                 }
                 if (saleType != null && saleType.equals("PERCENT") && (saleAmount > 100 || saleAmount < 0)) {
-                    errorMessages.add("Updated Failed: Please input 1-100.");
+                    errorMessages.add("For percent input 1-100.");
+                }
+                if (saleType != null && saleType.equals("FIXED") && saleAmount < 1000) {
+                    errorMessages.add("For fixed price please input >= 1000.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.add("Updated Failed: Must be an integer.");
+                errorMessages.add("Sale Type: Must be an integer.");
             }
         }
 
         if (minPriceStr == null || minPriceStr.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Minimum price cannot be empty.");
+            errorMessages.add("Minimum price cannot be empty.");
         } else {
             try {
                 minPrice = Integer.parseInt(minPriceStr.trim());
                 if (minPrice < 0) {
-                    errorMessages.add("Updated Failed: Minimum price must be non-negative.");
+                    errorMessages.add("Minimum price must be non-negative.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.add("Updated Failed: Invalid minimum price (must be an integer).");
+                errorMessages.add("Invalid minimum price (must be an integer).");
             }
         }
        
         if (amountStr == null || amountStr.trim().isEmpty()) {
-            errorMessages.add("Updated Failed: Amount cannot be empty.");
+            errorMessages.add("Amount cannot be empty.");
         } else {
             try {
                 amount = Integer.parseInt(amountStr.trim());
                 if (amount <= 0) {
-                    errorMessages.add("Updated Failed: Amount must be greater than 0.");
+                    errorMessages.add("Amount must be greater than 0.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.add("Updated Failed: Invalid amount (must be an integer).");
+                errorMessages.add("Invalid amount (must be an integer).");
             }
         }
         
@@ -158,11 +161,11 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Database error checking for duplicate voucher code during update.", ex);
-            errorMessages.add("Updated Failed: An error occurred while checking voucher code existence. Please try again.");
+            errorMessages.add("An error occurred while checking voucher code existence. Please try again.");
         }
 
         if (!errorMessages.isEmpty()) {
-            globalMessage = "Updated Failed: Voucher update failed. Please check for errors.";
+            globalMessage = "Voucher update failed. Please check for errors.";
             request.setAttribute("err", globalMessage);
             request.setAttribute("err", errorMessages);
 

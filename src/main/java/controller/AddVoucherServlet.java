@@ -82,19 +82,19 @@ public class AddVoucherServlet extends HttpServlet {
         int amount = 0;
 
         if (voucherName == null || voucherName.trim().isEmpty()) {
-            errorMessages.add("Not null here.");
+            errorMessages.add("Voucher name: Not null here.");
         }
 
         if (voucherCode == null || voucherCode.trim().isEmpty()) {
-            errorMessages.add("Not null here.");
+            errorMessages.add("Voucher code: Not null here.");
         }
 
         if (voucherCode.length() > 30) {
-            errorMessages.add("Voucher code is too long");
+            errorMessages.add("Voucher code is too long. Please input <= 30");
         }
 
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
-            errorMessages.add("Not null here.");
+            errorMessages.add("Expired date: Not null here.");
         } else {
             try {
                 LocalDateTime inputDateTime = LocalDateTime.parse(expiredDateStr);
@@ -109,11 +109,11 @@ public class AddVoucherServlet extends HttpServlet {
         }
 
         if (saleType == null || saleType.trim().isEmpty()) {
-            errorMessages.add("Not null here.");
+            errorMessages.add("Sale type: Not null here.");
         }
 
         if (saleAmountStr == null || saleAmountStr.trim().isEmpty()) {
-            errorMessages.add("Not null here.");
+            errorMessages.add("Sale Amount: Not null here.");
         } else {
             try {
                 saleAmount = Integer.parseInt(saleAmountStr.trim());
@@ -123,13 +123,16 @@ public class AddVoucherServlet extends HttpServlet {
                 if (saleType != null && saleType.equals("PERCENT") && (saleAmount > 100 || saleAmount < 0)) {
                     errorMessages.add("For percentage, discount amount must be between 0 and 100.");
                 }
+                if (saleType != null && saleType.equals("FIXED") && saleAmount < 1000) {
+                    errorMessages.add("For fixed price please input >= 1000.");
+                }
             } catch (NumberFormatException e) {
                 errorMessages.add("Invalid discount amount (must be an integer).");
             }
         }
 
         if (minPriceStr == null || minPriceStr.trim().isEmpty()) {
-            errorMessages.add("Not null here.");
+            errorMessages.add("Min Price: Not null here.");
         } else {
             try {
                 minPrice = Integer.parseInt(minPriceStr.trim());
@@ -142,7 +145,7 @@ public class AddVoucherServlet extends HttpServlet {
         }
 
         if (amountStr == null || amountStr.trim().isEmpty()) {
-            errorMessages.add("Not null here.");
+            errorMessages.add("Amount: Not null here.");
         } else {
             try {
                 amount = Integer.parseInt(amountStr.trim());
