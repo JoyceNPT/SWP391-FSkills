@@ -48,12 +48,12 @@
         }
 
         .result-pass {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: #218334;
             color: white;
         }
 
         .result-fail {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: #B93636;
             color: white;
         }
 
@@ -61,7 +61,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 50px;
-            padding: 12px 30px;
+            padding: 10px 25px;
             color: white;
             font-weight: 600;
             text-transform: uppercase;
@@ -76,19 +76,17 @@
         }
 
         .btn-back {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            border: none;
+            border: 1px solid #eee;
             border-radius: 50px;
             padding: 10px 25px;
-            color: white;
+            color: #333;
             font-weight: 500;
             transition: all 0.3s ease;
         }
 
         .btn-back:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(132, 250, 176, 0.4);
-            color: white;
+            box-shadow: 0 8px 25px;
         }
 
         .history-table {
@@ -134,278 +132,292 @@
     </style>
 </head>
 <body>
-    <%@include file="../../layout/header.jsp" %>
-    <%@include file="../../layout/sidebar_user.jsp"%>
+<%@include file="../../layout/header.jsp" %>
+<%@include file="../../layout/sidebar_user.jsp"%>
 
-    <main id="main-body" class="main d-flex">
-        <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
-            <div class="container-fluid px-4 py-4">
-                            <!-- Breadcrumb -->
-                            <nav aria-label="breadcrumb" class="mb-4">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item">
-                                        <a href="${pageContext.request.contextPath}/learner/tests?action=list" class="text-decoration-none">
-                                            <i class="bi bi-journal-text"></i> Tests
-                                        </a>
-                                    </li>
-                                    <li class="breadcrumb-item active">Detail</li>
-                                </ol>
-                            </nav>
+<main id="main-body" class="main d-flex">
+    <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
+        <div class="container-fluid px-4 py-4">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="${pageContext.request.contextPath}/learner/tests?action=list" class="text-decoration-none">
+                            <i class="bi bi-journal-text"></i> Tests
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Detail</li>
+                </ol>
+            </nav>
 
-                            <!-- Test Detail Card -->
-                            <div class="row justify-content-center">
-                                <div class="col-lg-10">
-                                    <div class="card test-detail-card">
-                                        <!-- Test Header -->
-                                        <div class="test-header text-center">
-                                            <h1 class="display-6 mb-3">
-                                                <i class="bi bi-journal-text me-3"></i>
-                                                ${test.testName}
-                                            </h1>
-                                            <p class="lead mb-0">${test.module.course.courseName} - ${test.module.moduleName}</p>
-                                        </div>
+            <!-- Back to Tests Button -->
+            <div class="mb-3">
+                <a href="${pageContext.request.contextPath}/learner/tests?action=list"
+                   class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Tests
+                </a>
+            </div>
 
-                                        <!-- Test Information -->
-                                        <div class="card-body p-4">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="test-info-item">
-                                                        <h5 class="mb-2">
-                                                            <i class="bi bi-question-circle text-primary me-2"></i>
-                                                            Total Questions
-                                                        </h5>
-                                                        <p class="mb-0 fs-4 fw-bold text-primary">${test.questionCount}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="test-info-item">
-                                                        <h5 class="mb-2">
-                                                            <i class="bi bi-trophy text-warning me-2"></i>
-                                                            Pass Percentage
-                                                        </h5>
-                                                        <p class="mb-0 fs-4 fw-bold text-warning">${test.passPercentage}%</p>
-                                                    </div>
-                                                </div>
+            <!-- Test Detail Card -->
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card test-detail-card">
+                        <!-- Test Header -->
+                        <div class="test-header text-center">
+                            <h1 class="display-6 mb-3">
+                                <i class="bi bi-journal-text me-3"></i>
+                                ${test.testName}
+                            </h1>
+                            <p class="lead mb-0">${test.module.course.courseName} - ${test.module.moduleName}</p>
+                        </div>
+
+                        <!-- Test Information -->
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="test-info-item">
+                                        <h5 class="mb-2">
+                                            <i class="bi bi-question-circle text-primary me-2"></i>
+                                            Total Questions
+                                        </h5>
+                                        <p class="mb-0 fs-4 fw-bold text-primary">${test.questionCount}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="test-info-item">
+                                        <h5 class="mb-2">
+                                            <i class="bi bi-trophy text-warning me-2"></i>
+                                            Pass Percentage
+                                        </h5>
+                                        <p class="mb-0 fs-4 fw-bold text-warning">${test.passPercentage}%</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <%--                                            <div class="row mt-3">--%>
+                            <%--                                                <div class="col-md-6">--%>
+                            <%--                                                    <div class="test-info-item">--%>
+                            <%--                                                        <h5 class="mb-2">--%>
+                            <%--                                                            <i class="bi bi-shuffle text-info me-2"></i>--%>
+                            <%--                                                            Question Order--%>
+                            <%--                                                        </h5>--%>
+                            <%--                                                        <p class="mb-0 fs-5">--%>
+                            <%--                                                            <c:choose>--%>
+                            <%--                                                                <c:when test="${test.isRandomize}">--%>
+                            <%--                                                                    <span class="badge bg-info">Randomized</span>--%>
+                            <%--                                                                </c:when>--%>
+                            <%--                                                                <c:otherwise>--%>
+                            <%--                                                                    <span class="badge bg-secondary">Sequential</span>--%>
+                            <%--                                                                </c:otherwise>--%>
+                            <%--                                                            </c:choose>--%>
+                            <%--                                                        </p>--%>
+                            <%--                                                    </div>--%>
+                            <%--                                                </div>--%>
+                            <%--                                                <div class="col-md-6">--%>
+                            <%--                                                    <div class="test-info-item">--%>
+                            <%--                                                        <h5 class="mb-2">--%>
+                            <%--                                                            <i class="bi bi-eye text-success me-2"></i>--%>
+                            <%--                                                            Answer Review--%>
+                            <%--                                                        </h5>--%>
+                            <%--                                                        <p class="mb-0 fs-5">--%>
+                            <%--                                                            <c:choose>--%>
+                            <%--                                                                <c:when test="${test.showAnswer}">--%>
+                            <%--                                                                    <span class="badge bg-success">Available</span>--%>
+                            <%--                                                                </c:when>--%>
+                            <%--                                                                <c:otherwise>--%>
+                            <%--                                                                    <span class="badge bg-warning">Not Available</span>--%>
+                            <%--                                                                </c:otherwise>--%>
+                            <%--                                                            </c:choose>--%>
+                            <%--                                                        </p>--%>
+                            <%--                                                    </div>--%>
+                            <%--                                                </div>--%>
+                            <%--                                            </div>--%>
+
+                            <!-- Latest Result -->
+                            <c:if test="${not empty latestResult}">
+                                <div class="mt-4">
+                                    <h4 class="mb-3">
+                                        <i class="bi bi-clock-history text-primary me-2"></i>
+                                        Latest Result
+                                    </h4>
+                                    <div class="test-info-item">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4">
+                                                <h6 class="mb-1">Score</h6>
+                                                <p class="mb-0 fs-4 fw-bold">${latestResult.result}%</p>
                                             </div>
-
-<%--                                            <div class="row mt-3">--%>
-<%--                                                <div class="col-md-6">--%>
-<%--                                                    <div class="test-info-item">--%>
-<%--                                                        <h5 class="mb-2">--%>
-<%--                                                            <i class="bi bi-shuffle text-info me-2"></i>--%>
-<%--                                                            Question Order--%>
-<%--                                                        </h5>--%>
-<%--                                                        <p class="mb-0 fs-5">--%>
-<%--                                                            <c:choose>--%>
-<%--                                                                <c:when test="${test.isRandomize}">--%>
-<%--                                                                    <span class="badge bg-info">Randomized</span>--%>
-<%--                                                                </c:when>--%>
-<%--                                                                <c:otherwise>--%>
-<%--                                                                    <span class="badge bg-secondary">Sequential</span>--%>
-<%--                                                                </c:otherwise>--%>
-<%--                                                            </c:choose>--%>
-<%--                                                        </p>--%>
-<%--                                                    </div>--%>
-<%--                                                </div>--%>
-<%--                                                <div class="col-md-6">--%>
-<%--                                                    <div class="test-info-item">--%>
-<%--                                                        <h5 class="mb-2">--%>
-<%--                                                            <i class="bi bi-eye text-success me-2"></i>--%>
-<%--                                                            Answer Review--%>
-<%--                                                        </h5>--%>
-<%--                                                        <p class="mb-0 fs-5">--%>
-<%--                                                            <c:choose>--%>
-<%--                                                                <c:when test="${test.showAnswer}">--%>
-<%--                                                                    <span class="badge bg-success">Available</span>--%>
-<%--                                                                </c:when>--%>
-<%--                                                                <c:otherwise>--%>
-<%--                                                                    <span class="badge bg-warning">Not Available</span>--%>
-<%--                                                                </c:otherwise>--%>
-<%--                                                            </c:choose>--%>
-<%--                                                        </p>--%>
-<%--                                                    </div>--%>
-<%--                                                </div>--%>
-<%--                                            </div>--%>
-
-                                            <!-- Latest Result -->
-                                            <c:if test="${not empty latestResult}">
-                                                <div class="mt-4">
-                                                    <h4 class="mb-3">
-                                                        <i class="bi bi-clock-history text-primary me-2"></i>
-                                                        Latest Result
-                                                    </h4>
-                                                    <div class="test-info-item">
-                                                        <div class="row align-items-center">
-                                                            <div class="col-md-4">
-                                                                <h6 class="mb-1">Score</h6>
-                                                                <p class="mb-0 fs-4 fw-bold">${latestResult.result}%</p>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <h6 class="mb-1">Status</h6>
-                                                                <span class="result-badge ${latestResult.passed ? 'result-pass' : 'result-fail'}">
+                                            <div class="col-md-4">
+                                                <h6 class="mb-1">Status</h6>
+                                                <span class="result-badge ${latestResult.passed ? 'result-pass' : 'result-fail'}">
                                                                     <i class="bi ${latestResult.passed ? 'bi-check-circle' : 'bi-x-circle'} me-1"></i>
                                                                     ${latestResult.passed ? 'PASSED' : 'FAILED'}
                                                                 </span>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <h6 class="mb-1">Attempt</h6>
-                                                                <p class="mb-0 fs-5">#${latestResult.attempt}</p>
-                                                            </div>
-                                                        </div>
-                                                        <c:if test="${test.showAnswer}">
-                                                            <div class="mt-3">
-                                                                <a href="${pageContext.request.contextPath}/learner/tests?action=result&testResultId=${latestResult.testResultID}" 
-                                                                   class="btn btn-outline-primary">
-                                                                    <i class="bi bi-eye me-2"></i>View Detailed Results
-                                                                </a>
-                                                            </div>
-                                                        </c:if>
-                                                    </div>
-                                                </div>
-                                            </c:if>
-
-                                            <!-- Test History -->
-                                            <c:if test="${not empty testHistory}">
-                                                <div class="mt-4">
-                                                    <h4 class="mb-3">
-                                                        <i class="bi bi-list-ul text-primary me-2"></i>
-                                                        Test History
-                                                    </h4>
-                                                    <div class="table-responsive">
-                                                        <table class="table history-table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Attempt</th>
-                                                                    <th>Score</th>
-                                                                    <th>Status</th>
-                                                                    <th>Date Taken</th>
-                                                                    <th>Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <c:forEach var="result" items="${testHistory}">
-                                                                    <tr>
-                                                                        <td class="fw-bold">#${result.attempt}</td>
-                                                                        <td class="fw-bold">${result.result}%</td>
-                                                                        <td>
-                                                                                                                                                    <span class="result-badge ${result.passed ? 'result-pass' : 'result-fail'}">
-                                                                            <i class="bi ${result.passed ? 'bi-check-circle' : 'bi-x-circle'} me-1"></i>
-                                                                            ${result.passed ? 'PASSED' : 'FAILED'}
-                                                                        </span>
-                                                                        </td>
-                                                                        <td>
-                                                                            <fmt:formatDate value="${result.dateTaken}" pattern="MMM dd, yyyy HH:mm"/>
-                                                                        </td>
-                                                                        <td>
-                                                                            <c:if test="${test.showAnswer}">
-                                                                                                                                                <a href="${pageContext.request.contextPath}/learner/tests?action=result&testResultId=${result.testResultID}" 
-                                                                   class="btn btn-sm btn-outline-primary">
-                                                                    <i class="bi bi-eye me-1"></i>View
-                                                                </a>
-                                                                            </c:if>
-                                                                        </td>
-                                                                    </tr>
-                                                                </c:forEach>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </c:if>
-
-                                            <!-- Action Buttons -->
-                                            <div class="text-center mt-5">
-                                                <a href="${pageContext.request.contextPath}/learner/tests?action=list" 
-                                                   class="btn btn-back me-3">
-                                                    <i class="bi bi-arrow-left me-2"></i>Back to Tests
-                                                </a>
-                                                <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
-                                                   class="btn btn-take-test">
-                                                    <i class="bi bi-play-circle me-2"></i>Take Test
-                                                </a>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="mb-1">Attempt</h6>
+                                                <p class="mb-0 fs-5">#${latestResult.attempt}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </c:if>
+
+                            <!-- Test History -->
+                            <c:if test="${not empty testHistory}">
+                                <div class="mt-4">
+                                    <h4 class="mb-3">
+                                        <i class="bi bi-list-ul text-primary me-2"></i>
+                                        Test History
+                                    </h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover shadow-sm bg-white rounded history-table">
+                                            <thead>
+                                            <tr>
+                                                <th>Attempt #</th>
+                                                <th>Status</th>
+                                                <th>Test Type</th>
+                                                <th>Start Time</th>
+                                                <th>End Time</th>
+                                                <th>Score %</th>
+                                                <th>View Result</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <c:forEach var="result" items="${testHistory}">
+                                                <tr>
+                                                    <td class="fw-bold">#${result.attempt}</td>
+                                                    <td>
+                                                                            <span class="result-badge ${result.passed ? 'result-pass' : 'result-fail'}">
+                                                                                <i class="bi ${result.passed ? 'bi-check-circle' : 'bi-x-circle'} me-1"></i>
+                                                                                ${result.passed ? 'PASSED' : 'FAILED'}
+                                                                            </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-info">${result.testType}</span>
+                                                    </td>
+                                                    <td>
+                                                        <fmt:formatDate value="${result.dateTaken}" pattern="MMM dd, yyyy HH:mm"/>
+                                                    </td>
+                                                    <td>
+                                                        <fmt:formatDate value="${result.dateTaken}" pattern="MMM dd, yyyy HH:mm"/>
+                                                    </td>
+                                                    <td class="fw-bold">${result.result}%</td>
+                                                    <td>
+                                                        <c:if test="${test.showAnswer}">
+                                                            <a href="${pageContext.request.contextPath}/learner/tests?action=result&testResultId=${result.testResultID}"
+                                                               class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-eye me-1"></i>View
+                                                            </a>
+                                                        </c:if>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </c:if>
+
+                            <!-- Action Buttons -->
+                            <div class="text-center mt-5">
+                                <c:choose>
+                                    <c:when test="${not empty latestResult}">
+                                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}"
+                                           class="btn btn-take-test">
+                                            <i class="bi bi-arrow-clockwise me-2"></i>Retake Test
+                                        </a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}"
+                                           class="btn btn-take-test">
+                                            <i class="bi bi-play-circle me-2"></i>Take Test
+                                        </a>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+    </div>
+    </div>
+    </div>
+</main>
 
-    <%@include file="../../layout/footer.jsp" %>
+<%@include file="../../layout/footer.jsp" %>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        // Script to ensure proper sidebar hover behavior
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('main');
-            const header = document.querySelector('header');
+<script>
+    // Script to ensure proper sidebar hover behavior
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('main');
+        const header = document.querySelector('header');
 
-            // Event handler functions defined outside to allow removal
-            function handleSidebarMouseEnter() {
-                const windowWidth = window.innerWidth;
-                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+        // Event handler functions defined outside to allow removal
+        function handleSidebarMouseEnter() {
+            const windowWidth = window.innerWidth;
+            mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
 
-                if (windowWidth <= 768) {
-                    // Mobile layout
-                    mainContent.style.marginLeft = '250px';
-                    if (header) {
-                        header.style.left = '250px';
-                        header.style.width = 'calc(100% - 266px)';
-                    }
-                } else {
-                    // Desktop layout
-                    mainContent.style.marginLeft = '250px';
-                    if (header) {
-                        header.style.left = '250px';
-                        header.style.width = 'calc(100% - 266px)';
-                    }
+            if (windowWidth <= 768) {
+                // Mobile layout
+                mainContent.style.marginLeft = '250px';
+                if (header) {
+                    header.style.left = '250px';
+                    header.style.width = 'calc(100% - 266px)';
+                }
+            } else {
+                // Desktop layout
+                mainContent.style.marginLeft = '250px';
+                if (header) {
+                    header.style.left = '250px';
+                    header.style.width = 'calc(100% - 266px)';
                 }
             }
+        }
 
-            function handleSidebarMouseLeave() {
-                const windowWidth = window.innerWidth;
-                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+        function handleSidebarMouseLeave() {
+            const windowWidth = window.innerWidth;
+            mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
 
-                if (windowWidth <= 768) {
-                    // Mobile layout
-                    mainContent.style.marginLeft = '0';
-                    if (header) {
-                        header.style.left = '0';
-                        header.style.width = 'calc(100% - 16px)';
-                    }
-                } else {
-                    // Desktop layout
-                    mainContent.style.marginLeft = '80px';
-                    if (header) {
-                        header.style.left = '80px';
-                        header.style.width = 'calc(100% - 96px)';
-                    }
+            if (windowWidth <= 768) {
+                // Mobile layout
+                mainContent.style.marginLeft = '0';
+                if (header) {
+                    header.style.left = '0';
+                    header.style.width = 'calc(100% - 16px)';
+                }
+            } else {
+                // Desktop layout
+                mainContent.style.marginLeft = '80px';
+                if (header) {
+                    header.style.left = '80px';
+                    header.style.width = 'calc(100% - 96px)';
                 }
             }
+        }
 
-            // Add event listeners
-            sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
-            sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+        // Add event listeners
+        sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+        sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
 
-            // Set initial state based on window width
-            handleSidebarMouseLeave();
+        // Set initial state based on window width
+        handleSidebarMouseLeave();
 
-            // Add resize event listener to handle window size changes
-            window.addEventListener('resize', function() {
-                // Update layout based on current sidebar state
-                if (sidebar.matches(':hover')) {
-                    handleSidebarMouseEnter();
-                } else {
-                    handleSidebarMouseLeave();
-                }
-            });
+        // Add resize event listener to handle window size changes
+        window.addEventListener('resize', function() {
+            // Update layout based on current sidebar state
+            if (sidebar.matches(':hover')) {
+                handleSidebarMouseEnter();
+            } else {
+                handleSidebarMouseLeave();
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html> 

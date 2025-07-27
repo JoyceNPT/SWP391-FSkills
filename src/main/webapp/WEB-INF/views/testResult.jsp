@@ -131,21 +131,21 @@
         }
 
         .answer-option.user-choice {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-            border-color: #e17055;
-            color: #2d3436;
+            background: #B93636;
+            border-color: #a52f2f;
+            color: white;
             font-weight: 600;
         }
 
         .answer-option.correct-answer {
-            background: linear-gradient(135deg, #55efc4, #00b894);
-            border-color: #00a085;
+            background: #28A745;
+            border-color: #1e7e34;
             color: white;
             font-weight: 600;
         }
 
         .answer-option.user-choice.correct-answer {
-            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            background: #6c5ce7;
             border-color: #5f3dc4;
         }
 
@@ -160,7 +160,7 @@
         }
 
         .user-writing-answer {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            background: #fdcb6e;
             border-color: #e17055;
             color: #2d3436;
         }
@@ -173,12 +173,12 @@
         }
 
         .points-earned {
-            background: linear-gradient(135deg, #55efc4, #00b894);
+            background: #28A745;
             color: white;
         }
 
         .points-lost {
-            background: linear-gradient(135deg, #fd79a8, #e84393);
+            background: #B93636;
             color: white;
         }
 
@@ -190,11 +190,11 @@
         }
 
         .indicator-correct {
-            color: #00b894;
+            color: #28A745;
         }
 
         .indicator-incorrect {
-            color: #e17055;
+            color: #B93636;
         }
 
         .indicator-partial {
@@ -263,15 +263,15 @@
         }
 
         .performance-fill.low {
-            background: linear-gradient(90deg, #fa709a, #fee140);
+            background: #B93636;
         }
 
         .performance-fill.medium {
-            background: linear-gradient(90deg, #ffeaa7, #fdcb6e);
+            background: #fdcb6e;
         }
 
         .performance-fill.high {
-            background: linear-gradient(90deg, #55efc4, #00b894);
+            background: #28A745;
         }
 
         #main-body{
@@ -284,320 +284,324 @@
     </style>
 </head>
 <body>
-    <%@include file="../../layout/header.jsp" %>
-    <%@include file="../../layout/sidebar_user.jsp"%>
+<%@include file="../../layout/header.jsp" %>
+<%@include file="../../layout/sidebar_user.jsp"%>
 
-    <main id="main-body" class="main d-flex">
-        <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
-            <div class="container-fluid px-4 py-4">
-                            <!-- Result Container -->
-                            <div class="result-container">
-                                <!-- Result Header -->
-                                <div class="result-header ${testResult.passed ? 'passed' : 'failed'}">
-                                    <h1 class="display-6 mb-3">
-                                        <i class="bi ${testResult.passed ? 'bi-trophy' : 'bi-x-circle'} me-3"></i>
-                                        Test Completed
-                                    </h1>
-                                    <h2 class="mb-2">${test.testName}</h2>
-                                    <p class="mb-4 opacity-75">${test.module.course.courseName} - ${test.module.moduleName}</p>
+<main id="main-body" class="main d-flex">
+    <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
+        <div class="container-fluid px-4 py-4">
+            <!-- Back to Test Details Button -->
+            <div class="mb-3">
+                <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}"
+                   class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Test Details
+                </a>
+            </div>
 
-                                    <div class="result-score">${testResult.result}%</div>
-                                    <div class="result-status">
-                                        <i class="bi ${testResult.passed ? 'bi-check-circle' : 'bi-x-circle'} me-2"></i>
-                                        ${testResult.passed ? 'PASSED' : 'FAILED'}
-                                    </div>
+            <!-- Result Container -->
+            <div class="result-container">
+                <!-- Result Header -->
+                <div class="result-header ${testResult.passed ? 'passed' : 'failed'}">
+                    <h1 class="display-6 mb-3">
+                        <i class="bi ${testResult.passed ? 'bi-trophy' : 'bi-x-circle'} me-3"></i>
+                        Test Completed
+                    </h1>
+                    <h2 class="mb-2">${test.testName}</h2>
+                    <p class="mb-4 opacity-75">${test.module.course.courseName} - ${test.module.moduleName}</p>
 
-                                    <p class="mt-3 mb-0 opacity-75">
-                                        Attempt #${testResult.attempt} • 
-                                        Completed on <fmt:formatDate value="${testResult.dateTaken}" pattern="MMM dd, yyyy 'at' HH:mm"/>
-                                    </p>
-                                </div>
+                    <div class="result-score">${testResult.result}%</div>
+                    <div class="result-status">
+                        <i class="bi ${testResult.passed ? 'bi-check-circle' : 'bi-x-circle'} me-2"></i>
+                        ${testResult.passed ? 'PASSED' : 'FAILED'}
+                    </div>
 
-                                <!-- Statistics -->
-                                <div class="stats-container">
-                                    <div class="row g-0">
-                                        <div class="col-md-3">
-                                            <div class="stat-item">
-                                                <div class="stat-value">${testResult.result}%</div>
-                                                <div class="stat-label">Final Score</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="stat-item">
-                                                <div class="stat-value">${test.passPercentage}%</div>
-                                                <div class="stat-label">Required</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="stat-item">
-                                                <div class="stat-value">${correctAnswers}</div>
-                                                <div class="stat-label">Correct</div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="stat-item">
-                                                <div class="stat-value">${totalQuestions}</div>
-                                                <div class="stat-label">Total</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <p class="mt-3 mb-0 opacity-75">
+                        Attempt #${testResult.attempt} •
+                        Completed on <fmt:formatDate value="${testResult.dateTaken}" pattern="MMM dd, yyyy 'at' HH:mm"/>
+                    </p>
+                </div>
 
-                                <div class="p-4">
-                                    <!-- Performance Summary -->
-                                    <div class="summary-card">
-                                        <h4 class="mb-3">
-                                            <i class="bi bi-graph-up text-primary me-2"></i>
-                                            Performance Summary
-                                        </h4>
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <p class="mb-2">
-                                                    You scored <strong>${testResult.result}%</strong> on this test.
-                                                    <c:choose>
-                                                        <c:when test="${testResult.passed}">
-                                                            <span class="text-success fw-bold">Congratulations! You passed this test.</span>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span class="text-warning fw-bold">You need ${test.passPercentage}% to pass. Keep studying and try again!</span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </p>
-                                                <div class="performance-meter">
-                                                    <div class="performance-fill ${testResult.result < 50 ? 'low' : testResult.result < 80 ? 'medium' : 'high'}" style="width: ${testResult.result}%;"></div>
-                                                </div>
-                                                <div class="d-flex justify-content-between small text-muted">
-                                                    <span>0%</span>
-                                                    <span>Pass: ${test.passPercentage}%</span>
-                                                    <span>100%</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 text-center">
-                                                <div class="display-6 ${testResult.passed ? 'text-success' : 'text-warning'} mb-2">
-                                                    <i class="bi ${testResult.passed ? 'bi-emoji-smile' : 'bi-emoji-neutral'}"></i>
-                                                </div>
-                                                <h5 class="${testResult.passed ? 'text-success' : 'text-warning'}">
-                                                    ${testResult.passed ? 'Great Job!' : 'Keep Trying!'}
-                                                </h5>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Question Review (if ShowAnswer is enabled) -->
-                                    <c:choose>
-                                        <c:when test="${test.showAnswer and not empty userAnswers}">
-                                            <div class="mb-4">
-                                                <h4 class="mb-4">
-                                                    <i class="bi bi-list-check text-primary me-2"></i>
-                                                    Question Review
-                                                </h4>
-
-                                                <c:forEach var="qa" items="${userAnswers}" varStatus="status">
-                                                    <div class="question-review-card">
-                                                        <div class="question-review-header position-relative">
-                                                            <div class="d-flex align-items-start">
-                                                                <div class="question-number">${status.index + 1}</div>
-                                                                <div class="flex-grow-1">
-                                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                        <span class="badge ${qa.question.questionType == 'CHOICE' ? 'bg-info' : 'bg-warning'} text-white">
-                                                                            <i class="bi ${qa.question.questionType == 'CHOICE' ? 'bi-check2-square' : 'bi-pencil-square'} me-1"></i>
-                                                                            ${qa.question.questionType}
-                                                                        </span>
-                                                                        <span class="points-badge ${qa.corrected ? 'points-earned' : 'points-lost'}">
-                                                                            ${qa.corrected ? qa.question.point : 0} / ${qa.question.point} points
-                                                                        </span>
-                                                                    </div>
-                                                                    <h5 class="question-text mb-0">${qa.question.question}</h5>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Result Indicator -->
-                                                            <div class="result-indicator">
-                                                                <c:choose>
-                                                                    <c:when test="${qa.corrected}">
-                                                                        <i class="bi bi-check-circle-fill indicator-correct"></i>
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <i class="bi bi-x-circle-fill indicator-incorrect"></i>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="answer-section">
-                                                            <c:choose>
-                                                                <c:when test="${qa.question.questionType == 'CHOICE'}">
-                                                                    <div class="choice-review">
-                                                                        <c:if test="${not empty qa.question.option1}">
-                                                                            <div class="answer-option ${qa.answer == '1' ? 'user-choice' : ''} ${qa.question.rightOption == 'A' ? 'correct-answer' : ''}">
-                                                                                <div class="d-flex justify-content-between align-items-center">
-                                                                                    <span><strong>A.</strong> ${qa.question.option1}</span>
-                                                                                    <div>
-                                                                                        <c:if test="${qa.answer == '1'}">
-                                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
-                                                                                        </c:if>
-                                                                                        <c:if test="${qa.question.rightOption == 'A'}">
-                                                                                            <span class="badge bg-success">Correct</span>
-                                                                                        </c:if>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </c:if>
-                                                                        <c:if test="${not empty qa.question.option2}">
-                                                                            <div class="answer-option ${qa.answer == '2' ? 'user-choice' : ''} ${qa.question.rightOption == 'B' ? 'correct-answer' : ''}">
-                                                                                <div class="d-flex justify-content-between align-items-center">
-                                                                                    <span><strong>B.</strong> ${qa.question.option2}</span>
-                                                                                    <div>
-                                                                                        <c:if test="${qa.answer == '2'}">
-                                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
-                                                                                        </c:if>
-                                                                                        <c:if test="${qa.question.rightOption == 'B'}">
-                                                                                            <span class="badge bg-success">Correct</span>
-                                                                                        </c:if>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </c:if>
-                                                                        <c:if test="${not empty qa.question.option3}">
-                                                                            <div class="answer-option ${qa.answer == '3' ? 'user-choice' : ''} ${qa.question.rightOption == 'C' ? 'correct-answer' : ''}">
-                                                                                <div class="d-flex justify-content-between align-items-center">
-                                                                                    <span><strong>C.</strong> ${qa.question.option3}</span>
-                                                                                    <div>
-                                                                                        <c:if test="${qa.answer == '3'}">
-                                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
-                                                                                        </c:if>
-                                                                                        <c:if test="${qa.question.rightOption == 'C'}">
-                                                                                            <span class="badge bg-success">Correct</span>
-                                                                                        </c:if>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </c:if>
-                                                                        <c:if test="${not empty qa.question.option4}">
-                                                                            <div class="answer-option ${qa.answer == '4' ? 'user-choice' : ''} ${qa.question.rightOption == 'D' ? 'correct-answer' : ''}">
-                                                                                <div class="d-flex justify-content-between align-items-center">
-                                                                                    <span><strong>D.</strong> ${qa.question.option4}</span>
-                                                                                    <div>
-                                                                                        <c:if test="${qa.answer == '4'}">
-                                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
-                                                                                        </c:if>
-                                                                                        <c:if test="${qa.question.rightOption == 'D'}">
-                                                                                            <span class="badge bg-success">Correct</span>
-                                                                                        </c:if>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </c:if>
-                                                                    </div>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <div class="writing-review">
-                                                                        <h6 class="mb-2">
-                                                                            <i class="bi bi-pencil text-primary me-2"></i>
-                                                                            Your Answer:
-                                                                        </h6>
-                                                                        <div class="writing-answer user-writing-answer">
-                                                                            <c:choose>
-                                                                                <c:when test="${not empty qa.answer}">
-                                                                                    ${qa.answer}
-                                                                                </c:when>
-                                                                                <c:otherwise>
-                                                                                    <em class="text-muted">No answer provided</em>
-                                                                                </c:otherwise>
-                                                                            </c:choose>
-                                                                        </div>
-                                                                        <small class="text-muted mt-2 d-block">
-                                                                            <i class="bi bi-info-circle me-1"></i>
-                                                                            Writing questions are manually graded by instructors.
-                                                                        </small>
-                                                                    </div>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </div>
-                                                    </div>
-                                                </c:forEach>
-                                            </div>
-                                        </c:when>
-
-                                        <c:when test="${not test.showAnswer}">
-                                            <div class="no-answers-message">
-                                                <i class="bi bi-eye-slash display-1 text-muted mb-3"></i>
-                                                <h4 class="text-muted">Answer Review Not Available</h4>
-                                                <p class="text-muted">
-                                                    The instructor has disabled answer review for this test. 
-                                                    You can only see your final score and pass/fail status.
-                                                </p>
-                                            </div>
-                                        </c:when>
-                                    </c:choose>
-
-                                    <!-- Action Buttons -->
-                                    <div class="text-center mt-5">
-                                        <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}" 
-                                           class="btn btn-back btn-action me-3">
-                                            <i class="bi bi-arrow-left me-2"></i>Back to Test Details
-                                        </a>
-                                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
-                                           class="btn btn-retake btn-action">
-                                            <i class="bi bi-arrow-clockwise me-2"></i>Retake Test
-                                        </a>
-                                    </div>
-                                </div>
+                <!-- Statistics -->
+                <div class="stats-container">
+                    <div class="row g-0">
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-value">${testResult.result}%</div>
+                                <div class="stat-label">Final Score</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-value">${test.passPercentage}%</div>
+                                <div class="stat-label">Required</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-value">${correctAnswers}</div>
+                                <div class="stat-label">Correct</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-item">
+                                <div class="stat-value">${totalQuestions}</div>
+                                <div class="stat-label">Total</div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="p-4">
+                    <!-- Performance Summary -->
+                    <div class="summary-card">
+                        <h4 class="mb-3">
+                            <i class="bi bi-graph-up text-primary me-2"></i>
+                            Performance Summary
+                        </h4>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p class="mb-2">
+                                    You scored <strong>${testResult.result}%</strong> on this test.
+                                    <c:choose>
+                                        <c:when test="${testResult.passed}">
+                                            <span class="text-success fw-bold">Congratulations! You passed this test.</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="text-warning fw-bold">You need ${test.passPercentage}% to pass. Keep studying and try again!</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </p>
+                                <div class="performance-meter">
+                                    <div class="performance-fill ${testResult.result < 50 ? 'low' : testResult.result < 80 ? 'medium' : 'high'}" style="width: ${testResult.result}%;"></div>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span>0%</span>
+                                    <span>Pass: ${test.passPercentage}%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="display-6 ${testResult.passed ? 'text-success' : 'text-warning'} mb-2">
+                                    <i class="bi ${testResult.passed ? 'bi-emoji-smile' : 'bi-emoji-neutral'}"></i>
+                                </div>
+                                <h5 class="${testResult.passed ? 'text-success' : 'text-warning'}">
+                                    ${testResult.passed ? 'Great Job!' : 'Keep Trying!'}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Review (if ShowAnswer is enabled) -->
+                    <c:choose>
+                        <c:when test="${test.showAnswer and not empty userAnswers}">
+                            <div class="mb-4">
+                                <h4 class="mb-4">
+                                    <i class="bi bi-list-check text-primary me-2"></i>
+                                    Question Review
+                                </h4>
+
+                                <c:forEach var="qa" items="${userAnswers}" varStatus="status">
+                                    <div class="question-review-card">
+                                        <div class="question-review-header position-relative">
+                                            <div class="d-flex align-items-start">
+                                                <div class="question-number">${status.index + 1}</div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                        <span class="badge ${qa.question.questionType == 'CHOICE' ? 'bg-info' : 'bg-warning'} text-white">
+                                                                            <i class="bi ${qa.question.questionType == 'CHOICE' ? 'bi-check2-square' : 'bi-pencil-square'} me-1"></i>
+                                                                            ${qa.question.questionType}
+                                                                        </span>
+                                                        <span class="points-badge ${qa.corrected ? 'points-earned' : 'points-lost'}">
+                                                                            ${qa.corrected ? qa.question.point : 0} / ${qa.question.point} points
+                                                                        </span>
+                                                    </div>
+                                                    <h5 class="question-text mb-0">${qa.question.question}</h5>
+                                                </div>
+                                            </div>
+
+                                            <!-- Result Indicator -->
+                                            <div class="result-indicator">
+                                                <c:choose>
+                                                    <c:when test="${qa.corrected}">
+                                                        <i class="bi bi-check-circle-fill indicator-correct"></i>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <i class="bi bi-x-circle-fill indicator-incorrect"></i>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+
+                                        <div class="answer-section">
+                                            <c:choose>
+                                                <c:when test="${qa.question.questionType == 'CHOICE'}">
+                                                    <div class="choice-review">
+                                                        <c:if test="${not empty qa.question.option1}">
+                                                            <div class="answer-option ${qa.answer == '1' ? 'user-choice' : ''} ${qa.question.rightOption == 'A' ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>A.</strong> ${qa.question.option1}</span>
+                                                                    <div>
+                                                                        <c:if test="${qa.answer == '1'}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${qa.question.rightOption == 'A'}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${not empty qa.question.option2}">
+                                                            <div class="answer-option ${qa.answer == '2' ? 'user-choice' : ''} ${qa.question.rightOption == 'B' ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>B.</strong> ${qa.question.option2}</span>
+                                                                    <div>
+                                                                        <c:if test="${qa.answer == '2'}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${qa.question.rightOption == 'B'}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${not empty qa.question.option3}">
+                                                            <div class="answer-option ${qa.answer == '3' ? 'user-choice' : ''} ${qa.question.rightOption == 'C' ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>C.</strong> ${qa.question.option3}</span>
+                                                                    <div>
+                                                                        <c:if test="${qa.answer == '3'}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${qa.question.rightOption == 'C'}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${not empty qa.question.option4}">
+                                                            <div class="answer-option ${qa.answer == '4' ? 'user-choice' : ''} ${qa.question.rightOption == 'D' ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>D.</strong> ${qa.question.option4}</span>
+                                                                    <div>
+                                                                        <c:if test="${qa.answer == '4'}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${qa.question.rightOption == 'D'}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="writing-review">
+                                                        <h6 class="mb-2">
+                                                            <i class="bi bi-pencil text-primary me-2"></i>
+                                                            Your Answer:
+                                                        </h6>
+                                                        <div class="writing-answer user-writing-answer">
+                                                            <c:choose>
+                                                                <c:when test="${not empty qa.answer}">
+                                                                    ${qa.answer}
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <em class="text-muted">No answer provided</em>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </div>
+                                                        <small class="text-muted mt-2 d-block">
+                                                            <i class="bi bi-info-circle me-1"></i>
+                                                            Writing questions are manually graded by instructors.
+                                                        </small>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:when>
+
+                        <c:when test="${not test.showAnswer}">
+                            <div class="no-answers-message">
+                                <i class="bi bi-eye-slash display-1 text-muted mb-3"></i>
+                                <h4 class="text-muted">Answer Review Not Available</h4>
+                                <p class="text-muted">
+                                    The instructor has disabled answer review for this test.
+                                    You can only see your final score and pass/fail status.
+                                </p>
+                            </div>
+                        </c:when>
+                    </c:choose>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center mt-5">
+                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}"
+                           class="btn btn-retake btn-action">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Retake Test
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </main>
+    </div>
+    </div>
+    </div>
+    </div>
+</main>
 
-    <%@include file="../../layout/footer.jsp" %>
+<%@include file="../../layout/footer.jsp" %>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Animate performance meter on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const performanceFill = document.querySelector('.performance-fill');
-                if (performanceFill) {
-                    performanceFill.style.width = '${testResult.result}%';
-                }
-            }, 500);
-        });
-
-        // Add smooth scroll to question review
-        function scrollToQuestionReview() {
-            const questionReview = document.querySelector('.question-review-card');
-            if (questionReview) {
-                questionReview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Animate performance meter on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const performanceFill = document.querySelector('.performance-fill');
+            if (performanceFill) {
+                performanceFill.style.width = '${testResult.result}%';
             }
+        }, 500);
+    });
+
+    // Add smooth scroll to question review
+    function scrollToQuestionReview() {
+        const questionReview = document.querySelector('.question-review-card');
+        if (questionReview) {
+            questionReview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Add confetti effect for passed tests (optional)
+    <c:if test="${testResult.passed}">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simple confetti effect using CSS animations
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.innerHTML = '🎉';
+            confetti.style.position = 'fixed';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-10px';
+            confetti.style.fontSize = '2rem';
+            confetti.style.zIndex = '9999';
+            confetti.style.pointerEvents = 'none';
+            confetti.style.animation = 'fall 3s linear forwards';
+            document.body.appendChild(confetti);
+
+            setTimeout(() => {
+                confetti.remove();
+            }, 3000);
         }
 
-        // Add confetti effect for passed tests (optional)
-        <c:if test="${testResult.passed}">
-        document.addEventListener('DOMContentLoaded', function() {
-            // Simple confetti effect using CSS animations
-            function createConfetti() {
-                const confetti = document.createElement('div');
-                confetti.innerHTML = '🎉';
-                confetti.style.position = 'fixed';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-10px';
-                confetti.style.fontSize = '2rem';
-                confetti.style.zIndex = '9999';
-                confetti.style.pointerEvents = 'none';
-                confetti.style.animation = 'fall 3s linear forwards';
-                document.body.appendChild(confetti);
-
-                setTimeout(() => {
-                    confetti.remove();
-                }, 3000);
-            }
-
-            // Add CSS for confetti animation
-            const style = document.createElement('style');
-            style.textContent = `
+        // Add CSS for confetti animation
+        const style = document.createElement('style');
+        style.textContent = `
                 @keyframes fall {
                     to {
                         transform: translateY(100vh) rotate(360deg);
@@ -605,14 +609,14 @@
                     }
                 }
             `;
-            document.head.appendChild(style);
+        document.head.appendChild(style);
 
-            // Create multiple confetti pieces
-            for (let i = 0; i < 20; i++) {
-                setTimeout(createConfetti, i * 100);
-            }
-        });
-        </c:if>
-    </script>
+        // Create multiple confetti pieces
+        for (let i = 0; i < 20; i++) {
+            setTimeout(createConfetti, i * 100);
+        }
+    });
+    </c:if>
+</script>
 </body>
 </html> 

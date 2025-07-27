@@ -16,15 +16,15 @@ public class Question {
     private String option3;
     private String option4;
     private String rightOption;
-    
+
     // For relationships
     private Test test;
 
     public Question() {
     }
 
-    public Question(int testID, int point, int questionOrder, String questionType, String question, 
-                   String option1, String option2, String option3, String option4, String rightOption) {
+    public Question(int testID, int point, int questionOrder, String questionType, String question,
+                    String option1, String option2, String option3, String option4, String rightOption) {
         this.testID = testID;
         this.point = point;
         this.questionOrder = questionOrder;
@@ -37,8 +37,8 @@ public class Question {
         this.rightOption = rightOption;
     }
 
-    public Question(int questionID, int testID, int point, int questionOrder, String questionType, 
-                   String question, String option1, String option2, String option3, String option4, String rightOption) {
+    public Question(int questionID, int testID, int point, int questionOrder, String questionType,
+                    String question, String option1, String option2, String option3, String option4, String rightOption) {
         this.questionID = questionID;
         this.testID = testID;
         this.point = point;

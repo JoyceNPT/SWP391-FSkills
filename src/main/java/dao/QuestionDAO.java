@@ -24,10 +24,10 @@ public class QuestionDAO extends DBContext {
     public List<Question> getQuestionsByTestID(int testID) {
         List<Question> list = new ArrayList<>();
         String sql = "SELECT q.*, t.ModuleID " +
-                    "FROM Questions q " +
-                    "JOIN Tests t ON q.TestID = t.TestID " +
-                    "WHERE q.TestID = ? " +
-                    "ORDER BY q.QuestionOrder";
+                "FROM Questions q " +
+                "JOIN Tests t ON q.TestID = t.TestID " +
+                "WHERE q.TestID = ? " +
+                "ORDER BY q.QuestionOrder";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -66,9 +66,9 @@ public class QuestionDAO extends DBContext {
      */
     public Question getQuestionByID(int questionID) {
         String sql = "SELECT q.*, t.ModuleID " +
-                    "FROM Questions q " +
-                    "JOIN Tests t ON q.TestID = t.TestID " +
-                    "WHERE q.QuestionID = ?";
+                "FROM Questions q " +
+                "JOIN Tests t ON q.TestID = t.TestID " +
+                "WHERE q.QuestionID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -107,8 +107,8 @@ public class QuestionDAO extends DBContext {
      */
     public int insertQuestion(Question question) {
         String sql = "INSERT INTO Questions (TestID, Point, QuestionOrder, QuestionType, Question, " +
-                    "Option1, Option2, Option3, Option4, RightOption) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "Option1, Option2, Option3, Option4, RightOption) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -129,10 +129,10 @@ public class QuestionDAO extends DBContext {
                 ResultSet generatedKeys = ps.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int questionID = generatedKeys.getInt(1);
-                    
+
                     // Update test last update
                     updateTestLastUpdate(question.getTestID());
-                    
+
                     return questionID;
                 }
             }
@@ -147,9 +147,9 @@ public class QuestionDAO extends DBContext {
      */
     public int updateQuestion(Question question) {
         String sql = "UPDATE Questions SET " +
-                    "Point = ?, QuestionOrder = ?, QuestionType = ?, Question = ?, " +
-                    "Option1 = ?, Option2 = ?, Option3 = ?, Option4 = ?, RightOption = ? " +
-                    "WHERE QuestionID = ?";
+                "Point = ?, QuestionOrder = ?, QuestionType = ?, Question = ?, " +
+                "Option1 = ?, Option2 = ?, Option3 = ?, Option4 = ?, RightOption = ? " +
+                "WHERE QuestionID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -289,8 +289,8 @@ public class QuestionDAO extends DBContext {
      */
     public int insertQuestions(List<Question> questions) {
         String sql = "INSERT INTO Questions (TestID, Point, QuestionOrder, QuestionType, Question, " +
-                    "Option1, Option2, Option3, Option4, RightOption) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "Option1, Option2, Option3, Option4, RightOption) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             conn.setAutoCommit(false);
@@ -354,10 +354,10 @@ public class QuestionDAO extends DBContext {
     public List<Question> getQuestionsForTest(int testID, boolean randomize) {
         List<Question> list = new ArrayList<>();
         String sql = "SELECT q.*, t.ModuleID " +
-                    "FROM Questions q " +
-                    "JOIN Tests t ON q.TestID = t.TestID " +
-                    "WHERE q.TestID = ? " +
-                    "ORDER BY " + (randomize ? "NEWID()" : "q.QuestionOrder");
+                "FROM Questions q " +
+                "JOIN Tests t ON q.TestID = t.TestID " +
+                "WHERE q.TestID = ? " +
+                "ORDER BY " + (randomize ? "NEWID()" : "q.QuestionOrder");
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);

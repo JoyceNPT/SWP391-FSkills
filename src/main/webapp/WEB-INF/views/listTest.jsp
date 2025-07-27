@@ -74,203 +74,208 @@
 <jsp:include page="/layout/header.jsp"/>
 
 <main class="main">
-<div class="px-5 py-6">
-    <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
-        <ol class="list-none p-0 inline-flex space-x-2">
-            <li class="inline-flex items-center">
-                <a href="${pageContext.request.contextPath}/instructor"
-                   class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
-            </li>
-            <li class="inline-flex items-center">
-                <span class="mx-2 text-gray-400">/</span>
-            </li>
-            <li class="inline-flex items-center">
-                <span class="text-gray-800 font-semibold">Manage Tests</span>
-            </li>
-        </ol>
-    </nav>
+    <div class="px-5 py-6">
+        <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
+            <ol class="list-none p-0 inline-flex space-x-2">
+                <li class="inline-flex items-center">
+                    <a href="${pageContext.request.contextPath}/instructor"
+                       class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
+                </li>
+                <li class="inline-flex items-center">
+                    <span class="mx-2 text-gray-400">/</span>
+                </li>
+                <li class="inline-flex items-center">
+                    <span class="text-gray-800 font-semibold">Manage Tests</span>
+                </li>
+            </ol>
+        </nav>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
 
-        <a href="${pageContext.request.contextPath}/instructor/tests?action=create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Create New Test
-        </a>
-    </div>
-
-    <!-- Success/Error Messages -->
-    <c:if test="${not empty success}">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ${success}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </c:if>
-
-    <c:if test="${not empty err}">
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            ${err}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </c:if>
-
-    <!-- Filter Section -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-filter"></i> Filter Tests</h5>
-            <form id="filterForm" method="GET" action="${pageContext.request.contextPath}/instructor/tests">
-                <input type="hidden" name="action" value="list">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="filterCourse" class="form-label">Course</label>
-                            <select class="form-select" id="filterCourse" name="filterCourseId" onchange="loadFilterModules()">
-                                <option value="">All Courses</option>
-                                <c:forEach var="course" items="${courses}">
-                                    <option value="${course.courseID}" ${param.filterCourseId == course.courseID ? 'selected' : ''}>${course.courseName}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="filterModule" class="form-label">Module</label>
-                            <select class="form-select" id="filterModule" name="filterModuleId">
-                                <option value="">All Modules</option>
-                                <c:if test="${not empty filterModules}">
-                                    <c:forEach var="module" items="${filterModules}">
-                                        <option value="${module.moduleID}" ${param.filterModuleId == module.moduleID ? 'selected' : ''}>${module.moduleName}</option>
-                                    </c:forEach>
-                                </c:if>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label class="form-label">&nbsp;</label>
-                            <div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search"></i> Filter
-                                </button>
-                                <a href="${pageContext.request.contextPath}/instructor/tests?action=list" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times"></i> Clear
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <c:choose>
-        <c:when test="${empty listTest}">
-            <div class="alert alert-warning text-center">
-                No tests available for this module.
-                <br><br>
+            <div class="d-flex gap-2">
+                <a href="${pageContext.request.contextPath}/instructor/tests?action=studentResults" class="btn btn-info">
+                    <i class="fas fa-users"></i> Learner Results
+                </a>
                 <a href="${pageContext.request.contextPath}/instructor/tests?action=create" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create First Test
+                    <i class="fas fa-plus"></i> Create New Test
                 </a>
             </div>
-        </c:when>
-        <c:otherwise>
-            <table class="table table-bordered table-hover shadow-sm bg-white rounded">
-                <thead>
-                <tr>
-                    <th>Test #</th>
-                    <th>Test Name</th>
-                    <th>Module</th>
-                    <th>Course</th>
-                    <th>Test Order</th>
-                    <th>Questions</th>
-                    <th>Pass %</th>
-                    <th>Randomize</th>
-                    <th>Show Answer</th>
-                    <th>Last Update</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
+        </div>
 
-                <tbody>
-                <c:forEach var="test" items="${listTest}">
-                    <tr>
-                        <td>
-                            <strong>#${test.testID}</strong>
-                        </td>
-                        <td>
-                            <strong>${test.testName}</strong>
-                        </td>
-                        <td>
-                            <c:if test="${not empty test.module}">
-                                ${test.module.moduleName}
-                            </c:if>
-                        </td>
-                        <td>
-                            <c:if test="${not empty test.module && not empty test.module.course}">
-                                ${test.module.course.courseName}
-                            </c:if>
-                        </td>
-                        <td>
-                            <span class="badge badge-info">${test.testOrder}</span>
-                        </td>
-                        <td>
-                            <span class="badge bg-secondary">${test.questionCount} questions</span>
-                        </td>
-                        <td>
-                            <span class="badge badge-pass">${test.passPercentage}%</span>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${test.randomize}">
-                                    <i class="fas fa-check text-success"></i>
-                                </c:when>
-                                <c:otherwise>
-                                    <i class="fas fa-times text-danger"></i>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${test.showAnswer}">
-                                    <i class="fas fa-check text-success"></i>
-                                </c:when>
-                                <c:otherwise>
-                                    <i class="fas fa-times text-danger"></i>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${not empty test.testLastUpdate}">
-                                    <span class="datetime" data-utc="${test.testLastUpdate}Z"></span>
-                                </c:when>
-                                <c:otherwise>N/A</c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="${pageContext.request.contextPath}/instructor/tests?action=view&testId=${test.testID}" 
-                                   class="btn btn-sm btn-info" title="View Test">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="${pageContext.request.contextPath}/instructor/tests?action=update&testId=${test.testID}" 
-                                   class="btn btn-sm btn-warning" title="Edit Test">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-danger" 
-                                        onclick="confirmDelete(${test.testID})" title="Delete Test">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+        <%--    <!-- Success/Error Messages -->--%>
+        <%--    <c:if test="${not empty success}">--%>
+        <%--        <div class="alert alert-success alert-dismissible fade show" role="alert">--%>
+        <%--            ${success}--%>
+        <%--            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>--%>
+        <%--        </div>--%>
+        <%--    </c:if>--%>
+
+        <%--    <c:if test="${not empty err}">--%>
+        <%--        <div class="alert alert-danger alert-dismissible fade show" role="alert">--%>
+        <%--            ${err}--%>
+        <%--            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>--%>
+        <%--        </div>--%>
+        <%--    </c:if>--%>
+
+        <!-- Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-filter"></i> Filter Tests</h5>
+                <form id="filterForm" method="GET" action="${pageContext.request.contextPath}/instructor/tests">
+                    <input type="hidden" name="action" value="list">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="filterCourse" class="form-label">Course</label>
+                                <select class="form-select" id="filterCourse" name="filterCourseId" onchange="loadFilterModules()">
+                                    <option value="">All Courses</option>
+                                    <c:forEach var="course" items="${courses}">
+                                        <option value="${course.courseID}" ${param.filterCourseId == course.courseID ? 'selected' : ''}>${course.courseName}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
-                        </td>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="filterModule" class="form-label">Module</label>
+                                <select class="form-select" id="filterModule" name="filterModuleId">
+                                    <option value="">All Modules</option>
+                                    <c:if test="${not empty filterModules}">
+                                        <c:forEach var="module" items="${filterModules}">
+                                            <option value="${module.moduleID}" ${param.filterModuleId == module.moduleID ? 'selected' : ''}>${module.moduleName}</option>
+                                        </c:forEach>
+                                    </c:if>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Filter
+                                    </button>
+                                    <a href="${pageContext.request.contextPath}/instructor/tests?action=list" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times"></i> Clear
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <c:choose>
+            <c:when test="${empty listTest}">
+                <div class="alert alert-warning text-center">
+                    No tests available for this module.
+                    <br><br>
+                    <a href="${pageContext.request.contextPath}/instructor/tests?action=create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create First Test
+                    </a>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+                    <thead>
+                    <tr>
+                        <th>Test #</th>
+                        <th>Test Name</th>
+                        <th>Module</th>
+                        <th>Course</th>
+                        <th>Test Order</th>
+                        <th>Questions</th>
+                        <th>Pass %</th>
+                        <th>Randomize</th>
+                        <th>Show Answer</th>
+                        <th>Last Update</th>
+                        <th>Actions</th>
                     </tr>
-                </c:forEach>
-                </tbody>
-            </table>
-        </c:otherwise>
-    </c:choose>
-</div>
+                    </thead>
+
+                    <tbody>
+                    <c:forEach var="test" items="${listTest}">
+                        <tr>
+                            <td>
+                                <strong>#${test.testID}</strong>
+                            </td>
+                            <td>
+                                <strong>${test.testName}</strong>
+                            </td>
+                            <td>
+                                <c:if test="${not empty test.module}">
+                                    ${test.module.moduleName}
+                                </c:if>
+                            </td>
+                            <td>
+                                <c:if test="${not empty test.module && not empty test.module.course}">
+                                    ${test.module.course.courseName}
+                                </c:if>
+                            </td>
+                            <td>
+                                <span class="badge badge-info">${test.testOrder}</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">${test.questionCount} questions</span>
+                            </td>
+                            <td>
+                                <span class="badge badge-pass">${test.passPercentage}%</span>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${test.randomize}">
+                                        <i class="fas fa-check text-success"></i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="fas fa-times text-danger"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${test.showAnswer}">
+                                        <i class="fas fa-check text-success"></i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="fas fa-times text-danger"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty test.testLastUpdate}">
+                                        <span class="datetime" data-utc="${test.testLastUpdate}Z"></span>
+                                    </c:when>
+                                    <c:otherwise>N/A</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="${pageContext.request.contextPath}/instructor/tests?action=view&testId=${test.testID}"
+                                       class="btn btn-sm btn-info" title="View Test">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="${pageContext.request.contextPath}/instructor/tests?action=update&testId=${test.testID}"
+                                       class="btn btn-sm btn-warning" title="Edit Test">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-danger"
+                                            onclick="confirmDelete(${test.testID})" title="Delete Test">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:otherwise>
+        </c:choose>
+    </div>
 </main>
 
 <!-- Delete Confirmation Modal -->
@@ -297,6 +302,7 @@
 </div>
 
 <jsp:include page="/layout/footer.jsp"/>
+<jsp:include page="/layout/toast.jsp"/>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>

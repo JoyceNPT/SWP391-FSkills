@@ -10,7 +10,7 @@ public class UserAnswer {
     private int userID;
     private String answer;
     private boolean isCorrected;
-    
+
     // For relationships
     private TestResult testResult;
     private Question question;

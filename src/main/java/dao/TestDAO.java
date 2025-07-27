@@ -25,11 +25,11 @@ public class TestDAO extends DBContext {
     public List<Test> getTestsByModuleID(int moduleID) {
         List<Test> list = new ArrayList<>();
         String sql = "SELECT t.*, m.ModuleName,c.CourseName, c.CourseID  " +
-                    "FROM Tests t " +
-                    "JOIN Modules m ON t.ModuleID = m.ModuleID " +
-                    "JOIN Courses c ON m.CourseID = c.CourseID " +
-                    "WHERE t.ModuleID = ? " +
-                    "ORDER BY t.TestOrder";
+                "FROM Tests t " +
+                "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "WHERE t.ModuleID = ? " +
+                "ORDER BY t.TestOrder";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -68,10 +68,10 @@ public class TestDAO extends DBContext {
      */
     public Test getTestByID(int testID) {
         String sql = "SELECT t.*, m.ModuleName, m.CourseID, c.CourseName " +
-                    "FROM Tests t " +
-                    "JOIN Modules m ON t.ModuleID = m.ModuleID " +
-                    "JOIN Courses c ON m.CourseID = c.CourseID " +
-                    "WHERE t.TestID = ?";
+                "FROM Tests t " +
+                "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "WHERE t.TestID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -110,7 +110,7 @@ public class TestDAO extends DBContext {
      */
     public int insertTest(Test test) {
         String sql = "INSERT INTO Tests (ModuleID, TestName, TestLastUpdate, TestOrder, PassPercentage, IsRandomize, ShowAnswer) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -128,10 +128,10 @@ public class TestDAO extends DBContext {
                 ResultSet generatedKeys = ps.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int testID = generatedKeys.getInt(1);
-                    
+
                     // Update module last update
                     updateModuleLastUpdate(test.getModuleID());
-                    
+
                     return testID;
                 }
             }
@@ -146,8 +146,8 @@ public class TestDAO extends DBContext {
      */
     public int updateTest(Test test) {
         String sql = "UPDATE Tests SET " +
-                    "TestName = ?, TestOrder = ?, PassPercentage = ?, IsRandomize = ?, ShowAnswer = ?, TestLastUpdate = ? " +
-                    "WHERE TestID = ?";
+                "TestName = ?, TestOrder = ?, PassPercentage = ?, IsRandomize = ?, ShowAnswer = ?, TestLastUpdate = ? " +
+                "WHERE TestID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -225,11 +225,11 @@ public class TestDAO extends DBContext {
     public List<Test> getTestsByInstructorID(int instructorID) {
         List<Test> list = new ArrayList<>();
         String sql = "SELECT t.*, m.ModuleName, c.CourseName, c.CourseID " +
-                    "FROM Tests t " +
-                    "JOIN Modules m ON t.ModuleID = m.ModuleID " +
-                    "JOIN Courses c ON m.CourseID = c.CourseID " +
-                    "WHERE c.UserID = ? " +
-                    "ORDER BY c.CourseName, m.ModuleName, t.TestOrder";
+                "FROM Tests t " +
+                "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "WHERE c.UserID = ? " +
+                "ORDER BY c.CourseName, m.ModuleName, t.TestOrder";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -268,10 +268,10 @@ public class TestDAO extends DBContext {
      */
     public boolean isTestOwnedByInstructor(int testID, int instructorID) {
         String sql = "SELECT COUNT(*) as count " +
-                    "FROM Tests t " +
-                    "JOIN Modules m ON t.ModuleID = m.ModuleID " +
-                    "JOIN Courses c ON m.CourseID = c.CourseID " +
-                    "WHERE t.TestID = ? AND c.UserID = ?";
+                "FROM Tests t " +
+                "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "WHERE t.TestID = ? AND c.UserID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -284,6 +284,37 @@ public class TestDAO extends DBContext {
             }
         } catch (SQLException e) {
             System.out.println("Error in isTestOwnedByInstructor: " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Check if test order already exists in a module
+     * @param moduleID The module ID to check
+     * @param testOrder The test order to check
+     * @param excludeTestID Test ID to exclude from check (for updates), use -1 for new tests
+     * @return true if test order exists, false otherwise
+     */
+    public boolean checkTestOrderExists(int moduleID, int testOrder, int excludeTestID) {
+        String sql = "SELECT COUNT(*) as count FROM Tests WHERE ModuleID = ? AND TestOrder = ?";
+        if (excludeTestID > 0) {
+            sql += " AND TestID != ?";
+        }
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, moduleID);
+            ps.setInt(2, testOrder);
+            if (excludeTestID > 0) {
+                ps.setInt(3, excludeTestID);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in checkTestOrderExists: " + e.getMessage());
         }
         return false;
     }
@@ -308,13 +339,13 @@ public class TestDAO extends DBContext {
     public List<Test> getTestsForLearner(int learnerID) {
         List<Test> list = new ArrayList<>();
         String sql = "SELECT t.*, m.ModuleName, c.CourseName, c.CourseID, " +
-                    "(SELECT COUNT(*) FROM Questions q WHERE q.TestID = t.TestID) as QuestionCount " +
-                    "FROM Tests t " +
-                    "JOIN Modules m ON t.ModuleID = m.ModuleID " +
-                    "JOIN Courses c ON m.CourseID = c.CourseID " +
-                    "JOIN Enroll e ON c.CourseID = e.CourseID " +
-                    "WHERE e.UserID = ? " +
-                    "ORDER BY c.CourseName, m.ModuleName, t.TestOrder";
+                "(SELECT COUNT(*) FROM Questions q WHERE q.TestID = t.TestID) as QuestionCount " +
+                "FROM Tests t " +
+                "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "JOIN Enroll e ON c.CourseID = e.CourseID " +
+                "WHERE e.UserID = ? " +
+                "ORDER BY c.CourseName, m.ModuleName, t.TestOrder";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -338,13 +369,13 @@ public class TestDAO extends DBContext {
     public List<Test> getFilteredTestsForLearner(int learnerID, Integer courseID, Integer moduleID) {
         List<Test> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder(
-            "SELECT t.*, m.ModuleName, c.CourseName, c.CourseID, " +
-            "(SELECT COUNT(*) FROM Questions q WHERE q.TestID = t.TestID) as QuestionCount " +
-            "FROM Tests t " +
-            "JOIN Modules m ON t.ModuleID = m.ModuleID " +
-            "JOIN Courses c ON m.CourseID = c.CourseID " +
-            "JOIN Enroll e ON c.CourseID = e.CourseID " +
-            "WHERE e.UserID = ? "
+                "SELECT t.*, m.ModuleName, c.CourseName, c.CourseID, " +
+                        "(SELECT COUNT(*) FROM Questions q WHERE q.TestID = t.TestID) as QuestionCount " +
+                        "FROM Tests t " +
+                        "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                        "JOIN Courses c ON m.CourseID = c.CourseID " +
+                        "JOIN Enroll e ON c.CourseID = e.CourseID " +
+                        "WHERE e.UserID = ? "
         );
 
         if (courseID != null) {
@@ -384,11 +415,11 @@ public class TestDAO extends DBContext {
      */
     public boolean isLearnerEnrolledInTest(int testID, int learnerID) {
         String sql = "SELECT COUNT(*) as count " +
-                    "FROM Tests t " +
-                    "JOIN Modules m ON t.ModuleID = m.ModuleID " +
-                    "JOIN Courses c ON m.CourseID = c.CourseID " +
-                    "JOIN Enroll e ON c.CourseID = e.CourseID " +
-                    "WHERE t.TestID = ? AND e.UserID = ?";
+                "FROM Tests t " +
+                "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "JOIN Enroll e ON c.CourseID = e.CourseID " +
+                "WHERE t.TestID = ? AND e.UserID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -412,7 +443,7 @@ public class TestDAO extends DBContext {
         Module module = new Module();
         module.setModuleID(rs.getInt("ModuleID"));
         module.setModuleName(rs.getString("ModuleName"));
-        
+
         Course course = new Course();
         course.setCourseID(rs.getInt("CourseID"));
         course.setCourseName(rs.getString("CourseName"));

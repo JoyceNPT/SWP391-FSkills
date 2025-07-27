@@ -76,7 +76,7 @@
             font-weight: bold;
             margin-right: 1rem;
         }
-                .choice-options{
+        .choice-options{
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.8rem;
@@ -203,366 +203,366 @@
     </style>
 </head>
 <body>
-    <%@include file="../../layout/header.jsp" %>
-    <%@include file="../../layout/sidebar_user.jsp"%>
+<%@include file="../../layout/header.jsp" %>
+<%@include file="../../layout/sidebar_user.jsp"%>
 
-    <main id="main-body" class="main d-flex">
-        <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
-            <div class="container-fluid px-4 py-4">
-                            <!-- Test Container -->
-                            <div class="test-container">
-                                <!-- Test Header -->
-                                <div class="test-header">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-4">
-                                            <h2 class="mb-2">
-                                                <i class="bi bi-journal-text me-3"></i>
-                                                ${test.testName}
-                                            </h2>
-                                            <p class="mb-1 opacity-75">${test.module.course.courseName} - ${test.module.moduleName}</p>
-                                            <p class="mb-0 opacity-75">Pass Requirement: ${test.passPercentage}%</p>
-                                        </div>
-                                        <div class="col-md-4 text-center">
-                                            <div class="progress-container">
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <span class="fw-bold">Progress</span>
-                                                    <span id="progressPercent" class="fw-bold">0%</span>
-                                                </div>
-                                                <div class="progress" style="height: 8px;">
-                                                    <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 text-center">
-                                            <div class="answer-counter">
-                                                <i class="bi bi-list-check me-2"></i>
-                                                <span id="answeredCount">0</span> / ${fn:length(questions)} Answered
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 text-end">
-                                            <div class="d-flex gap-2 justify-content-end">
-                                                <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}" 
-                                                   class="btn btn-cancel btn-sm">
-                                                    <i class="bi bi-x-circle me-1"></i>Cancel
-                                                </a>
-                                                <button type="submit" class="btn btn-submit-test btn-sm" onclick="return confirmSubmit()" form="testForm">
-                                                    <i class="bi bi-send me-1"></i>Submit
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Progress Bar -->
-
+<main id="main-body" class="main d-flex">
+    <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
+        <div class="container-fluid px-4 py-4">
+            <!-- Test Container -->
+            <div class="test-container">
+                <!-- Test Header -->
+                <div class="test-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <h2 class="mb-2">
+                                <i class="bi bi-journal-text me-3"></i>
+                                ${test.testName}
+                            </h2>
+                            <p class="mb-1 opacity-75">${test.module.course.courseName} - ${test.module.moduleName}</p>
+                            <p class="mb-0 opacity-75">Pass Requirement: ${test.passPercentage}%</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="progress-container">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold">Progress</span>
+                                    <span id="progressPercent" class="fw-bold">0%</span>
                                 </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <div class="answer-counter">
+                                <i class="bi bi-list-check me-2"></i>
+                                <span id="answeredCount">0</span> / ${fn:length(questions)} Answered
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}"
+                                   class="btn btn-cancel btn-sm">
+                                    <i class="bi bi-x-circle me-1"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-submit-test btn-sm" onclick="return confirmSubmit()" form="testForm">
+                                    <i class="bi bi-send me-1"></i>Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                                <!-- Test Form -->
-                                <form id="testForm" action="${pageContext.request.contextPath}/learner/tests" method="post">
-                                    <input type="hidden" name="action" value="submit">
-                                    <input type="hidden" name="testId" value="${test.testID}">
+                    <!-- Progress Bar -->
 
-                                    <div class="p-4">
-                                        <!-- Questions -->
-                                        <c:forEach var="question" items="${questions}" varStatus="status">
-                                            <div class="question-card">
-                                                <div class="question-header">
-                                                    <div class="d-flex align-items-start">
-                                                        <div class="question-number">${status.index + 1}</div>
-                                                        <div class="flex-grow-1">
-                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                </div>
+
+                <!-- Test Form -->
+                <form id="testForm" action="${pageContext.request.contextPath}/learner/tests" method="post">
+                    <input type="hidden" name="action" value="submit">
+                    <input type="hidden" name="testId" value="${test.testID}">
+
+                    <div class="p-4">
+                        <!-- Questions -->
+                        <c:forEach var="question" items="${questions}" varStatus="status">
+                            <div class="question-card">
+                                <div class="question-header">
+                                    <div class="d-flex align-items-start">
+                                        <div class="question-number">${status.index + 1}</div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
                                                                 <span class="question-type-badge ${question.questionType == 'CHOICE' ? 'badge-choice' : 'badge-writing'}">
                                                                     <i class="bi ${question.questionType == 'CHOICE' ? 'bi-check2-square' : 'bi-pencil-square'} me-1"></i>
                                                                     ${question.questionType}
                                                                 </span>
-                                                                <span class="text-muted">
+                                                <span class="text-muted">
                                                                     <i class="bi bi-star-fill text-warning me-1"></i>
                                                                     ${question.point} ${question.point == 1 ? 'point' : 'points'}
                                                                 </span>
-                                                            </div>
-                                                            <h5 class="question-text">${question.question}</h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            </div>
+                                            <h5 class="question-text">${question.question}</h5>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                                <div class="card-body p-4">
-                                                    <c:choose>
-                                                        <c:when test="${question.questionType == 'CHOICE'}">
-                                                            <div class="choice-options">
-                                                                <c:if test="${not empty question.option1}">
-                                                                    <label class="choice-option" for="q${question.questionID}_1">
-                                                                        <input type="radio" 
-                                                                               id="q${question.questionID}_1"
-                                                                               name="answer_${question.questionID}" 
-                                                                               value="1"
-                                                                               onchange="updateProgress()">
-                                                                        <span class="option-text">A. ${question.option1}</span>
-                                                                    </label>
-                                                                </c:if>
-                                                                <c:if test="${not empty question.option2}">
-                                                                    <label class="choice-option" for="q${question.questionID}_2">
-                                                                        <input type="radio" 
-                                                                               id="q${question.questionID}_2"
-                                                                               name="answer_${question.questionID}" 
-                                                                               value="2"
-                                                                               onchange="updateProgress()">
-                                                                        <span class="option-text">B. ${question.option2}</span>
-                                                                    </label>
-                                                                </c:if>
-                                                                <c:if test="${not empty question.option3}">
-                                                                    <label class="choice-option" for="q${question.questionID}_3">
-                                                                        <input type="radio" 
-                                                                               id="q${question.questionID}_3"
-                                                                               name="answer_${question.questionID}" 
-                                                                               value="3"
-                                                                               onchange="updateProgress()">
-                                                                        <span class="option-text">C. ${question.option3}</span>
-                                                                    </label>
-                                                                </c:if>
-                                                                <c:if test="${not empty question.option4}">
-                                                                    <label class="choice-option" for="q${question.questionID}_4">
-                                                                        <input type="radio" 
-                                                                               id="q${question.questionID}_4"
-                                                                               name="answer_${question.questionID}" 
-                                                                               value="4"
-                                                                               onchange="updateProgress()">
-                                                                        <span class="option-text">D. ${question.option4}</span>
-                                                                    </label>
-                                                                </c:if>
-                                                            </div>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <div class="writing-question">
-                                                                <textarea class="form-control writing-textarea" 
+                                <div class="card-body p-4">
+                                    <c:choose>
+                                        <c:when test="${question.questionType == 'CHOICE'}">
+                                            <div class="choice-options">
+                                                <c:if test="${not empty question.option1}">
+                                                    <label class="choice-option" for="q${question.questionID}_1">
+                                                        <input type="radio"
+                                                               id="q${question.questionID}_1"
+                                                               name="answer_${question.questionID}"
+                                                               value="1"
+                                                               onchange="updateProgress()">
+                                                        <span class="option-text">A. ${question.option1}</span>
+                                                    </label>
+                                                </c:if>
+                                                <c:if test="${not empty question.option2}">
+                                                    <label class="choice-option" for="q${question.questionID}_2">
+                                                        <input type="radio"
+                                                               id="q${question.questionID}_2"
+                                                               name="answer_${question.questionID}"
+                                                               value="2"
+                                                               onchange="updateProgress()">
+                                                        <span class="option-text">B. ${question.option2}</span>
+                                                    </label>
+                                                </c:if>
+                                                <c:if test="${not empty question.option3}">
+                                                    <label class="choice-option" for="q${question.questionID}_3">
+                                                        <input type="radio"
+                                                               id="q${question.questionID}_3"
+                                                               name="answer_${question.questionID}"
+                                                               value="3"
+                                                               onchange="updateProgress()">
+                                                        <span class="option-text">C. ${question.option3}</span>
+                                                    </label>
+                                                </c:if>
+                                                <c:if test="${not empty question.option4}">
+                                                    <label class="choice-option" for="q${question.questionID}_4">
+                                                        <input type="radio"
+                                                               id="q${question.questionID}_4"
+                                                               name="answer_${question.questionID}"
+                                                               value="4"
+                                                               onchange="updateProgress()">
+                                                        <span class="option-text">D. ${question.option4}</span>
+                                                    </label>
+                                                </c:if>
+                                            </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="writing-question">
+                                                                <textarea class="form-control writing-textarea"
                                                                           name="answer_${question.questionID}"
                                                                           placeholder="Enter your answer here..."
                                                                           onchange="updateProgress()"
                                                                           oninput="updateProgress()"></textarea>
-                                                                <small class="text-muted mt-2 d-block">
-                                                                    <i class="bi bi-info-circle me-1"></i>
-                                                                    Provide a detailed written response to this question.
-                                                                </small>
-                                                            </div>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </div>
+                                                <small class="text-muted mt-2 d-block">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    Provide a detailed written response to this question.
+                                                </small>
                                             </div>
-                                        </c:forEach>
-
-                                    </div>
-                                </form>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
                             </div>
-                        </div>
+                        </c:forEach>
+
                     </div>
-                </div>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
+    </div>
+    </div>
+    </div>
+</main>
 
-    <%@include file="../../layout/footer.jsp" %>
+<%@include file="../../layout/footer.jsp" %>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Add JSTL tag for total questions count
-        const totalQuestions = ${fn:length(questions)};
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Add JSTL tag for total questions count
+    const totalQuestions = ${fn:length(questions)};
 
-        // Update choice option selection visual feedback
-        document.querySelectorAll('.choice-option').forEach(option => {
-            option.addEventListener('click', function() {
-                const radio = this.querySelector('input[type="radio"]');
-                if (radio) {
-                    // Remove selected class from all options in this question
-                    const questionName = radio.name;
-                    document.querySelectorAll('input[name="'+ questionName + '"]').forEach(r => {
-                        r.closest('.choice-option').classList.remove('selected');
-                    });
-                    // Check the radio button and add selected class
-                    radio.checked = true;
-                    this.classList.add('selected');
-                    updateProgress();
-                }
-            });
-        });
-
-        // Update progress function
-        function updateProgress() {
-            let answeredCount = 0;
-
-            // Count answered multiple choice questions
-            const allRadioNames = new Set();
-            document.querySelectorAll('input[type="radio"][name^="answer_"]').forEach(radio => {
-                allRadioNames.add(radio.name);
-            });
-
-            allRadioNames.forEach(name => {
-                if (document.querySelector(`input[name="` + name +`"]:checked`)) {
-                    answeredCount++;
-                }
-            });
-
-            // Count answered writing questions
-            document.querySelectorAll('textarea[name^="answer_"]').forEach(textarea => {
-                if (textarea.value && textarea.value.trim().length > 0) {
-                    answeredCount++;
-                }
-            });
-
-            // Update progress display
-            const percentage = Math.round((answeredCount / totalQuestions) * 100);
-            document.getElementById('answeredCount').textContent = answeredCount;
-            document.getElementById('progressPercent').textContent = percentage + '%';
-            document.getElementById('progressBar').style.width = percentage + '%';
-        }
-
-        // Confirm submit function
-        function confirmSubmit() {
-            const answeredCount = parseInt(document.getElementById('answeredCount').textContent);
-            const unanswered = totalQuestions - answeredCount;
-
-            if (unanswered > 0) {
-                return confirm(`You have `+unanswered+ ` unanswered question(s). Are you sure you want to submit the test?`);
-            }
-
-            return confirm('Are you sure you want to submit the test? This action cannot be undone.');
-        }
-
-        // Auto-save functionality (optional - saves to localStorage)
-        function autoSave() {
-            const formData = new FormData(document.getElementById('testForm'));
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-                if (key.startsWith('answer_')) {
-                    data[key] = value;
-                }
-            }
-            localStorage.setItem('test_${test.testID}_autosave', JSON.stringify(data));
-        }
-
-        // Restore from auto-save
-        function restoreAutoSave() {
-            const saved = localStorage.getItem('test_${test.testID}_autosave');
-            if (saved) {
-                const data = JSON.parse(saved);
-                Object.entries(data).forEach(([key, value]) => {
-                    const input = document.querySelector(`[name="` + key + `"]`);
-                    if (input) {
-                        if (input.type === 'radio') {
-                            const radio = document.querySelector(`[name="`+key+`"][value="`+value+`"]`);
-                            if (radio) {
-                                radio.checked = true;
-                                radio.closest('.choice-option').classList.add('selected');
-                            }
-                        } else if (input.type === 'textarea' || input.tagName === 'TEXTAREA') {
-                            input.value = value;
-                        }
-                    }
+    // Update choice option selection visual feedback
+    document.querySelectorAll('.choice-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                // Remove selected class from all options in this question
+                const questionName = radio.name;
+                document.querySelectorAll('input[name="'+ questionName + '"]').forEach(r => {
+                    r.closest('.choice-option').classList.remove('selected');
                 });
+                // Check the radio button and add selected class
+                radio.checked = true;
+                this.classList.add('selected');
                 updateProgress();
             }
+        });
+    });
+
+    // Update progress function
+    function updateProgress() {
+        let answeredCount = 0;
+
+        // Count answered multiple choice questions
+        const allRadioNames = new Set();
+        document.querySelectorAll('input[type="radio"][name^="answer_"]').forEach(radio => {
+            allRadioNames.add(radio.name);
+        });
+
+        allRadioNames.forEach(name => {
+            if (document.querySelector(`input[name="` + name +`"]:checked`)) {
+                answeredCount++;
+            }
+        });
+
+        // Count answered writing questions
+        document.querySelectorAll('textarea[name^="answer_"]').forEach(textarea => {
+            if (textarea.value && textarea.value.trim().length > 0) {
+                answeredCount++;
+            }
+        });
+
+        // Update progress display
+        const percentage = Math.round((answeredCount / totalQuestions) * 100);
+        document.getElementById('answeredCount').textContent = answeredCount;
+        document.getElementById('progressPercent').textContent = percentage + '%';
+        document.getElementById('progressBar').style.width = percentage + '%';
+    }
+
+    // Confirm submit function
+    function confirmSubmit() {
+        const answeredCount = parseInt(document.getElementById('answeredCount').textContent);
+        const unanswered = totalQuestions - answeredCount;
+
+        if (unanswered > 0) {
+            return confirm(`You have `+unanswered+ ` unanswered question(s). Are you sure you want to submit the test?`);
         }
 
-        // Initialize auto-save
-        document.addEventListener('DOMContentLoaded', function() {
-            restoreAutoSave();
-            updateProgress(); // Initial progress update
+        return confirm('Are you sure you want to submit the test? This action cannot be undone.');
+    }
 
-            // Auto-save every 30 seconds
-            setInterval(autoSave, 30000);
-
-            // Save on form changes
-            document.getElementById('testForm').addEventListener('change', autoSave);
-            document.getElementById('testForm').addEventListener('input', autoSave);
-
-            // Add progress update listeners to textareas
-            document.querySelectorAll('textarea[name^="answer_"]').forEach(textarea => {
-                textarea.addEventListener('input', updateProgress);
-                textarea.addEventListener('change', updateProgress);
-            });
-        });
-
-        // Clear auto-save on successful submit
-        document.getElementById('testForm').addEventListener('submit', function() {
-            localStorage.removeItem('test_${test.testID}_autosave');
-        });
-
-        // Warning before leaving page
-        window.addEventListener('beforeunload', function(e) {
-            const answeredCount = parseInt(document.getElementById('answeredCount').textContent);
-            if (answeredCount > 0) {
-                e.preventDefault();
-                e.returnValue = '';
-                return '';
+    // Auto-save functionality (optional - saves to localStorage)
+    function autoSave() {
+        const formData = new FormData(document.getElementById('testForm'));
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            if (key.startsWith('answer_')) {
+                data[key] = value;
             }
-        });
-    </script>
+        }
+        localStorage.setItem('test_${test.testID}_autosave', JSON.stringify(data));
+    }
 
-    <script>
-        // Script to ensure proper sidebar hover behavior
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('main');
-            const header = document.querySelector('header');
-
-            // Event handler functions defined outside to allow removal
-            function handleSidebarMouseEnter() {
-                const windowWidth = window.innerWidth;
-                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
-
-                if (windowWidth <= 768) {
-                    // Mobile layout
-                    mainContent.style.marginLeft = '250px';
-                    if (header) {
-                        header.style.left = '250px';
-                        header.style.width = 'calc(100% - 266px)';
+    // Restore from auto-save
+    function restoreAutoSave() {
+        const saved = localStorage.getItem('test_${test.testID}_autosave');
+        if (saved) {
+            const data = JSON.parse(saved);
+            Object.entries(data).forEach(([key, value]) => {
+                const input = document.querySelector(`[name="` + key + `"]`);
+                if (input) {
+                    if (input.type === 'radio') {
+                        const radio = document.querySelector(`[name="`+key+`"][value="`+value+`"]`);
+                        if (radio) {
+                            radio.checked = true;
+                            radio.closest('.choice-option').classList.add('selected');
+                        }
+                    } else if (input.type === 'textarea' || input.tagName === 'TEXTAREA') {
+                        input.value = value;
                     }
-                } else {
-                    // Desktop layout
-                    mainContent.style.marginLeft = '250px';
-                    if (header) {
-                        header.style.left = '250px';
-                        header.style.width = 'calc(100% - 266px)';
-                    }
-                }
-            }
-
-            function handleSidebarMouseLeave() {
-                const windowWidth = window.innerWidth;
-                mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
-
-                if (windowWidth <= 768) {
-                    // Mobile layout
-                    mainContent.style.marginLeft = '0';
-                    if (header) {
-                        header.style.left = '0';
-                        header.style.width = 'calc(100% - 16px)';
-                    }
-                } else {
-                    // Desktop layout
-                    mainContent.style.marginLeft = '80px';
-                    if (header) {
-                        header.style.left = '80px';
-                        header.style.width = 'calc(100% - 96px)';
-                    }
-                }
-            }
-
-            // Add event listeners
-            sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
-            sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
-
-            // Set initial state based on window width
-            handleSidebarMouseLeave();
-
-            // Add resize event listener to handle window size changes
-            window.addEventListener('resize', function() {
-                // Update layout based on current sidebar state
-                if (sidebar.matches(':hover')) {
-                    handleSidebarMouseEnter();
-                } else {
-                    handleSidebarMouseLeave();
                 }
             });
+            updateProgress();
+        }
+    }
+
+    // Initialize auto-save
+    document.addEventListener('DOMContentLoaded', function() {
+        restoreAutoSave();
+        updateProgress(); // Initial progress update
+
+        // Auto-save every 30 seconds
+        setInterval(autoSave, 30000);
+
+        // Save on form changes
+        document.getElementById('testForm').addEventListener('change', autoSave);
+        document.getElementById('testForm').addEventListener('input', autoSave);
+
+        // Add progress update listeners to textareas
+        document.querySelectorAll('textarea[name^="answer_"]').forEach(textarea => {
+            textarea.addEventListener('input', updateProgress);
+            textarea.addEventListener('change', updateProgress);
         });
-    </script>
+    });
+
+    // Clear auto-save on successful submit
+    document.getElementById('testForm').addEventListener('submit', function() {
+        localStorage.removeItem('test_${test.testID}_autosave');
+    });
+
+    // Warning before leaving page
+    window.addEventListener('beforeunload', function(e) {
+        const answeredCount = parseInt(document.getElementById('answeredCount').textContent);
+        if (answeredCount > 0) {
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+        }
+    });
+</script>
+
+<script>
+    // Script to ensure proper sidebar hover behavior
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('main');
+        const header = document.querySelector('header');
+
+        // Event handler functions defined outside to allow removal
+        function handleSidebarMouseEnter() {
+            const windowWidth = window.innerWidth;
+            mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+            if (windowWidth <= 768) {
+                // Mobile layout
+                mainContent.style.marginLeft = '250px';
+                if (header) {
+                    header.style.left = '250px';
+                    header.style.width = 'calc(100% - 266px)';
+                }
+            } else {
+                // Desktop layout
+                mainContent.style.marginLeft = '250px';
+                if (header) {
+                    header.style.left = '250px';
+                    header.style.width = 'calc(100% - 266px)';
+                }
+            }
+        }
+
+        function handleSidebarMouseLeave() {
+            const windowWidth = window.innerWidth;
+            mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+
+            if (windowWidth <= 768) {
+                // Mobile layout
+                mainContent.style.marginLeft = '0';
+                if (header) {
+                    header.style.left = '0';
+                    header.style.width = 'calc(100% - 16px)';
+                }
+            } else {
+                // Desktop layout
+                mainContent.style.marginLeft = '80px';
+                if (header) {
+                    header.style.left = '80px';
+                    header.style.width = 'calc(100% - 96px)';
+                }
+            }
+        }
+
+        // Add event listeners
+        sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+        sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+
+        // Set initial state based on window width
+        handleSidebarMouseLeave();
+
+        // Add resize event listener to handle window size changes
+        window.addEventListener('resize', function() {
+            // Update layout based on current sidebar state
+            if (sidebar.matches(':hover')) {
+                handleSidebarMouseEnter();
+            } else {
+                handleSidebarMouseLeave();
+            }
+        });
+    });
+</script>
 </body>
 </html> 
