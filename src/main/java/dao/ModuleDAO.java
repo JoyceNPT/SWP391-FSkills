@@ -272,7 +272,7 @@ public class ModuleDAO extends DBContext {
     }
     public List<Module> getModulesByCourseIDAdmin(int courseID) throws SQLException {
         List<Module> modules = new ArrayList<>();
-        String query = "SELECT moduleID, moduleName, courseID, moduleLastUpdate FROM Modules WHERE courseID = ?";
+        String query = "SELECT moduleID, moduleName, courseID, moduleLastUpdate " + "FROM Modules WHERE courseID = ? AND Status = 0";
         try (PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();

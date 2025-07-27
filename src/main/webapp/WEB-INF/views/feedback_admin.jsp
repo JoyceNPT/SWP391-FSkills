@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Feedback Management - F-Skills</title>
+    <title>Manage Feedback - F-Skills</title>
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -193,12 +193,12 @@
                                     </div>
                                 </div>
                                 <div class="flex space-x-2">
-                                    <button class="action-button p-1 text-gray-400 hover:text-indigo-600 focus:outline-none" data-id="${feedback.feedbackId}" data-action="archive">
-                                        <i class="fas fa-archive"></i>
-                                    </button>
-                                    <button class="action-button p-1 text-gray-400 hover:text-green-600 focus:outline-none" data-id="${feedback.feedbackId}" data-action="resolve">
-                                        <i class="fas fa-check"></i>
-                                    </button>
+<%--                                    <button class="action-button p-1 text-gray-400 hover:text-indigo-600 focus:outline-none" data-id="${feedback.feedbackId}" data-action="archive">--%>
+<%--                                        <i class="fas fa-archive"></i>--%>
+<%--                                    </button>--%>
+<%--                                    <button class="action-button p-1 text-gray-400 hover:text-green-600 focus:outline-none" data-id="${feedback.feedbackId}" data-action="resolve">--%>
+<%--                                        <i class="fas fa-check"></i>--%>
+<%--                                    </button>--%>
                                     <button class="action-button delete-btn p-1 text-gray-400 hover:text-red-600 focus:outline-none" data-id="${feedback.feedbackId}" data-action="delete">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
@@ -207,12 +207,12 @@
                             <div class="feedback-content mt-3 pt-3 border-t border-gray-100">
                                 <p class="text-gray-700">${feedback.content}</p>
                                 <div class="mt-4 flex justify-end space-x-3">
-                                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 focus:outline-none">
-                                        <i class="fas fa-reply mr-1"></i>Reply
-                                    </button>
-                                    <button class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-md text-sm hover:bg-indigo-100 focus:outline-none">
-                                        <i class="fas fa-tag mr-1"></i>Tag
-                                    </button>
+<%--                                    <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 focus:outline-none">--%>
+<%--                                        <i class="fas fa-reply mr-1"></i>Reply--%>
+<%--                                    </button>--%>
+<%--                                    <button class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-md text-sm hover:bg-indigo-100 focus:outline-none">--%>
+<%--                                        <i class="fas fa-tag mr-1"></i>Tag--%>
+<%--                                    </button>--%>
                                 </div>
                             </div>
                         </div>
