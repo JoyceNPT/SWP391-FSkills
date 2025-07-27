@@ -77,18 +77,18 @@ public class InstructorTestServlet extends HttpServlet {
                     CourseDAO courseDAO = new CourseDAO();
                     List<Course> courses = courseDAO.getCourseByUserID(acc.getUserId());
                     request.setAttribute("courses", courses);
-                    
+
                     // Handle filtering
                     String filterCourseIdStr = request.getParameter("filterCourseId");
                     String filterModuleIdStr = request.getParameter("filterModuleId");
-                    
+
                     List<Test> testList;
-                    
+
                     if (filterModuleIdStr != null && !filterModuleIdStr.isEmpty()) {
                         // Filter by specific module
                         int moduleId = Integer.parseInt(filterModuleIdStr);
                         testList = testDAO.getTestsByModuleID(moduleId);
-                        
+
                         // Also load modules for the selected course to repopulate dropdown
                         if (filterCourseIdStr != null && !filterCourseIdStr.isEmpty()) {
                             int courseId = Integer.parseInt(filterCourseIdStr);
@@ -103,41 +103,41 @@ public class InstructorTestServlet extends HttpServlet {
                         for (Module module : modulesByCourse) {
                             testList.addAll(testDAO.getTestsByModuleID(module.getModuleID()));
                         }
-                        
+
                         // Load modules for dropdown
                         request.setAttribute("filterModules", modulesByCourse);
                     } else {
                         // No filter - get all tests for instructor
                         testList = testDAO.getTestsByInstructorID(acc.getUserId());
                     }
-                    
+
                     // Add question counts to each test
                     for (Test test : testList) {
                         int questionCount = questionDAO.getQuestionCountForTest(test.getTestID());
                         test.setQuestionCount(questionCount);
                     }
-                    
+
                     request.setAttribute("listTest", testList);
                     request.getRequestDispatcher("/WEB-INF/views/listTest.jsp").forward(request, response);
                     break;
-                    
+
                 case "listByModule":
                     String moduleIdStr = request.getParameter("moduleId");
                     if (moduleIdStr == null || moduleIdStr.isEmpty()) {
                         response.sendRedirect(contextPath + "/instructor/tests?action=list");
                         return;
                     }
-                    
+
                     int moduleId = Integer.parseInt(moduleIdStr);
                     Module module = moduleDAO.getModuleByID(moduleId);
                     List<Test> moduleTests = testDAO.getTestsByModuleID(moduleId);
-                    
+
                     // Add question counts to each test
                     for (Test test : moduleTests) {
                         int questionCount = questionDAO.getQuestionCountForTest(test.getTestID());
                         test.setQuestionCount(questionCount);
                     }
-                    
+
                     request.setAttribute("module", module);
                     request.setAttribute("listTest", moduleTests);
                     request.getRequestDispatcher("/WEB-INF/views/listTest.jsp").forward(request, response);
@@ -157,16 +157,16 @@ public class InstructorTestServlet extends HttpServlet {
                     }
 
                     int testId = Integer.parseInt(testIdUpdate);
-                    
+
                     // Check if test belongs to instructor
                     if (!testDAO.isTestOwnedByInstructor(testId, acc.getUserId())) {
                         response.sendRedirect(contextPath + "/instructor/tests?action=list");
                         return;
                     }
-                    
+
                     Test testToUpdate = testDAO.getTestByID(testId);
                     List<Question> questions = questionDAO.getQuestionsByTestID(testId);
-                    
+
                     request.setAttribute("test", testToUpdate);
                     request.setAttribute("questions", questions);
                     request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
@@ -180,40 +180,40 @@ public class InstructorTestServlet extends HttpServlet {
                     }
 
                     int viewTestId = Integer.parseInt(testIdView);
-                    
+
                     // Check if test belongs to instructor
                     if (!testDAO.isTestOwnedByInstructor(viewTestId, acc.getUserId())) {
                         response.sendRedirect(contextPath + "/instructor/tests?action=list");
                         return;
                     }
-                    
+
                     Test testToView = testDAO.getTestByID(viewTestId);
                     List<Question> viewQuestions = questionDAO.getQuestionsByTestID(viewTestId);
                     int totalPoints = questionDAO.getTotalPointsForTest(viewTestId);
                     int questionCount = questionDAO.getQuestionCountForTest(viewTestId);
-                    
+
                     request.setAttribute("test", testToView);
                     request.setAttribute("questions", viewQuestions);
                     request.setAttribute("totalPoints", totalPoints);
                     request.setAttribute("questionCount", questionCount);
                     request.getRequestDispatcher("/WEB-INF/views/viewTest.jsp").forward(request, response);
                     break;
-                    
+
                 case "getModules":
                     // API endpoint to get modules by course ID
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
-                    
+
                     String courseIdStr = request.getParameter("courseId");
                     if (courseIdStr == null || courseIdStr.isEmpty()) {
                         response.getWriter().write("[]");
                         return;
                     }
-                    
+
                     try {
                         int courseId = Integer.parseInt(courseIdStr);
                         List<Module> modules = moduleDAO.getAllModuleByCourseID(courseId);
-                        
+
                         StringBuilder json = new StringBuilder();
                         json.append("[");
                         for (int i = 0; i < modules.size(); i++) {
@@ -227,11 +227,63 @@ public class InstructorTestServlet extends HttpServlet {
                             }
                         }
                         json.append("]");
-                        
+
                         response.getWriter().write(json.toString());
                     } catch (NumberFormatException e) {
                         response.getWriter().write("[]");
                     }
+                    break;
+
+                case "checkTestOrder":
+                    // API endpoint to check if test order already exists in module
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+
+                    String checkModuleIdStr = request.getParameter("moduleId");
+                    String checkTestOrderStr = request.getParameter("testOrder");
+                    String existingTestIdStr = request.getParameter("testId"); // For update operations
+
+                    try {
+                        if (checkTestOrderStr == null || checkTestOrderStr.isEmpty()) {
+                            response.getWriter().write("{\"exists\": false}");
+                            return;
+                        }
+
+                        int checkModuleId = -1;
+                        int checkTestOrder = Integer.parseInt(checkTestOrderStr);
+                        int existingTestId = existingTestIdStr != null && !existingTestIdStr.isEmpty()
+                                ? Integer.parseInt(existingTestIdStr) : -1;
+
+                        // If moduleId is provided, use it directly
+                        if (checkModuleIdStr != null && !checkModuleIdStr.isEmpty()) {
+                            checkModuleId = Integer.parseInt(checkModuleIdStr);
+                        }
+                        // If testId is provided but moduleId is not, get moduleId from test
+                        else if (existingTestId > 0) {
+                            Test existingTest = testDAO.getTestByID(existingTestId);
+                            if (existingTest != null) {
+                                checkModuleId = existingTest.getModuleID();
+                            }
+                        }
+
+                        if (checkModuleId <= 0) {
+                            response.getWriter().write("{\"exists\": false}");
+                            return;
+                        }
+
+                        boolean exists = testDAO.checkTestOrderExists(checkModuleId, checkTestOrder, existingTestId);
+                        response.getWriter().write("{\"exists\": " + exists + "}");
+                    } catch (NumberFormatException e) {
+                        response.getWriter().write("{\"exists\": false}");
+                    }
+                    break;
+
+                case "studentResults":
+                    handleStudentResults(request, response, acc);
+                    break;
+
+                case "studentResultDetail":
+                    handleStudentResultDetail(request, response, acc);
                     break;
             }
         } catch (Exception e) {
@@ -250,7 +302,7 @@ public class InstructorTestServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
         User acc = (User) session.getAttribute("user");
-        
+
         if (acc == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -266,17 +318,17 @@ public class InstructorTestServlet extends HttpServlet {
         try {
             switch (action) {
                 case "create":
-                    handleCreateTest(request, response, testDAO, questionDAO, acc);
+                    handleCreateTest(request, response, testDAO, questionDAO, acc, session);
                     break;
-                    
+
                 case "update":
-                    handleUpdateTest(request, response, testDAO, questionDAO, acc);
+                    handleUpdateTest(request, response, testDAO, questionDAO, acc, session);
                     break;
-                    
+
                 case "delete":
-                    handleDeleteTest(request, response, testDAO, acc);
+                    handleDeleteTest(request, response, testDAO, acc, session);
                     break;
-                    
+
                 default:
                     response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
                     break;
@@ -289,14 +341,15 @@ public class InstructorTestServlet extends HttpServlet {
         }
     }
 
-    private void handleCreateTest(HttpServletRequest request, HttpServletResponse response, 
-                                 TestDAO testDAO, QuestionDAO questionDAO, User acc) 
-                                 throws ServletException, IOException {
-        
+    private void handleCreateTest(HttpServletRequest request, HttpServletResponse response,
+                                  TestDAO testDAO, QuestionDAO questionDAO, User acc, HttpSession session)
+            throws ServletException, IOException {
+
         String moduleIdStr = request.getParameter("moduleId");
         String testName = request.getParameter("testName");
         String testOrderStr = request.getParameter("testOrder");
         String passPercentageStr = request.getParameter("passPercentage");
+        String requiredCorrectAnswersStr = request.getParameter("requiredCorrectAnswers");
         String isRandomizeStr = request.getParameter("isRandomize");
         String showAnswerStr = request.getParameter("showAnswer");
 
@@ -316,12 +369,38 @@ public class InstructorTestServlet extends HttpServlet {
         try {
             int moduleId = Integer.parseInt(moduleIdStr);
             int testOrder = Integer.parseInt(testOrderStr);
-            int passPercentage = Integer.parseInt(passPercentageStr);
+            //int passPercentage = Integer.parseInt(passPercentageStr);
+            int requiredCorrectAnswers = Integer.parseInt(requiredCorrectAnswersStr);
             boolean isRandomize = "1".equals(isRandomizeStr);
             boolean showAnswer = "1".equals(showAnswerStr);
 
-            if (passPercentage < 0 || passPercentage > 100) {
-                request.setAttribute("err", "Pass percentage must be between 0 and 100.");
+            // if (passPercentage < 0 || passPercentage > 100) {
+            //     request.setAttribute("err", "Pass percentage must be between 0 and 100.");
+            //     request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+            //     return;
+            // }
+            String questionCountStr = request.getParameter("questionCount");
+            if (questionCountStr == null || questionCountStr.isEmpty()) {
+                request.setAttribute("err", "Question count is required.");
+                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                return;
+            }
+            int questionCount = Integer.parseInt(questionCountStr);
+            if (questionCount < 1) {
+                request.setAttribute("err", "Question count must be at least 1.");
+                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                return;
+            }
+
+            if (requiredCorrectAnswers < 1) {
+                request.setAttribute("err", "Required correct answers must be at least 1.");
+                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                return;
+            }
+            int passPercentage = (requiredCorrectAnswers * 100) / questionCount;
+            // Check if test order already exists
+            if (testDAO.checkTestOrderExists(moduleId, testOrder, -1)) {
+                request.setAttribute("err", "Test order " + testOrder + " already exists in this module. Please choose a different order.");
                 request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
                 return;
             }
@@ -338,13 +417,12 @@ public class InstructorTestServlet extends HttpServlet {
             int testId = testDAO.insertTest(test);
 
             if (testId > 0) {
-                // Handle questions
                 List<Question> questions = parseQuestions(request, testId);
                 if (!questions.isEmpty()) {
                     questionDAO.insertQuestions(questions);
                 }
 
-                request.setAttribute("success", "Test created successfully!");
+                session.setAttribute("success", "Test created successfully!");
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
             } else {
                 request.setAttribute("err", "Failed to create test.");
@@ -356,20 +434,32 @@ public class InstructorTestServlet extends HttpServlet {
         }
     }
 
-    private void handleUpdateTest(HttpServletRequest request, HttpServletResponse response, 
-                                 TestDAO testDAO, QuestionDAO questionDAO, User acc) 
-                                 throws ServletException, IOException {
-        
+    private void handleUpdateTest(HttpServletRequest request, HttpServletResponse response,
+                                  TestDAO testDAO, QuestionDAO questionDAO, User acc, HttpSession session)
+            throws ServletException, IOException {
+
         String testIdStr = request.getParameter("testId");
         String testName = request.getParameter("testName");
         String testOrderStr = request.getParameter("testOrder");
-        String passPercentageStr = request.getParameter("passPercentage");
+        String requiredCorrectAnswersStr = request.getParameter("requiredCorrectAnswers");
         String isRandomizeStr = request.getParameter("isRandomize");
         String showAnswerStr = request.getParameter("showAnswer");
+        String questionCountStr = request.getParameter("questionCount");
+        if (questionCountStr == null || questionCountStr.isEmpty()) {
+            request.setAttribute("err", "Question count is required.");
+            request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+            return;
+        }
+        int questionCount = Integer.parseInt(questionCountStr);
+        if (questionCount < 1) {
+            request.setAttribute("err", "Question count must be at least 1.");
+            request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+            return;
+        }
 
         try {
             int testId = Integer.parseInt(testIdStr);
-            
+
             // Check ownership
             if (!testDAO.isTestOwnedByInstructor(testId, acc.getUserId())) {
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
@@ -390,12 +480,25 @@ public class InstructorTestServlet extends HttpServlet {
             }
 
             int testOrder = Integer.parseInt(testOrderStr);
-            int passPercentage = Integer.parseInt(passPercentageStr);
+            int requiredCorrectAnswers = Integer.parseInt(requiredCorrectAnswersStr);
             boolean isRandomize = "1".equals(isRandomizeStr);
             boolean showAnswer = "1".equals(showAnswerStr);
 
-            if (passPercentage < 0 || passPercentage > 100) {
-                request.setAttribute("err", "Pass percentage must be between 0 and 100.");
+//            if (passPercentage < 0 || passPercentage > 100) {
+//                request.setAttribute("err", "Pass percentage must be between 0 and 100.");
+//                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+//                return;
+//            }
+
+            if (requiredCorrectAnswers < 1) {
+                request.setAttribute("err", "Required correct answers must be at least 1.");
+                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+                return;
+            }
+            int passPercentage = (requiredCorrectAnswers * 100) / questionCount;
+            // Check if test order already exists (excluding current test)
+            if (testDAO.checkTestOrderExists(existingTest.getModuleID(), testOrder, testId)) {
+                request.setAttribute("err", "Test order " + testOrder + " already exists in this module. Please choose a different order.");
                 request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
                 return;
             }
@@ -412,13 +515,13 @@ public class InstructorTestServlet extends HttpServlet {
             if (updateResult > 0) {
                 // Delete existing questions and insert new ones
                 questionDAO.deleteQuestionsByTestID(testId);
-                
+
                 List<Question> questions = parseQuestions(request, testId);
                 if (!questions.isEmpty()) {
                     questionDAO.insertQuestions(questions);
                 }
 
-                request.setAttribute("success", "Test updated successfully!");
+                session.setAttribute("success", "Test updated successfully!");
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
             } else {
                 request.setAttribute("err", "Failed to update test.");
@@ -430,15 +533,15 @@ public class InstructorTestServlet extends HttpServlet {
         }
     }
 
-    private void handleDeleteTest(HttpServletRequest request, HttpServletResponse response, 
-                                 TestDAO testDAO, User acc) 
-                                 throws ServletException, IOException {
-        
+    private void handleDeleteTest(HttpServletRequest request, HttpServletResponse response,
+                                  TestDAO testDAO, User acc, HttpSession session)
+            throws ServletException, IOException {
+
         String testIdStr = request.getParameter("testId");
 
         try {
             int testId = Integer.parseInt(testIdStr);
-            
+
             // Check ownership
             if (!testDAO.isTestOwnedByInstructor(testId, acc.getUserId())) {
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
@@ -456,10 +559,10 @@ public class InstructorTestServlet extends HttpServlet {
             int deleteResult = testDAO.deleteTest(testId);
 
             if (deleteResult > 0) {
-                request.setAttribute("success", "Test deleted successfully!");
+                session.setAttribute("success", "Test deleted successfully!");
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
             } else {
-                request.setAttribute("err", "Failed to delete test.");
+                session.setAttribute("err", "Failed to delete test.");
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
             }
         } catch (NumberFormatException e) {
@@ -470,7 +573,7 @@ public class InstructorTestServlet extends HttpServlet {
 
     private List<Question> parseQuestions(HttpServletRequest request, int testId) {
         List<Question> questions = new ArrayList<>();
-        
+
         // Get question count
         String questionCountStr = request.getParameter("questionCount");
         if (questionCountStr == null || questionCountStr.isEmpty()) {
@@ -479,7 +582,7 @@ public class InstructorTestServlet extends HttpServlet {
 
         try {
             int questionCount = Integer.parseInt(questionCountStr);
-            
+
             for (int i = 1; i <= questionCount; i++) {
                 String question = request.getParameter("question_" + i);
                 String option1 = request.getParameter("option1_" + i);
@@ -533,6 +636,74 @@ public class InstructorTestServlet extends HttpServlet {
         }
 
         return questions;
+    }
+
+    /**
+     * Handle student results list view
+     */
+    private void handleStudentResults(HttpServletRequest request, HttpServletResponse response, User instructor)
+            throws ServletException, IOException {
+        TestResultDAO testResultDAO = new TestResultDAO();
+        CourseDAO courseDAO = new CourseDAO();
+
+        // Get course filter parameter
+        String courseIdStr = request.getParameter("courseId");
+        Integer courseId = null;
+        if (courseIdStr != null && !courseIdStr.isEmpty()) {
+            try {
+                courseId = Integer.parseInt(courseIdStr);
+            } catch (NumberFormatException e) {
+                courseId = null;
+            }
+        }
+
+        // Get student results for instructor
+        List<TestResult> studentResults = testResultDAO.getStudentResultsForInstructor(instructor.getUserId(), courseId);
+
+        // Get instructor's courses for filter dropdown
+        List<Course> instructorCourses = courseDAO.getCourseByUserID(instructor.getUserId());
+
+        request.setAttribute("studentResults", studentResults);
+        request.setAttribute("instructorCourses", instructorCourses);
+        request.setAttribute("selectedCourseId", courseId);
+
+        request.getRequestDispatcher("/WEB-INF/views/studentResults.jsp").forward(request, response);
+    }
+
+    /**
+     * Handle student result detail view
+     */
+    private void handleStudentResultDetail(HttpServletRequest request, HttpServletResponse response, User instructor)
+            throws ServletException, IOException {
+        String testResultIdStr = request.getParameter("testResultId");
+        if (testResultIdStr == null || testResultIdStr.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/instructor/tests?action=studentResults");
+            return;
+        }
+
+        try {
+            int testResultId = Integer.parseInt(testResultIdStr);
+            TestResultDAO testResultDAO = new TestResultDAO();
+            UserAnswerDAO userAnswerDAO = new UserAnswerDAO();
+
+            // Get student result detail (with ownership check)
+            TestResult studentResult = testResultDAO.getStudentResultDetail(testResultId, instructor.getUserId());
+            if (studentResult == null) {
+                request.setAttribute("err", "Result not found or access denied.");
+                response.sendRedirect(request.getContextPath() + "/instructor/tests?action=studentResults");
+                return;
+            }
+
+            // Get user answers with question details
+            List<UserAnswer> userAnswers = userAnswerDAO.getUserAnswersWithQuestions(testResultId);
+
+            request.setAttribute("studentResult", studentResult);
+            request.setAttribute("userAnswers", userAnswers);
+
+            request.getRequestDispatcher("/WEB-INF/views/studentResultDetail.jsp").forward(request, response);
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/instructor/tests?action=studentResults");
+        }
     }
 
     /**

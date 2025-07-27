@@ -15,12 +15,13 @@ public class Test {
     private int passPercentage;
     private boolean isRandomize;
     private boolean showAnswer;
-    
+
     // For relationships
     private Module module;
-    
+
     // For displaying additional information
     private int questionCount;
+    private TestResult latestResult;
 
     public Test() {
     }
@@ -124,6 +125,14 @@ public class Test {
 
     public void setQuestionCount(int questionCount) {
         this.questionCount = questionCount;
+    }
+
+    public TestResult getLatestResult() {
+        return latestResult;
+    }
+
+    public void setLatestResult(TestResult latestResult) {
+        this.latestResult = latestResult;
     }
 
     @Override

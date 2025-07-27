@@ -28,7 +28,7 @@ public class LearnerTestServlet extends HttpServlet {
             throws ServletException, IOException {
         String contextPath = request.getContextPath();
         request.setCharacterEncoding("UTF-8");
-        
+
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         // Check if user is logged in and is a learner
@@ -105,10 +105,10 @@ public class LearnerTestServlet extends HttpServlet {
             throws ServletException, IOException {
         String contextPath = request.getContextPath();
         request.setCharacterEncoding("UTF-8");
-        
+
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        
+
         // Check if user is logged in and is a learner
         if (user == null || user.getRole() != Role.LEARNER) {
             response.sendRedirect(contextPath + "/homePage_Guest.jsp");
@@ -116,7 +116,7 @@ public class LearnerTestServlet extends HttpServlet {
         }
 
         String action = request.getParameter("action");
-        
+
         try {
             switch (action) {
                 case "submit":
@@ -173,13 +173,10 @@ public class LearnerTestServlet extends HttpServlet {
             modules = moduleDAO.getAllModuleByCourseID(courseId);
         }
 
-        // Add latest test results to each test
+        // Add latest test results to each test for Take/Retake button logic and status badges
         for (Test test : tests) {
             TestResult latestResult = testResultDAO.getLatestTestResult(test.getTestID(), user.getUserId());
-            if (latestResult != null) {
-                test.setModule(test.getModule()); // Ensure module is set for display
-                // You might want to add a field to Test model to store latest result
-            }
+            test.setLatestResult(latestResult); // Store latest result in test object
         }
 
         request.setAttribute("tests", tests);
@@ -229,8 +226,12 @@ public class LearnerTestServlet extends HttpServlet {
         // Get latest test result
         TestResult latestResult = testResultDAO.getLatestTestResult(testId, user.getUserId());
 
+        // Get test history for learner
+        List<TestResult> testHistory = testResultDAO.getTestResults(testId, user.getUserId());
+
         request.setAttribute("test", test);
         request.setAttribute("latestResult", latestResult);
+        request.setAttribute("testHistory", testHistory);
 
         request.getRequestDispatcher("/WEB-INF/views/testDetail.jsp").forward(request, response);
     }
@@ -307,10 +308,10 @@ public class LearnerTestServlet extends HttpServlet {
 
         for (Question question : questions) {
             totalPoints += question.getPoint();
-            
+
             String userAnswer = request.getParameter("answer_" + question.getQuestionID());
             if (userAnswer == null) userAnswer = "";
-            
+
             boolean isCorrect = false;
             if (question.getQuestionType().equals("CHOICE")) {
                 // Map user answer (1,2,3,4) to option letters (A,B,C,D)
@@ -331,9 +332,7 @@ public class LearnerTestServlet extends HttpServlet {
                 }
                 isCorrect = selectedOptionLetter.equals(question.getRightOption());
             } else if (question.getQuestionType().equals("WRITING")) {
-                // For writing questions, we'll consider them correct if answered
-                // In a real system, this might need manual grading
-                isCorrect = !userAnswer.trim().isEmpty();
+                isCorrect = !userAnswer.trim().equalsIgnoreCase(question.getRightOption().trim());
             }
 
             if (isCorrect) {
@@ -371,7 +370,7 @@ public class LearnerTestServlet extends HttpServlet {
             for (UserAnswer ua : userAnswers) {
                 ua.setTestResultID(testResultId);
             }
-            
+
             // Save user answers
             userAnswerDAO.insertUserAnswers(userAnswers);
         }
@@ -406,7 +405,7 @@ public class LearnerTestServlet extends HttpServlet {
 
         // Get test details
         Test test = testDAO.getTestByID(testResult.getTestID());
-        
+
         // Get user answers with question details
         List<UserAnswer> userAnswers = userAnswerDAO.getUserAnswersWithQuestions(testResultId);
 

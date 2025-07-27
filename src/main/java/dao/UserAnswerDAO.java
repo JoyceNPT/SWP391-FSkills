@@ -22,7 +22,7 @@ public class UserAnswerDAO extends DBContext {
      */
     public boolean insertUserAnswer(UserAnswer userAnswer) {
         String sql = "INSERT INTO UserAnswer (TestResultID, QuestionID, UserID, Answer, IsCorrected) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class UserAnswerDAO extends DBContext {
      */
     public boolean insertUserAnswers(List<UserAnswer> userAnswers) {
         String sql = "INSERT INTO UserAnswer (TestResultID, QuestionID, UserID, Answer, IsCorrected) " +
-                    "VALUES (?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?)";
 
         try {
             conn.setAutoCommit(false);
@@ -109,11 +109,11 @@ public class UserAnswerDAO extends DBContext {
     public List<UserAnswer> getUserAnswersWithQuestions(int testResultID) {
         List<UserAnswer> list = new ArrayList<>();
         String sql = "SELECT ua.*, q.Question, q.Option1, q.Option2, q.Option3, q.Option4, " +
-                    "q.RightOption, q.QuestionType, q.Point " +
-                    "FROM UserAnswer ua " +
-                    "JOIN Questions q ON ua.QuestionID = q.QuestionID " +
-                    "WHERE ua.TestResultID = ? " +
-                    "ORDER BY q.QuestionOrder";
+                "q.RightOption, q.QuestionType, q.Point " +
+                "FROM UserAnswer ua " +
+                "JOIN Questions q ON ua.QuestionID = q.QuestionID " +
+                "WHERE ua.TestResultID = ? " +
+                "ORDER BY q.QuestionOrder";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -122,7 +122,7 @@ public class UserAnswerDAO extends DBContext {
 
             while (rs.next()) {
                 UserAnswer userAnswer = createUserAnswerFromResultSet(rs);
-                
+
                 // Create and set question details
                 model.Question question = new model.Question();
                 question.setQuestionID(rs.getInt("QuestionID"));
@@ -134,7 +134,7 @@ public class UserAnswerDAO extends DBContext {
                 question.setRightOption(rs.getString("RightOption"));
                 question.setQuestionType(rs.getString("QuestionType"));
                 question.setPoint(rs.getInt("Point"));
-                
+
                 userAnswer.setQuestion(question);
                 list.add(userAnswer);
             }

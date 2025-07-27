@@ -97,7 +97,7 @@
         <a href="${pageContext.request.contextPath}/instructor/tests?action=listByModule&moduleId=${test.moduleID}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
-        
+
         <div class="d-flex gap-2">
             <a href="${pageContext.request.contextPath}/instructor/tests?action=update&testId=${test.testID}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Test
@@ -172,7 +172,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-4">
                 <div class="stats-card">
                     <h5><i class="fas fa-chart-bar"></i> Test Statistics</h5>
@@ -194,7 +194,7 @@
     <!-- Questions -->
     <div class="mb-4">
         <h4 class="mb-3"><i class="fas fa-question-circle"></i> Questions (${questionCount})</h4>
-        
+
         <c:choose>
             <c:when test="${empty questions}">
                 <div class="alert alert-warning text-center">
@@ -211,11 +211,11 @@
                                 <span class="badge bg-warning text-dark">${question.point} point(s)</span>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <h6 class="fw-bold">${question.question}</h6>
                         </div>
-                        
+
                         <div class="options">
                             <div class="row">
                                 <div class="col-md-6">
@@ -225,7 +225,7 @@
                                         </c:if>
                                         <strong>A.</strong> ${question.option1}
                                     </div>
-                                    
+
                                     <c:if test="${not empty question.option3}">
                                         <div class="${question.rightOption == 'C' ? 'correct-option' : 'incorrect-option'}">
                                             <c:if test="${question.rightOption == 'C'}">
@@ -235,7 +235,7 @@
                                         </div>
                                     </c:if>
                                 </div>
-                                
+
                                 <div class="col-md-6">
                                     <div class="${question.rightOption == 'B' ? 'correct-option' : 'incorrect-option'}">
                                         <c:if test="${question.rightOption == 'B'}">
@@ -243,7 +243,7 @@
                                         </c:if>
                                         <strong>B.</strong> ${question.option2}
                                     </div>
-                                    
+
                                     <c:if test="${not empty question.option4}">
                                         <div class="${question.rightOption == 'D' ? 'correct-option' : 'incorrect-option'}">
                                             <c:if test="${question.rightOption == 'D'}">
@@ -255,10 +255,10 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="mt-3 text-end">
                             <small class="text-muted">
-                                <i class="fas fa-bullseye"></i> Correct Answer: 
+                                <i class="fas fa-bullseye"></i> Correct Answer:
                                 <span class="badge bg-success">${question.rightOption}</span>
                             </small>
                         </div>
