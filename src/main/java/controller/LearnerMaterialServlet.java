@@ -137,15 +137,10 @@ public class LearnerMaterialServlet extends HttpServlet {
 
                                 if (commentToEdit != null && user.getUserId() == commentToEdit.getUserId()) {
                                     request.setAttribute("commentToEdit", commentToEdit);
-                                    System.out.println("DEBUG (LearnerMaterialServlet): commentToEdit set for ID: " + commentIdToEdit);
-                                } else {
-                                    System.out.println("DEBUG (LearnerMaterialServlet): User " + user.getUserId() + " not authorized or comment " + commentIdToEdit + " not found for editing.");
                                 }
                             } catch (NumberFormatException e) {
                                 System.err.println("ERROR (LearnerMaterialServlet): Invalid commentIdToEdit parameter: " + commentIdToEditParam);
                             }
-                        } else {
-                            System.out.println("DEBUG (LearnerMaterialServlet): No commentIdToEdit parameter found in request.");
                         }
                         request.setAttribute("listReportCategory", listReportCate);
                         request.setAttribute("Course", course);
