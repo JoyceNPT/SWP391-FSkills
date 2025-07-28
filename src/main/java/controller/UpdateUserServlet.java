@@ -36,7 +36,7 @@ public class UpdateUserServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(UpdateUserServlet.class.getName());
     private static final Pattern DISPLAY_NAME_PATTERN = Pattern.compile("^[\\p{L}]+(\\s[\\p{L}]+)*$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x5e-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])$");
-    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^(0|\\+84)(3|5|7|8|9)\\d{8}$");  
+    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^(0|\\+84)(3|5|7|8|9)\\d{8}$");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -151,7 +151,6 @@ public class UpdateUserServlet extends HttpServlet {
         updatedUser.setEmail(email.trim());
         updatedUser.setPhone(phone.trim());
         updatedUser.setInfo(info != null ? info.trim() : null);
-
         updatedUser.setDateOfBirth(dateOfBirthTimestamp);
 
         try {
@@ -189,7 +188,7 @@ public class UpdateUserServlet extends HttpServlet {
                 UserDAO userDAO = new UserDAO();
                 request.setAttribute("allInform", userDAO.showAllInform(userNameFromParam));
             } catch (SQLException ex) {
-                /* handle */ }
+            }
             request.setAttribute("currentUsername", userNameFromParam);
             request.getRequestDispatcher("/WEB-INF/views/userDetails.jsp").forward(request, response);
             return;
