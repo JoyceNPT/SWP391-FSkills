@@ -9,12 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Feedback;
+import model.Role;
 import model.User;
 
 /**
  * Servlet to handle user feedback
  */
-@WebServlet(name = "FeedbackUserServlet", urlPatterns = {"/feedback"})
+@WebServlet(name = "FeedbackUserServlet", urlPatterns = {"/learner/feedback", "/instructor/feedback", "/feedback"})
 public class FeedbackUserServlet extends HttpServlet {
 
     /**
@@ -29,7 +30,36 @@ public class FeedbackUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Forward to the feedback JSP page
+        // Check if user is logged in and has appropriate role
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
+        // Redirect to login page if user is not logged in
+        if (user == null) {
+            System.out.println("[DEBUG_LOG] Access denied: User not logged in");
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        
+        // Check if user has learner or instructor role
+        Role role = user.getRole();
+        if (role != Role.LEARNER && role != Role.INSTRUCTOR) {
+            System.out.println("[DEBUG_LOG] Access denied: User role is " + role);
+            response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+            return;
+        }
+
+        String[] nameParts = user.getDisplayName().split(" ", 2);
+        String firstName = nameParts[0];
+        String lastName = nameParts.length > 1 ? nameParts[1] : "";
+        String email = user.getEmail();
+
+        request.setAttribute("firstName", firstName);
+        request.setAttribute("lastName", lastName);
+        request.setAttribute("email", email);
+
+
+        // User is logged in and has appropriate role, forward to the feedback JSP page
         request.getRequestDispatcher("/WEB-INF/views/feedback_user.jsp").forward(request, response);
     }
 
@@ -45,6 +75,25 @@ public class FeedbackUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Check if user is logged in and has appropriate role
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
+        // Redirect to login page if user is not logged in
+        if (user == null) {
+            System.out.println("[DEBUG_LOG] Feedback submission denied: User not logged in");
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        
+        // Check if user has learner or instructor role
+        Role role = user.getRole();
+        if (role != Role.LEARNER && role != Role.INSTRUCTOR) {
+            System.out.println("[DEBUG_LOG] Feedback submission denied: User role is " + role);
+            response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+            return;
+        }
+        
         // Get form data
         String feedbackType = request.getParameter("feedbackType");
         String feedbackTitle = request.getParameter("feedbackTitle");
@@ -59,49 +108,41 @@ public class FeedbackUserServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/feedback_user.jsp").forward(request, response);
             return;
         }
+        
+        // Email validation removed as the field is now hidden and pre-filled from session
 
-        if (email == null || email.trim().isEmpty()) {
-            request.setAttribute("err", "Please enter your email address.");
-            request.getRequestDispatcher("/WEB-INF/views/feedback_user.jsp").forward(request, response);
-            return;
-        }
+        // User is already validated and available from session
+        int userId = user.getUserId(); // Get user ID from the authenticated user
+            
+        // Log user information for debugging
+        System.out.println("[DEBUG_LOG] User from session: " + user.getUserId() + ", " + user.getDisplayName() + ", " + user.getEmail());
+        System.out.println("[DEBUG_LOG] Form data before override: firstName=" + firstName + ", lastName=" + lastName + ", email=" + email);
 
-        // Get user ID from session if available
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
-        int userId = 0; // Default for anonymous users
-
-        if (user != null) {
-            userId = user.getUserId();
-
-            // If user is logged in and didn't provide name, use their display name
-            if ((firstName == null || firstName.trim().isEmpty()) && 
-                (lastName == null || lastName.trim().isEmpty())) {
-                String[] nameParts = user.getDisplayName().split(" ", 2);
-                if (nameParts.length > 0) {
-                    firstName = nameParts[0];
-                    if (nameParts.length > 1) {
-                        lastName = nameParts[1];
-                    } else {
-                        lastName = "";
-                    }
-                }
-            }
-
-            // If user is logged in and didn't provide email, use their email
-            if (email == null || email.trim().isEmpty()) {
-                email = user.getEmail();
+        // Always use the user's display name from session
+        String[] nameParts = user.getDisplayName().split(" ", 2);
+        if (nameParts.length > 0) {
+            firstName = nameParts[0];
+            if (nameParts.length > 1) {
+                lastName = nameParts[1];
+            } else {
+                lastName = "";
             }
         }
+
+        // Always use the user's email from session
+        email = user.getEmail();
+        
+        // Log updated information for debugging
+        System.out.println("[DEBUG_LOG] After override: firstName=" + firstName + ", lastName=" + lastName + ", email=" + email);
 
         // Create feedback object
         Feedback feedback = new Feedback(
                 feedbackType,
                 feedbackTitle,
-                feedbackContent, 
-                firstName, 
-                lastName, 
-                email, 
+                feedbackContent,
+                firstName,
+                lastName,
+                email,
                 userId
         );
 

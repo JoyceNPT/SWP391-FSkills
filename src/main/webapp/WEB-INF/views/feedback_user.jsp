@@ -181,55 +181,51 @@
         <p class="text-sm text-gray-600 max-w-2xl mx-auto">We value your input! Help us improve by sharing your thoughts, suggestions, or questions.</p>
       </div>
       <form id="feedbackForm" action="${pageContext.request.contextPath}/feedback" method="POST" class="h-full flex flex-col">
-        <div class="grid grid-cols-2 gap-6 flex-grow">
-          <div class="col-span-1 flex flex-col h-full">
-            <div class="space-y-4">
-              <p class="text-sm font-medium text-gray-800 mb-2">Feedback Type:</p>
-              <div class="flex flex-wrap gap-4">
-                <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
-                  <input type="radio" name="feedbackType" value="comments" class="custom-radio-input" checked>
-                  <span class="text-sm font-medium text-gray-700">Comments</span>
-                </label>
-                <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
-                  <input type="radio" name="feedbackType" value="suggestions" class="custom-radio-input">
-                  <span class="text-sm font-medium text-gray-700">Suggestions</span>
-                </label>
-                <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
-                  <input type="radio" name="feedbackType" value="questions" class="custom-radio-input">
-                  <span class="text-sm font-medium text-gray-700">Questions</span>
-                </label>
-              </div>
-              <div class="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                  <input type="text" id="firstName" name="firstName" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="John" value="${sessionScope.user.displayName != null ? sessionScope.user.displayName.split(' ')[0] : ''}">
-                </div>
-                <div>
-                  <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                  <input type="text" id="lastName" name="lastName" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Doe">
-                </div>
-              </div>
-              <div class="mt-4">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Receive Feedback</label>
-                <input type="email" id="email" name="email" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="ex: myname@example.com" value="${sessionScope.user.email != null ? sessionScope.user.email : ''}">
-              </div>
+        <div class="flex flex-col space-y-5 flex-grow">
+          <!-- Feedback Type -->
+          <div class="space-y-4">
+            <p class="text-sm font-medium text-gray-800 mb-2">Feedback Type:</p>
+            <div class="flex flex-wrap gap-4">
+              <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
+                <input type="radio" name="feedbackType" value="comments" class="custom-radio-input" checked>
+                <span class="text-sm font-medium text-gray-700">Comments</span>
+              </label>
+              <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
+                <input type="radio" name="feedbackType" value="suggestions" class="custom-radio-input">
+                <span class="text-sm font-medium text-gray-700">Suggestions</span>
+              </label>
+              <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
+                <input type="radio" name="feedbackType" value="questions" class="custom-radio-input">
+                <span class="text-sm font-medium text-gray-700">Questions</span>
+              </label>
             </div>
-            <div class="mt-auto pt-4">
-              <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-medium py-2.5 px-6 rounded-lg hover:shadow-md transition-all duration-300 whitespace-nowrap text-sm shadow-sm hover:shadow-green-100">
-                Submit Feedback <i class="ri-send-plane-2-fill ml-1"></i>
-              </button>
-            </div>
+            <!-- Hidden fields -->
+            <input type="hidden" id="firstName" name="firstName" value="${requestScope.firstName}">
+            <input type="hidden" id="lastName" name="lastName" value="${requestScope.lastName}">
+            <input type="hidden" id="email" name="email" value="${requestScope.email}">
           </div>
-          <div class="col-span-1 flex flex-col h-full">
-            <div class="mb-3">
-              <label for="feedbackTitle" class="block text-sm font-medium text-gray-800 mb-1">Title Name:</label>
-              <input type="text" id="feedbackTitle" name="feedbackTitle" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Enter a title for your feedback">
-            </div>
+
+          <!-- Title Name -->
+          <div>
+            <label for="feedbackTitle" class="block text-sm font-medium text-gray-800 mb-1">Title Name:</label>
+            <input type="text" id="feedbackTitle" name="feedbackTitle" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Enter a title for your feedback">
+          </div>
+
+          <!-- Describe Feedback -->
+          <div class="flex-grow flex flex-col">
             <label for="feedbackContent" class="block text-sm font-medium text-gray-800 mb-1">Describe Your Feedback:</label>
             <textarea id="feedbackContent" name="feedbackContent" class="w-full flex-grow border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Please share your feedback details here..."></textarea>
           </div>
+
+          <!-- Submit Button -->
+          <div class="pt-4">
+            <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-medium py-2.5 px-6 rounded-lg hover:shadow-md transition-all duration-300 whitespace-nowrap text-sm shadow-sm hover:shadow-green-100">
+              Submit Feedback <i class="ri-send-plane-2-fill ml-1"></i>
+            </button>
+          </div>
         </div>
       </form>
+
     </div>
   </div>
 </div>
@@ -323,26 +319,14 @@
 
     form.addEventListener("submit", function (e) {
       const feedbackContentValue = feedbackContent.value.trim();
-      const email = document.getElementById("email").value.trim();
 
       if (!feedbackContentValue) {
         e.preventDefault();
         showValidationError("Please enter your feedback content.");
         return;
       }
-
-      if (!email) {
-        e.preventDefault();
-        showValidationError("Please enter your email address.");
-        return;
-      }
-
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        e.preventDefault();
-        showValidationError("Please enter a valid email address.");
-        return;
-      }
+      
+      // Email validation removed as the field is now hidden and pre-filled from session
     });
   });
 </script>

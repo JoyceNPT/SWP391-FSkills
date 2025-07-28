@@ -528,4 +528,27 @@ public class TestDAO extends DBContext {
         }
         return list;
     }
+
+    public List<Test> getAllTestsWithModuleCourse() {
+        List<Test> list = new ArrayList<>();
+        String sql = "SELECT t.*, m.ModuleName, c.CourseID, c.CourseName " +
+                "FROM Tests t " +
+                "JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "ORDER BY c.CourseName, m.ModuleName, t.TestOrder";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Test test = createTestFromResultSet(rs);
+                list.add(test);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getAllTestsWithModuleCourse: " + e.getMessage());
+        }
+        return list;
+    }
+
 } 

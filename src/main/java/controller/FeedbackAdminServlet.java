@@ -76,6 +76,14 @@ public class FeedbackAdminServlet extends HttpServlet {
             feedbackList.sort((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()));
         }
 
+        // Log feedback list for debugging
+        System.out.println("[DEBUG_LOG] Passing " + feedbackList.size() + " feedback items to JSP");
+        for (Feedback feedback : feedbackList) {
+            System.out.println("[DEBUG_LOG] Feedback to JSP: ID=" + feedback.getFeedbackId() + 
+                               ", userName=" + feedback.getUserName() + 
+                               ", email=" + feedback.getEmail());
+        }
+        
         // Set attributes for the JSP
         request.setAttribute("feedbackList", feedbackList);
         request.setAttribute("activeTab", feedbackType);

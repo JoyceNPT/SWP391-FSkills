@@ -11,8 +11,6 @@
             <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="logo-img">
         </a>
 
-
-        <!-- Navigation Links -->
         <nav class="sidebar-nav">
             <c:if test="${sessionScope.user.role eq 'ADMIN'}">
                 <a href="${pageContext.request.contextPath}/admin"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
@@ -22,8 +20,9 @@
                 <a href="${pageContext.request.contextPath}/admin/degree"><i class="bi bi-mortarboard"></i> <span>Manage Degree</span></a>
                 <a href="${pageContext.request.contextPath}/alluser"><i class="bi bi-people"></i> <span>Manage Accounts</span></a>
                 <a href="${pageContext.request.contextPath}/admin/ManageCourse"><i class="bi bi-book"></i> <span>Manage Courses</span></a>
+                <a href="${pageContext.request.contextPath}/admin/tests"><i class="bi bi-journal-text"></i> <span>Manage Tests</span></a>
                 <a href="${pageContext.request.contextPath}/admin/report"><i class="bi bi-bar-chart"></i> <span>Report</span></a>
-                <a href="${pageContext.request.contextPath}/admin/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback Management</span></a>
+                <a href="${pageContext.request.contextPath}/admin/feedback"><i class="bi bi-chat-dots"></i> <span>Manage Feedback</span></a>
                 <div class="divider"></div>
                 <a href="${pageContext.request.contextPath}/admin/profile" class="user-profile">
                     <c:choose>
