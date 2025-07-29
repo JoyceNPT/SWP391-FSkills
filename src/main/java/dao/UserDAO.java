@@ -937,19 +937,18 @@ public class UserDAO extends DBContext {
     }
 
     public boolean updateUser(User user) throws SQLException {
-        String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, ReportAmount = ?, DateOfBirth = ?, info = ?, PhoneNumber = ? WHERE UserName = ?";
-
+        String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, DateOfBirth = ?, info = ?, PhoneNumber = ? WHERE UserName = ?";
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
-            int i = 1; //dùng i thì ít gây ra lôi null hon
+            int i = 1;
             ps.setString(i++, user.getDisplayName());
             ps.setString(i++, user.getEmail());
+
             if (user.getRole() != null) {
                 ps.setInt(i++, user.getRole().ordinal());
             }
             if (user.getBan() != null) {
                 ps.setInt(i++, user.getBan().ordinal());
             }
-            ps.setInt(i++, user.getReports());
             ps.setTimestamp(i++, user.getDateOfBirth());
             ps.setString(i++, user.getInfo());
             ps.setString(i++, user.getPhone());
