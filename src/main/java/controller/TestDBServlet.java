@@ -62,7 +62,7 @@ public class TestDBServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         if (db.conn != null) {
-            out.println("Đã kết nối thành công tới Azure SQL Database!");
+            out.println("Đã kết nối thành công SQL Server of Docker in VPS!");
         } else {
             out.println("Kết nối thất bại (conn = null)");
         }
