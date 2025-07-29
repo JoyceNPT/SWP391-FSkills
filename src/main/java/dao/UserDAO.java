@@ -388,6 +388,29 @@ public class UserDAO extends DBContext {
         return us;
     }
 
+    public boolean updateUser(User user) throws SQLException {
+        String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, DateOfBirth = ?, info = ?, PhoneNumber = ? WHERE UserName = ?";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            int i = 1;
+            ps.setString(i++, user.getDisplayName());
+            ps.setString(i++, user.getEmail());
+
+            if (user.getRole() != null) {
+                ps.setInt(i++, user.getRole().ordinal());
+            }
+            if (user.getBan() != null) {
+                ps.setInt(i++, user.getBan().ordinal());
+            }
+            ps.setTimestamp(i++, user.getDateOfBirth());
+            ps.setString(i++, user.getInfo());
+            ps.setString(i++, user.getPhone());
+            ps.setString(i++, user.getUserName());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
     public String hashMD5(String pass) {
         try {
             MessageDigest mes = MessageDigest.getInstance("MD5");
