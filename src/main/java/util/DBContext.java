@@ -46,7 +46,7 @@ public class DBContext {
             String dbURL = "jdbc:sqlserver://148.230.96.68:1433;"
                     + "databaseName=FLearn;"
                     + "user=sa;"
-                    + "password=FPT_Group3_SE1815;"
+                    + "password=FPT-SPRING2025-Group3;"
                     + "encrypt=false;"
                     + "trustServerCertificate=true;"
                     + "loginTimeout=30;";
