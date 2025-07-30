@@ -228,7 +228,7 @@ public class TestDAO extends DBContext {
                 "FROM Tests t " +
                 "JOIN Modules m ON t.ModuleID = m.ModuleID " +
                 "JOIN Courses c ON m.CourseID = c.CourseID " +
-                "WHERE c.UserID = ? " +
+                "WHERE c.UserID = ? AND t.TestID IS NOT NULL " +
                 "ORDER BY c.CourseName, m.ModuleName, t.TestOrder";
 
         try {
@@ -473,7 +473,7 @@ public class TestDAO extends DBContext {
                 + "JOIN Enroll e ON c.CourseID = e.CourseID\n"
                 + "JOIN [Users] u ON e.UserID = u.UserID\n"
                 + "JOIN Category cat ON c.category_id = cat.category_id\n"
-                + "WHERE e.UserID = ? AND c.Status = 1";
+                + "WHERE e.UserID = ? ";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userID);
@@ -549,6 +549,21 @@ public class TestDAO extends DBContext {
             System.out.println("Error in getAllTestsWithModuleCourse: " + e.getMessage());
         }
         return list;
+    }
+
+    public boolean checkTestNameExists(int moduleID, String testName) {
+        String sql = "SELECT COUNT(*) as count FROM Tests WHERE ModuleID = ? AND LOWER(TestName) = LOWER(?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, moduleID);
+            ps.setString(2, testName.trim());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in checkTestNameExists: " + e.getMessage());
+        }
+        return false;
     }
 
 } 

@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css">
-
   <style>
     .badge-info { background-color: #17a2b8; }
     .badge-pass { background-color: #28a745; }
@@ -51,22 +50,6 @@
         <i class="fas fa-arrow-left"></i> Back
       </a>
     </div>
-
-    <c:if test="${not empty sessionScope.success}">
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-          ${sessionScope.success}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-      <c:remove var="success" scope="session"/>
-    </c:if>
-
-    <c:if test="${not empty sessionScope.err}">
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          ${sessionScope.err}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-      <c:remove var="err" scope="session"/>
-    </c:if>
 
     <div class="card mb-4">
       <div class="card-body">
@@ -139,7 +122,7 @@
               <td><span class="badge badge-pass">${test.passPercentage}%</span></td>
               <td><c:choose><c:when test="${test.randomize}"><i class="fas fa-check text-success"></i></c:when><c:otherwise><i class="fas fa-times text-danger"></i></c:otherwise></c:choose></td>
               <td><c:choose><c:when test="${test.showAnswer}"><i class="fas fa-check text-success"></i></c:when><c:otherwise><i class="fas fa-times text-danger"></i></c:otherwise></c:choose></td>
-              <td><c:choose><c:when test="${not empty test.testLastUpdate}"><span class="datetime" data-utc="${test.testLastUpdate}Z"></span></c:when><c:otherwise>N/A</c:otherwise></c:choose></td>
+              <td><c:choose><c:when test="${not empty test.testLastUpdate}"><fmt:formatDate value="${test.testLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss" /></c:when><c:otherwise>N/A</c:otherwise></c:choose></td>
               <td>
                 <div class="action-buttons">
                   <a href="${pageContext.request.contextPath}/admin/tests?action=view&testId=${test.testID}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
@@ -155,15 +138,38 @@
   </div>
 </main>
 
-<!-- Delete Modal, scripts and formatters -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this test? This action cannot be undone and will also delete all questions associated with this test.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteForm" method="POST" action="${pageContext.request.contextPath}/admin/tests" style="display: inline;">
+          <input type="hidden" name="action" value="delete">
+          <input type="hidden" name="testId" id="deleteTestId">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <jsp:include page="/layout/footer.jsp"/>
 <jsp:include page="/layout/toast.jsp"/>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
 <script>
+  let selectedTestId = null;
   function confirmDelete(testId) {
+    selectedTestId = testId;
     document.getElementById('deleteTestId').value = testId;
-    document.getElementById('deleteForm').action = '${pageContext.request.contextPath}/admin/tests';
     new bootstrap.Modal(document.getElementById('deleteModal')).show();
   }
   function loadFilterModules() {

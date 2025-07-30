@@ -115,8 +115,8 @@
             <!-- Back to Test Management Button -->
             <div class="mb-3">
                 <a href="${pageContext.request.contextPath}/instructor/tests?action=list"
-                   class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left me-2"></i>Back to Test Management
+                   class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>Back to Test Management
                 </a>
             </div>
 
@@ -218,8 +218,9 @@
                                             <td class="fw-bold">${result.result}%</td>
                                             <td>
                                                 <a href="${pageContext.request.contextPath}/instructor/tests?action=studentResultDetail&testResultId=${result.testResultID}"
-                                                   class="btn btn-view btn-sm" title="View Details">
-                                                    <i class="bi bi-eye"></i>
+                                                   class="btn btn-sm btn-info" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+
                                                 </a>
                                             </td>
                                         </tr>

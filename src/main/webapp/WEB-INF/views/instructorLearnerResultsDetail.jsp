@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -143,7 +145,6 @@
 <main id="main-body" class="main d-flex">
     <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
         <div class="container-fluid px-4 py-4">
-            <!-- Breadcrumb -->
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
@@ -160,11 +161,16 @@
                 </ol>
             </nav>
 
-            <!-- Result Detail Card -->
+            <div class="mb-3">
+                <a href="${pageContext.request.contextPath}/instructor/tests?action=list"
+                   class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Test Management
+                </a>
+            </div>
+
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="card result-detail-card">
-                        <!-- Result Header -->
                         <div class="result-header text-center">
                             <h1 class="display-6 mb-3">
                                 <i class="bi bi-person-check me-3"></i>
@@ -200,7 +206,6 @@
                                 </div>
                             </div>
 
-                            <!-- Test Result -->
                             <div class="mt-4">
                                 <h4 class="mb-3">
                                     <i class="bi bi-trophy text-primary me-2"></i>
@@ -215,19 +220,18 @@
                                         <div class="col-md-4">
                                             <h6 class="mb-1">Status</h6>
                                             <span class="${studentResult.passed ? 'status-passed' : 'status-failed'}">
-                                                    <i class="bi ${studentResult.passed ? 'bi-check-circle' : 'bi-x-circle'} me-1"></i>
-                                                    ${studentResult.passed ? 'PASSED' : 'FAILED'}
-                                                </span>
+                                                <i class="bi ${studentResult.passed ? 'bi-check-circle' : 'bi-x-circle'} me-1"></i>
+                                                ${studentResult.passed ? 'PASSED' : 'FAILED'}
+                                            </span>
                                         </div>
                                         <div class="col-md-4">
                                             <h6 class="mb-1">Total Questions</h6>
-                                            <p class="mb-0 fs-4 fw-bold">${userAnswers.size()}</p>
+                                            <p class="mb-0 fs-4 fw-bold"><c:out value="${fn:length(userAnswers)}"/></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Questions and Answers -->
                             <div class="mt-4">
                                 <h4 class="mb-3">
                                     <i class="bi bi-question-circle text-primary me-2"></i>
@@ -237,8 +241,8 @@
                                     <table class="table questions-table">
                                         <thead>
                                         <tr>
-                                            <th style="width: 60%">Question</th>
-                                            <th style="width: 40%">Learner Answer</th>
+                                            <th style="width: 60%">Learner Answer</th>
+                                            <th style="width: 40%">Correct Answer</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -248,8 +252,6 @@
                                                     <div class="question-text">
                                                         <strong>Question ${status.index + 1}:</strong><br>
                                                             ${userAnswer.question.question}
-
-                                                        <!-- Show options for choice questions -->
                                                         <c:if test="${userAnswer.question.questionType == 'CHOICE'}">
                                                             <div class="mt-3">
                                                                 <div class="choice-option ${userAnswer.answer == '1' ? 'choice-selected' : ''}">
@@ -269,32 +271,16 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <c:choose>
-                                                        <c:when test="${userAnswer.question.questionType == 'CHOICE'}">
-                                                            <div class="answer-text">
-                                                                <strong>Selected:</strong>
-                                                                <c:choose>
-                                                                    <c:when test="${userAnswer.answer == '1'}">A. ${userAnswer.question.option1}</c:when>
-                                                                    <c:when test="${userAnswer.answer == '2'}">B. ${userAnswer.question.option2}</c:when>
-                                                                    <c:when test="${userAnswer.answer == '3'}">C. ${userAnswer.question.option3}</c:when>
-                                                                    <c:when test="${userAnswer.answer == '4'}">D. ${userAnswer.question.option4}</c:when>
-                                                                    <c:otherwise>No answer selected</c:otherwise>
-                                                                </c:choose>
-                                                            </div>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <div class="answer-text">
-                                                                <c:choose>
-                                                                    <c:when test="${not empty userAnswer.answer}">
-                                                                        ${userAnswer.answer}
-                                                                    </c:when>
-                                                                    <c:otherwise>
-                                                                        <em class="text-muted">No answer provided</em>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </div>
-                                                        </c:otherwise>
-                                                    </c:choose>
+                                                    <div class="answer-text">
+                                                        <strong>Correct:</strong>
+                                                        <c:choose>
+                                                            <c:when test="${userAnswer.question.rightOption eq 'A'}">A. ${userAnswer.question.option1}</c:when>
+                                                            <c:when test="${userAnswer.question.rightOption eq 'B'}">B. ${userAnswer.question.option2}</c:when>
+                                                            <c:when test="${userAnswer.question.rightOption eq 'C'}">C. ${userAnswer.question.option3}</c:when>
+                                                            <c:when test="${userAnswer.question.rightOption eq 'D'}">D. ${userAnswer.question.option4}</c:when>
+                                                            <c:otherwise><em class="text-muted">No correct answer set</em></c:otherwise>
+                                                        </c:choose>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -303,13 +289,6 @@
                                 </div>
                             </div>
 
-                            <!-- Back Button -->
-                            <div class="text-center mt-5">
-                                <a href="${pageContext.request.contextPath}/instructor/tests?action=studentResults"
-                                   class="btn btn-back">
-                                    <i class="bi bi-arrow-left me-2"></i>Back to Learner Results
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -320,74 +299,39 @@
 
 <%@include file="../../layout/footer.jsp" %>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    // Script to ensure proper sidebar hover behavior
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const sidebar = document.querySelector('.sidebar');
         const mainContent = document.querySelector('main');
         const header = document.querySelector('header');
 
-        // Event handler functions defined outside to allow removal
         function handleSidebarMouseEnter() {
             const windowWidth = window.innerWidth;
             mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
-
-            if (windowWidth <= 768) {
-                // Mobile layout
-                mainContent.style.marginLeft = '250px';
-                if (header) {
-                    header.style.left = '250px';
-                    header.style.width = 'calc(100% - 266px)';
-                }
-            } else {
-                // Desktop layout
-                mainContent.style.marginLeft = '250px';
-                if (header) {
-                    header.style.left = '250px';
-                    header.style.width = 'calc(100% - 266px)';
-                }
+            mainContent.style.marginLeft = '250px';
+            if (header) {
+                header.style.left = '250px';
+                header.style.width = 'calc(100% - 266px)';
             }
         }
 
         function handleSidebarMouseLeave() {
             const windowWidth = window.innerWidth;
             mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
-
-            if (windowWidth <= 768) {
-                // Mobile layout
-                mainContent.style.marginLeft = '0';
-                if (header) {
-                    header.style.left = '0';
-                    header.style.width = 'calc(100% - 16px)';
-                }
-            } else {
-                // Desktop layout
-                mainContent.style.marginLeft = '80px';
-                if (header) {
-                    header.style.left = '80px';
-                    header.style.width = 'calc(100% - 96px)';
-                }
+            mainContent.style.marginLeft = windowWidth <= 768 ? '0' : '80px';
+            if (header) {
+                header.style.left = windowWidth <= 768 ? '0' : '80px';
+                header.style.width = windowWidth <= 768 ? 'calc(100% - 16px)' : 'calc(100% - 96px)';
             }
         }
 
-        // Add event listeners
         sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
         sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
-
-        // Set initial state based on window width
         handleSidebarMouseLeave();
 
-        // Add resize event listener to handle window size changes
-        window.addEventListener('resize', function() {
-            // Update layout based on current sidebar state
-            if (sidebar.matches(':hover')) {
-                handleSidebarMouseEnter();
-            } else {
-                handleSidebarMouseLeave();
-            }
+        window.addEventListener('resize', function () {
+            sidebar.matches(':hover') ? handleSidebarMouseEnter() : handleSidebarMouseLeave();
         });
     });
 </script>
