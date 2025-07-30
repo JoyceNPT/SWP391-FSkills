@@ -10,6 +10,7 @@
     <title>Test Results - F-SKILL</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css">
     <style>
@@ -292,12 +293,11 @@
         <div class="container-fluid px-4 py-4">
             <!-- Back to Test Details Button -->
             <div class="mb-3">
-                <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}"
-                   class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left me-2"></i>Back to Test Details
-                </a>
+                <a href="${pageContext.request.contextPath}//learner/tests?action=detail&testId=${test.testID}" 
+                   class="btn btn-secondary">
+                   <i class="fas fa-arrow-left"></i>Back to Tests
+                </a>     
             </div>
-
             <!-- Result Container -->
             <div class="result-container">
                 <!-- Result Header -->
@@ -541,7 +541,7 @@
 
                     <!-- Action Buttons -->
                     <div class="text-center mt-5">
-                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}"
+                           <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}"
                            class="btn btn-retake btn-action">
                             <i class="bi bi-arrow-clockwise me-2"></i>Retake Test
                         </a>

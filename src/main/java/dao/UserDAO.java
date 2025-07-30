@@ -695,67 +695,68 @@ public class UserDAO extends DBContext {
         return list;
     }
 
-    public List<User> getAllLearners() {
+    public List<User> getAllLearners() throws SQLException {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, Role.LEARNER.ordinal());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                User u = new User();
-                u.setUserId(rs.getInt("UserID"));
-                u.setUserName(rs.getString("UserName"));
-                u.setDisplayName(rs.getString("DisplayName"));
-                u.setRole(Role.LEARNER);
-                int banInt = rs.getInt("BanStatus");
-                switch (banInt) {
-                    case 0:
-                        u.setBan(Ban.NORMAL);
-                        break;
-                    case 1:
-                        u.setBan(Ban.BANNED);
-                        break;
-                }
-                u.setReports(rs.getInt("ReportAmount"));
-                list.add(u);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String sql = "SELECT u.UserID, u.UserName, u.DisplayName, u.BanStatus, "
+                + "(SELECT COUNT(*) FROM Reports r "
+                + " WHERE ( "
+                + "     (r.CommentID IS NOT NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Comments c WHERE r.CommentID = c.CommentID AND c.UserID = u.UserID)) "
+                + "     OR "
+                + "     (r.CommentID IS NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Materials m "
+                + "         JOIN Modules mo ON m.ModuleID = mo.ModuleID "
+                + "         JOIN Courses co ON mo.CourseID = co.CourseID "
+                + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
+                + ")) AS ReportCount "
+                + "FROM Users u WHERE u.Role = 0";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            User u = new User();
+            u.setUserId(rs.getInt("UserID"));
+            u.setUserName(rs.getString("UserName"));
+            u.setDisplayName(rs.getString("DisplayName"));
+            u.setRole(Role.LEARNER);
+            int ban = rs.getInt("BanStatus");
+            u.setBan(ban == 1 ? Ban.BANNED : Ban.NORMAL);
+            u.setReports(rs.getInt("ReportCount"));
+            list.add(u);
         }
         return list;
     }
 
-    public List<User> getAllInstructors() {
+    public List<User> getAllInstructors() throws SQLException {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, Role.INSTRUCTOR.ordinal());
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                User u = new User();
-                u.setUserId(rs.getInt("UserID"));
-                u.setUserName(rs.getString("UserName"));
-                u.setDisplayName(rs.getString("DisplayName"));
-                u.setRole(Role.INSTRUCTOR);
-                int banInt = rs.getInt("BanStatus");
-                switch (banInt) {
-                    case 0:
-                        u.setBan(Ban.NORMAL);
-                        break;
-                    case 1:
-                        u.setBan(Ban.BANNED);
-                        break;
-                }
-                u.setReports(rs.getInt("ReportAmount"));
-                list.add(u);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String sql = "SELECT u.UserID, u.UserName, u.DisplayName, u.BanStatus, "
+                + "(SELECT COUNT(*) FROM Reports r "
+                + " WHERE ( "
+                + "     (r.CommentID IS NOT NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Comments c WHERE r.CommentID = c.CommentID AND c.UserID = u.UserID)) "
+                + "     OR "
+                + "     (r.CommentID IS NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Materials m "
+                + "         JOIN Modules mo ON m.ModuleID = mo.ModuleID "
+                + "         JOIN Courses co ON mo.CourseID = co.CourseID "
+                + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
+                + ")) AS ReportCount "
+                + "FROM Users u WHERE u.Role = 1";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            User u = new User();
+            u.setUserId(rs.getInt("UserID"));
+            u.setUserName(rs.getString("UserName"));
+            u.setDisplayName(rs.getString("DisplayName"));
+            u.setRole(Role.INSTRUCTOR);
+            int ban = rs.getInt("BanStatus");
+            u.setBan(ban == 1 ? Ban.BANNED : Ban.NORMAL);
+            u.setReports(rs.getInt("ReportCount"));
+            list.add(u);
         }
         return list;
     }
+
 
     public List<User> searchUsersByName(String searchName) throws SQLException {
         List<User> users = new ArrayList<>();
@@ -797,65 +798,70 @@ public class UserDAO extends DBContext {
         return users;
     }
 
-    public List<User> searchLearnersByName(String searchName) throws SQLException {
-        List<User> users = new ArrayList<>();
-        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, Role.LEARNER.ordinal());
-            ps.setString(2, "%" + searchName + "%");
-            try ( ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    User u = new User();
-                    u.setUserId(rs.getInt("UserID"));
-                    u.setUserName(rs.getString("UserName"));
-                    u.setDisplayName(rs.getString("DisplayName"));
-                    u.setRole(Role.LEARNER);
-                    int banInt = rs.getInt("BanStatus");
-                    switch (banInt) {
-                        case 0:
-                            u.setBan(Ban.NORMAL);
-                            break;
-                        case 1:
-                            u.setBan(Ban.BANNED);
-                            break;
-                    }
-                    u.setReports(rs.getInt("ReportAmount"));
-                    users.add(u);
-                }
-            }
+    public List<User> searchLearnersByName(String name) throws SQLException {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT u.UserID, u.UserName, u.DisplayName, u.BanStatus, "
+                + "(SELECT COUNT(*) FROM Reports r "
+                + " WHERE ( "
+                + "     (r.CommentID IS NOT NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Comments c WHERE r.CommentID = c.CommentID AND c.UserID = u.UserID)) "
+                + "     OR "
+                + "     (r.CommentID IS NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Materials m "
+                + "         JOIN Modules mo ON m.ModuleID = mo.ModuleID "
+                + "         JOIN Courses co ON mo.CourseID = co.CourseID "
+                + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
+                + ")) AS ReportCount "
+                + "FROM Users u WHERE u.Role = 0 AND u.UserName LIKE ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, "%" + name + "%");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            User u = new User();
+            u.setUserId(rs.getInt("UserID"));
+            u.setUserName(rs.getString("UserName"));
+            u.setDisplayName(rs.getString("DisplayName"));
+            u.setRole(Role.LEARNER);
+            int ban = rs.getInt("BanStatus");
+            u.setBan(ban == 1 ? Ban.BANNED : Ban.NORMAL);
+            u.setReports(rs.getInt("ReportCount"));
+            list.add(u);
         }
-        return users;
+        return list;
     }
 
-    public List<User> searchInstructorsByName(String searchName) throws SQLException {
-        List<User> users = new ArrayList<>();
-        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, Role.INSTRUCTOR.ordinal());
-            ps.setString(2, "%" + searchName + "%");
-            try ( ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    User u = new User();
-                    u.setUserId(rs.getInt("UserID"));
-                    u.setUserName(rs.getString("UserName"));
-                    u.setDisplayName(rs.getString("DisplayName"));
-                    u.setRole(Role.INSTRUCTOR);
-                    int banInt = rs.getInt("BanStatus");
-                    switch (banInt) {
-                        case 0:
-                            u.setBan(Ban.NORMAL);
-                            break;
-                        case 1:
-                            u.setBan(Ban.BANNED);
-                            break;
-                    }
-                    u.setReports(rs.getInt("ReportAmount"));
-                    users.add(u);
-                }
-            }
+    public List<User> searchInstructorsByName(String name) throws SQLException {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT u.UserID, u.UserName, u.DisplayName, u.BanStatus, "
+                + "(SELECT COUNT(*) FROM Reports r "
+                + " WHERE ( "
+                + "     (r.CommentID IS NOT NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Comments c WHERE r.CommentID = c.CommentID AND c.UserID = u.UserID)) "
+                + "     OR "
+                + "     (r.CommentID IS NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Materials m "
+                + "         JOIN Modules mo ON m.ModuleID = mo.ModuleID "
+                + "         JOIN Courses co ON mo.CourseID = co.CourseID "
+                + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
+                + ")) AS ReportCount "
+                + "FROM Users u WHERE u.Role = 1 AND u.UserName LIKE ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, "%" + name + "%");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            User u = new User();
+            u.setUserId(rs.getInt("UserID"));
+            u.setUserName(rs.getString("UserName"));
+            u.setDisplayName(rs.getString("DisplayName"));
+            u.setRole(Role.INSTRUCTOR);
+            int ban = rs.getInt("BanStatus");
+            u.setBan(ban == 1 ? Ban.BANNED : Ban.NORMAL);
+            u.setReports(rs.getInt("ReportCount"));
+            list.add(u);
         }
-        return users;
+        return list;
     }
+
 
     public boolean deleteAccount(String userName) throws SQLException {
         String sql = "DELETE FROM Users WHERE UserName = ?";
@@ -870,16 +876,32 @@ public class UserDAO extends DBContext {
 
     public List<User> showAllInform(String informUser) throws SQLException {
         List<User> us = new ArrayList<>();
-        String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, info, BanStatus, ReportAmount, PhoneNumber, Avatar, AvatarGoogle FROM Users WHERE UserName = ?";
+        String sql = "SELECT u.UserID, u.UserName, u.DisplayName, u.Email, u.Password, u.Role, "
+                + "u.DateOfBirth, u.UserCreateDate, u.info, u.BanStatus, u.PhoneNumber, "
+                + "u.Avatar, u.AvatarGoogle, "
+                + "(SELECT COUNT(*) FROM Reports r "
+                + " WHERE ( "
+                + "     (r.CommentID IS NOT NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Comments c WHERE r.CommentID = c.CommentID AND c.UserID = u.UserID)) "
+                + "     OR "
+                + "     (r.CommentID IS NULL AND EXISTS ( "
+                + "         SELECT 1 FROM Materials m "
+                + "         JOIN Modules mo ON m.ModuleID = mo.ModuleID "
+                + "         JOIN Courses co ON mo.CourseID = co.CourseID "
+                + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
+                + ")) AS ReportCount "
+                + "FROM Users u WHERE u.UserName = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, informUser);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             User u = new User();
+            u.setUserId(rs.getInt("UserID"));
             u.setUserName(rs.getString("UserName"));
             u.setDisplayName(rs.getString("DisplayName"));
             u.setEmail(rs.getString("Email"));
             u.setPassword(rs.getString("Password"));
+
             int roleInt = rs.getInt("Role");
             switch (roleInt) {
                 case 0:
@@ -892,9 +914,11 @@ public class UserDAO extends DBContext {
                     u.setRole(Role.ADMIN);
                     break;
             }
+
             u.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
             u.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
             u.setInfo(rs.getString("info"));
+
             int banInt = rs.getInt("BanStatus");
             switch (banInt) {
                 case 0:
@@ -904,14 +928,16 @@ public class UserDAO extends DBContext {
                     u.setBan(Ban.BANNED);
                     break;
             }
+
             u.setPhone(rs.getString("PhoneNumber"));
-            u.setReports(rs.getInt("ReportAmount"));
+            u.setReports(rs.getInt("ReportCount"));
             u.setAvatar(rs.getBytes("Avatar"));
             u.setAvatarUrl(rs.getString("AvatarGoogle"));
             us.add(u);
         }
         return us;
     }
+
 
 
     public boolean updateUser(User user) throws SQLException {

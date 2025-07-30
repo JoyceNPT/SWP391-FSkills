@@ -152,9 +152,8 @@
 
             <!-- Back to Tests Button -->
             <div class="mb-3">
-                <a href="${pageContext.request.contextPath}/learner/tests?action=list"
-                   class="btn btn-outline-primary">
-                    <i class="bi bi-arrow-left me-2"></i>Back to Tests
+                <a href="${pageContext.request.contextPath}/learner/tests?action=list" class="btn btn-secondary">
+                   <i class="fas fa-arrow-left"></i>Back to Tests
                 </a>
             </div>
 
@@ -305,9 +304,9 @@
                                                     <td>
                                                         <c:if test="${test.showAnswer}">
                                                             <a href="${pageContext.request.contextPath}/learner/tests?action=result&testResultId=${result.testResultID}"
-                                                               class="btn btn-sm btn-outline-primary">
-                                                                <i class="bi bi-eye me-1"></i>View
-                                                            </a>
+                                                               class="btn btn-sm btn-info" title="View Test">
+                                                                 <i class="fas fa-eye"></i>
+                                                            </a>                                                                                                     
                                                         </c:if>
                                                     </td>
                                                 </tr>

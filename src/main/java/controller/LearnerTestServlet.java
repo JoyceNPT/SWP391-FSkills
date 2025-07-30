@@ -185,7 +185,7 @@ public class LearnerTestServlet extends HttpServlet {
         request.setAttribute("selectedCourseId", courseId);
         request.setAttribute("selectedModuleId", moduleId);
 
-        request.getRequestDispatcher("/WEB-INF/views/listTests.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/learnerListTest.jsp").forward(request, response);
     }
 
     /**
@@ -233,7 +233,7 @@ public class LearnerTestServlet extends HttpServlet {
         request.setAttribute("latestResult", latestResult);
         request.setAttribute("testHistory", testHistory);
 
-        request.getRequestDispatcher("/WEB-INF/views/testDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/learnerTestDetail.jsp").forward(request, response);
     }
 
     /**
@@ -272,7 +272,7 @@ public class LearnerTestServlet extends HttpServlet {
         request.setAttribute("test", test);
         request.setAttribute("questions", questions);
 
-        request.getRequestDispatcher("/WEB-INF/views/takeTest.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/learnerTakeTest.jsp").forward(request, response);
     }
 
     /**
@@ -424,6 +424,6 @@ public class LearnerTestServlet extends HttpServlet {
         request.setAttribute("totalQuestions", totalQuestions);
         request.setAttribute("correctAnswers", correctAnswers);
 
-        request.getRequestDispatcher("/WEB-INF/views/testResult.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/learnerTestResult.jsp").forward(request, response);
     }
 } 
