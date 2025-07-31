@@ -103,6 +103,7 @@ public class CommentServlet extends HttpServlet {
             comment.setUserId(userIdToAddComment);
             comment.setMaterialId(materialID);
             comment.setCommentContent(content.trim());
+            comment.setIsEdit(false);
             commentDAO.addComment(comment);
         }
         response.sendRedirect(redirectUrl);
@@ -127,17 +128,10 @@ public class CommentServlet extends HttpServlet {
                 return;
             }
 
-            boolean contentActuallyChanged = !trimmedNewContent.equals(trimmedExistingContent);
-
-            if (contentActuallyChanged) {
+            if (!trimmedNewContent.equals(trimmedExistingContent)) {
                 existingComment.setCommentContent(trimmedNewContent);
-                existingComment.setIsEdit(true);
+                existingComment.setIsEdit(true); // cho biet da chinh sua roi
                 commentDAO.updateComment(existingComment);
-            } else {
-                if (existingComment.isIsEdit()) {
-                    existingComment.setIsEdit(false);
-                    commentDAO.updateComment(existingComment);
-                }
             }
         }
         response.sendRedirect(redirectUrl);
