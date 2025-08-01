@@ -412,12 +412,12 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    public List<Course> searchCourseByName(String input) {
+    public List<Course> searchCourseByName(String input, int userId) {
         List<Course> list = new ArrayList<>();
         CategoryDAO categoryDAO = new CategoryDAO();
         UserDAO userDAO = new UserDAO();
 
-        String sql = "SELECT * FROM Courses WHERE CourseName  LIKE ? OR CourseID = ?";
+        String sql = "SELECT * FROM Courses WHERE (CourseName  LIKE ? OR CourseID = ?) AND (ApproveStatus <> 4) AND UserID = ?";
 
         int courseId;
         try {
@@ -430,12 +430,12 @@ public class CourseDAO extends DBContext {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, "%" + input + "%");
             ps.setInt(2, courseId);
+            ps.setInt(3, userId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int categoryId = rs.getInt("category_id");
                 Category category = categoryDAO.getCategoryById(categoryId);
 
-                int userId = rs.getInt("UserID");
                 User user = userDAO.getByUserID(userId);
 
                 Course course = new Course();

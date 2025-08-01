@@ -74,7 +74,7 @@
                 <p class="text-gray-500 text-lg">Here's your teaching dashboard for today.</p>
             </section>
 
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
                 <!-- Card 1 -->
                 <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
                     <div class="bg-indigo-100 p-4 rounded-full mb-3">
@@ -101,7 +101,6 @@
 <%--                    <p class="text-gray-500 text-sm">Average Rating</p>--%>
 <%--                    <p class="text-3xl font-bold text-gray-800">${totalRating}</p>--%>
 <%--                </div>--%>
-
             </section>
 
             <section id="my-courses">
@@ -137,8 +136,6 @@
                                     </span>
                                 </div>
 
-                                <p class="text-gray-600 mb-6 text-sm">Instructor: ${course.user.displayName}</p>
-
                                 <div class="flex space-x-3">
                                     <a href="courseDetail?id=${course.courseID}"
                                        class="flex-1 text-center bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Manage</a>
@@ -155,13 +152,11 @@
         
 
         <script>
-            // Script to ensure proper sidebar hover behavior
             document.addEventListener('DOMContentLoaded', function() {
                 const sidebar = document.querySelector('.sidebar');
                 const mainContent = document.querySelector('.main');
                 const header = document.querySelector('header');
 
-                // Event handler functions defined outside to allow removal
                 function handleSidebarMouseEnter() {
                     const windowWidth = window.innerWidth;
                     mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
@@ -188,14 +183,12 @@
                     mainContent.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
 
                     if (windowWidth <= 768) {
-                        // Mobile layout
                         mainContent.style.marginLeft = '0';
                         if (header) {
                             header.style.left = '0';
                             header.style.width = 'calc(100% - 16px)';
                         }
                     } else {
-                        // Desktop layout
                         mainContent.style.marginLeft = '80px';
                         if (header) {
                             header.style.left = '80px';
@@ -204,16 +197,12 @@
                     }
                 }
 
-                // Add event listeners
                 sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
                 sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
 
-                // Set initial state based on window width
                 handleSidebarMouseLeave();
 
-                // Add resize event listener to handle window size changes
                 window.addEventListener('resize', function() {
-                    // Update layout based on current sidebar state
                     if (sidebar.matches(':hover')) {
                         handleSidebarMouseEnter();
                     } else {

@@ -78,13 +78,13 @@
                 <div class="mb-3">
                     <label for="courseSummary" class="form-label">Summary</label>
                     <input type="text" class="form-control" id="updateCourseSummary${listCourse.courseID}" name="courseSummary"
-                           value="${listCourse.courseSummary}" maxlength="255">
+                           value="${listCourse.courseSummary}" maxlength="255" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="courseHighlight" class="form-label">Highlight</label>
                     <textarea class="form-control" id="updateCourseHighlight${listCourse.courseID}"
-                              name="courseHighlight" rows="4">${listCourse.courseHighlight}</textarea>
+                              name="courseHighlight" rows="4" required>${listCourse.courseHighlight}</textarea>
                 </div>
 
                 <%--        <div class="form-check mb-3">--%>

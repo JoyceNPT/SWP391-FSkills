@@ -528,7 +528,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 List<Course> listCourse;
 
                 if(inputSearch != null && !inputSearch.trim().isEmpty()) {
-                    listCourse = cDao.searchCourseByName(inputSearch.trim());
+                    listCourse = cDao.searchCourseByName(inputSearch.trim(), userId);
                 } else {
                     listCourse = cDao.getCourseByUserID(userId);
                 }
