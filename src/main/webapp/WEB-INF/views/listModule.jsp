@@ -385,13 +385,6 @@
                     const name = nameInput.value.trim();
                     const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
-                    if (!spaceOnlyRegex.test(name)) {
-                        showJsToast("Module name must not contain consecutive spaces.");
-                        nameInput.focus();
-                        e.preventDefault();
-                        return;
-                    }
-
                     if (!name) {
                         showJsToast("Module Name is required.");
                         nameInput.focus();
@@ -399,8 +392,15 @@
                         return;
                     }
 
-                    if (name.length > 30) {
-                        showJsToast("Module Name must not exceed 30 characters.");
+                    if (!spaceOnlyRegex.test(name)) {
+                        showJsToast("Module name must not contain consecutive spaces.");
+                        nameInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (name.length < 10 || name.length > 30) {
+                        showJsToast("Module name must not be less than 10 and must not be greater than 30.");
                         nameInput.focus();
                         e.preventDefault();
                         return;
@@ -417,13 +417,6 @@
                         const name = nameInput.value.trim();
                         const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
-                        if (!spaceOnlyRegex.test(name)) {
-                            showJsToast("Module name must not contain consecutive spaces.");
-                            nameInput.focus();
-                            e.preventDefault();
-                            return;
-                        }
-
                         if (!name) {
                             showJsToast("Module Name is required.");
                             nameInput.focus();
@@ -431,8 +424,15 @@
                             return;
                         }
 
-                        if (name.length > 30) {
-                            showJsToast("Module Name must not exceed 30 characters.");
+                        if (!spaceOnlyRegex.test(name)) {
+                            showJsToast("Module name must not contain consecutive spaces.");
+                            nameInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+
+                        if (name.length < 10 || name.length > 30) {
+                            showJsToast("Module name must not be less than 10 and must not be greater than 30.");
                             nameInput.focus();
                             e.preventDefault();
                             return;

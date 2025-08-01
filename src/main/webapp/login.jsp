@@ -42,9 +42,8 @@
                         <label style="margin-right: 70%;" class="form-check-label" for="rememberMe">Remember</label>
                     </div>
 
-                    <!--<div class="cf-turnstile" data-sitekey="0x4AAAAAABgts3i36HFv5My1"></div>-->
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAABgts3i36HFv5My1"></div>
 
-                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
 
@@ -60,11 +59,11 @@
                         Continue with Google
                     </a>
 
-                    <!--                    <a href="https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile%20openid&access_type=offline&include_granted_scopes=true&response_type=code&redirect_uri=http://localhost:8080/FSkills/login&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com"
-                                           class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
-                                            <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
-                                            Continue with Google
-                                        </a>-->
+<!--                    <a href="https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile%20openid&access_type=offline&include_granted_scopes=true&response_type=code&redirect_uri=http://localhost:8080/FSkills/login&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com"
+                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
+                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
+                        Continue with Google
+                    </a>-->
                 </div>
 
                 <div class="mt-3">

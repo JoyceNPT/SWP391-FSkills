@@ -196,6 +196,15 @@ public class InstructorModuleServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                     return;
                 }
+                
+                if (moduleName.length() < 10 || moduleName.length() > 30) {
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.setAttribute("err", "Creation failed: Module name must not be less than 10 and must not be greater than 30.");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    return;
+                }
 
                 module = new Module(moduleName, course);
 
@@ -224,7 +233,7 @@ public class InstructorModuleServlet extends HttpServlet {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
                     request.setAttribute("listModule", list);
-                    request.setAttribute("err", "Create failed: Module Name is required.");
+                    request.setAttribute("err", "Update failed: Module Name is required.");
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                     return;
                 }
@@ -233,7 +242,16 @@ public class InstructorModuleServlet extends HttpServlet {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
                     request.setAttribute("listModule", list);
-                    request.setAttribute("err", "Create failed: Module Name must not contain consecutive spaces.");
+                    request.setAttribute("err", "Update failed: Module Name must not contain consecutive spaces.");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    return;
+                }
+                
+                if (moduleName.length() < 10 || moduleName.length() > 30) {
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.setAttribute("err", "Update failed: Module name must not be less than 10 and must not be greater than 30.");
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                     return;
                 }
