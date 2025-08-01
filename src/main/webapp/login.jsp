@@ -10,6 +10,7 @@
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="stylesheet" href="css/log.css">
     </head>
     <body>
@@ -24,19 +25,25 @@
 
                 <form method="POST" action="login">
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="username" value="${usernameCookieSaved}" placeholder="Username or Email" required/>
+                        <label for="username" class="form-label fw-bold text-start d-block">Username or Email:</label>
+                        <input type="text" class="form-control" id="username" name="username" value="${usernameCookieSaved}" placeholder="Enter Username or Email" required/>
                     </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" required/>
+                    <div class="mb-3 position-relative">
+                        <label for="password" class="form-label fw-bold text-start d-block">Password:</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control pe-5" id="password" name="password" placeholder="Enter Password" required />
+                            <span class="input-group-text bg-white border-start-0" style="cursor: pointer;">
+                                <i class="bi bi-eye-slash toggle-password" data-target="password"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe" />
                         <label style="margin-right: 70%;" class="form-check-label" for="rememberMe">Remember</label>
                     </div>
 
-                    <!--<div class="cf-turnstile" data-sitekey="0x4AAAAAABgts3i36HFv5My1"></div>-->
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAABgts3i36HFv5My1"></div>
 
-                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
 
@@ -47,7 +54,7 @@
                 <div class="mt-3">
                     <%--Connect Google From Render--%>
                     <a href="https://accounts.google.com/o/oauth2/v2/auth?scope=email%20profile%20openid&access_type=offline&include_granted_scopes=true&response_type=code&redirect_uri=https://www.fskills.website/login&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com"
-                        class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
+                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
                         <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
                         Continue with Google
                     </a>
@@ -93,6 +100,18 @@
         <script>
             document.getElementById("forgotPasswordModal").addEventListener('show.bs.modal', function () {
                 document.getElementById("forgotInfo").classList.remove("d-none");
+            });
+        </script>
+
+        <script>
+            document.querySelectorAll('.toggle-password').forEach(icon => {
+                icon.addEventListener('click', () => {
+                    const targetInput = document.getElementById(icon.getAttribute('data-target'));
+                    const isPassword = targetInput.type === 'password';
+                    targetInput.type = isPassword ? 'text' : 'password';
+                    icon.classList.toggle('bi-eye');
+                    icon.classList.toggle('bi-eye-slash');
+                });
             });
         </script>
 

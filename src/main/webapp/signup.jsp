@@ -157,11 +157,11 @@
                     return;
                 }
 
-                const phoneRegex = /^0[1-9](?!.*000)\d{8}$/;
+                const phoneRegex = /^0[35789]\d{8}$/;
                 const zeroCount = (phone.match(/0/g) || []).length;
 
-                if (!phoneRegex.test(phone) || zeroCount > 5) {
-                    showJsToast("Phone number must start with 0, second digit ≠ 0, 10 digits, no '000', and no more than five 0s.");
+                if (!phoneRegex.test(phone) || zeroCount > 7) {
+                    showJsToast("Phone number must start with 0, second digit ≠ 0.");
                     e.preventDefault();
                     return;
                 }

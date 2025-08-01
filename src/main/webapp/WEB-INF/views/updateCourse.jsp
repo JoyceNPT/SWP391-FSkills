@@ -13,8 +13,9 @@
 
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header.jsp"/>
 
-        <div class="container px-5 mt-5">
+        <div class="container px-5 mt-5 py-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <a href="${pageContext.request.contextPath}/instructor/courses?action=list" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back
@@ -77,13 +78,13 @@
                 <div class="mb-3">
                     <label for="courseSummary" class="form-label">Summary</label>
                     <input type="text" class="form-control" id="updateCourseSummary${listCourse.courseID}" name="courseSummary"
-                           value="${listCourse.courseSummary}" maxlength="255">
+                           value="${listCourse.courseSummary}" maxlength="255" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="courseHighlight" class="form-label">Highlight</label>
                     <textarea class="form-control" id="updateCourseHighlight${listCourse.courseID}"
-                              name="courseHighlight" rows="4">${listCourse.courseHighlight}</textarea>
+                              name="courseHighlight" rows="4" required>${listCourse.courseHighlight}</textarea>
                 </div>
 
                 <%--        <div class="form-check mb-3">--%>

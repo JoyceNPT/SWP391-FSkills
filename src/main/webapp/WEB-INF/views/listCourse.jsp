@@ -89,7 +89,7 @@
                            value="${param.search}" style="height: 32px; font-size: 0.9rem;">
 
                     <button type="submit" class="btn btn-sm btn-primary" style="height: 32px;">
-                        <i class="fas fa-search"></i> Search
+                        <i class="fas fa-search"></i>
                     </button>
                 </form>
 
@@ -128,7 +128,6 @@
                                     <th>Image</th>
                                     <th>Title</th>
                                     <th>Category</th>
-                                    <th>Instructor</th>
                                     <th>Status</th>
                                     <th>Published</th>
                                     <th>Last Update</th>
@@ -144,13 +143,19 @@
                                             <img src="${course.imageDataURI}" class="course-image mx-auto d-block" alt="Course Image">
                                         </td>
                                         <td>
-                                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
-                                               class="link-hover">
-                                                ${course.courseName}
-                                            </a>
+                                            <c:choose>
+                                                <c:when test="${course.approveStatus == 2 || course.approveStatus == 3}">
+                                                    ${course.courseName}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
+                                                       class="link-hover">
+                                                        ${course.courseName}
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
                                         <td>${course.category.name}</td>
-                                        <td>${course.user.displayName}</td>
                                         <td>
                                             <span class="
                                                   text-xs font-semibold px-2.5 py-0.5 rounded-full
@@ -193,13 +198,15 @@
                                                 </c:choose>
                                             </td>
                                             <td class="d-flex justify-content-center align-items-center gap-2" style="height: 100px;">
-                                                <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
-                                                   class="btn btn-info btn-sm d-flex align-items-center justify-content-center"
-                                                   style="height: 40px; width: 40px;">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
+                                                <c:if test="${course.approveStatus != 2 && course.approveStatus != 3}">
+                                                    <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
+                                                       class="btn btn-info btn-sm d-flex align-items-center justify-content-center"
+                                                       style="height: 40px; width: 40px;">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </c:if>
 
-                                                <c:if test="${course.approveStatus != 2}">
+                                                <c:if test="${course.approveStatus != 2 && course.approveStatus != 3}">
                                                     <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
                                                        class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
                                                        style="height: 40px; width: 40px;">

@@ -184,9 +184,9 @@ public class SignUpServlet extends HttpServlet {
                 return;
             }
 
-            String phonePattern = "^0[1-9](?!.*000)\\d{8}$";
+            String phonePattern = "^0[35789]\\d{8}$";
             if (!phoneNumber.matches(phonePattern)) {
-                request.setAttribute("err", "Invalid phone number. Must start with 0, second digit ≠ 0, 10 digits total, and no '000'.");
+                request.setAttribute("err", "Invalid phone number. Must start with 0, second digit ≠ 0, 10 digits total, and no '0000000'.");
                 request.getRequestDispatcher("signup.jsp").forward(request, response);
                 return;
             }

@@ -118,7 +118,7 @@ public class InstructorTestServlet extends HttpServlet {
                     }
 
                     request.setAttribute("listTest", testList);
-                    request.getRequestDispatcher("/WEB-INF/views/listTest.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/instructorListTests.jsp").forward(request, response);
                     break;
 
                 case "listByModule":
@@ -140,13 +140,17 @@ public class InstructorTestServlet extends HttpServlet {
 
                     request.setAttribute("module", module);
                     request.setAttribute("listTest", moduleTests);
-                    request.getRequestDispatcher("/WEB-INF/views/listTest.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/instructorListTests.jsp").forward(request, response);
                     break;
 
                 case "create":
                     List<Course> coursesByUser =  new CourseDAO().getCourseByUserID(acc.getUserId());
                     request.setAttribute("courses", coursesByUser);
-                    request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+
+                    List<Test> allTestsByInstructor = testDAO.getTestsByInstructorID(acc.getUserId());
+                    request.setAttribute("allTestsByInstructor", allTestsByInstructor);
+
+                    request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
                     break;
 
                 case "update":
@@ -169,7 +173,7 @@ public class InstructorTestServlet extends HttpServlet {
 
                     request.setAttribute("test", testToUpdate);
                     request.setAttribute("questions", questions);
-                    request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
                     break;
 
                 case "view":
@@ -196,7 +200,7 @@ public class InstructorTestServlet extends HttpServlet {
                     request.setAttribute("questions", viewQuestions);
                     request.setAttribute("totalPoints", totalPoints);
                     request.setAttribute("questionCount", questionCount);
-                    request.getRequestDispatcher("/WEB-INF/views/viewTest.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/instructorViewTest.jsp").forward(request, response);
                     break;
 
                 case "getModules":
@@ -337,7 +341,7 @@ public class InstructorTestServlet extends HttpServlet {
             System.out.println("Error in InstructorTestServlet doPost: " + e.getMessage());
             e.printStackTrace();
             request.setAttribute("err", "An error occurred: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/listTest.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorListTests.jsp").forward(request, response);
         }
     }
 
@@ -356,13 +360,13 @@ public class InstructorTestServlet extends HttpServlet {
         // Validation
         if (moduleIdStr == null || moduleIdStr.isEmpty()) {
             request.setAttribute("err", "Module ID is required.");
-            request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
             return;
         }
 
         if (testName == null || testName.trim().isEmpty()) {
             request.setAttribute("err", "Test name is required.");
-            request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
             return;
         }
 
@@ -376,32 +380,38 @@ public class InstructorTestServlet extends HttpServlet {
 
             // if (passPercentage < 0 || passPercentage > 100) {
             //     request.setAttribute("err", "Pass percentage must be between 0 and 100.");
-            //     request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+            //     request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
             //     return;
             // }
             String questionCountStr = request.getParameter("questionCount");
             if (questionCountStr == null || questionCountStr.isEmpty()) {
                 request.setAttribute("err", "Question count is required.");
-                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
                 return;
             }
             int questionCount = Integer.parseInt(questionCountStr);
             if (questionCount < 1) {
                 request.setAttribute("err", "Question count must be at least 1.");
-                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
                 return;
             }
 
             if (requiredCorrectAnswers < 1) {
                 request.setAttribute("err", "Required correct answers must be at least 1.");
-                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
                 return;
             }
             int passPercentage = (requiredCorrectAnswers * 100) / questionCount;
             // Check if test order already exists
+            if (testDAO.checkTestNameExists(moduleId, testName)) {
+                request.setAttribute("err", "Test name '" + testName + "' already exists in this module. Please choose a different name.");
+                request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
+                return;
+            }
+
             if (testDAO.checkTestOrderExists(moduleId, testOrder, -1)) {
                 request.setAttribute("err", "Test order " + testOrder + " already exists in this module. Please choose a different order.");
-                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
                 return;
             }
 
@@ -426,11 +436,11 @@ public class InstructorTestServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
             } else {
                 request.setAttribute("err", "Failed to create test.");
-                request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
             }
         } catch (NumberFormatException e) {
             request.setAttribute("err", "Invalid number format.");
-            request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorCreateTest.jsp").forward(request, response);
         }
     }
 
@@ -447,13 +457,13 @@ public class InstructorTestServlet extends HttpServlet {
         String questionCountStr = request.getParameter("questionCount");
         if (questionCountStr == null || questionCountStr.isEmpty()) {
             request.setAttribute("err", "Question count is required.");
-            request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
             return;
         }
         int questionCount = Integer.parseInt(questionCountStr);
         if (questionCount < 1) {
             request.setAttribute("err", "Question count must be at least 1.");
-            request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
             return;
         }
 
@@ -475,7 +485,7 @@ public class InstructorTestServlet extends HttpServlet {
 
             if (testName == null || testName.trim().isEmpty()) {
                 request.setAttribute("err", "Test name is required.");
-                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
                 return;
             }
 
@@ -486,20 +496,20 @@ public class InstructorTestServlet extends HttpServlet {
 
 //            if (passPercentage < 0 || passPercentage > 100) {
 //                request.setAttribute("err", "Pass percentage must be between 0 and 100.");
-//                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+//                request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
 //                return;
 //            }
 
             if (requiredCorrectAnswers < 1) {
                 request.setAttribute("err", "Required correct answers must be at least 1.");
-                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
                 return;
             }
             int passPercentage = (requiredCorrectAnswers * 100) / questionCount;
             // Check if test order already exists (excluding current test)
             if (testDAO.checkTestOrderExists(existingTest.getModuleID(), testOrder, testId)) {
                 request.setAttribute("err", "Test order " + testOrder + " already exists in this module. Please choose a different order.");
-                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
                 return;
             }
 
@@ -525,11 +535,11 @@ public class InstructorTestServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/instructor/tests?action=list");
             } else {
                 request.setAttribute("err", "Failed to update test.");
-                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
             }
         } catch (NumberFormatException e) {
             request.setAttribute("err", "Invalid number format.");
-            request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorUpdateTest.jsp").forward(request, response);
         }
     }
 
@@ -667,12 +677,14 @@ public class InstructorTestServlet extends HttpServlet {
         request.setAttribute("instructorCourses", instructorCourses);
         request.setAttribute("selectedCourseId", courseId);
 
-        request.getRequestDispatcher("/WEB-INF/views/studentResults.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/instructorLearnerResults.jsp").forward(request, response);
     }
 
     /**
      * Handle student result detail view
      */
+// ... toàn bộ phần đầu file giữ nguyên như bạn đã gửi ...
+
     private void handleStudentResultDetail(HttpServletRequest request, HttpServletResponse response, User instructor)
             throws ServletException, IOException {
         String testResultIdStr = request.getParameter("testResultId");
@@ -685,8 +697,9 @@ public class InstructorTestServlet extends HttpServlet {
             int testResultId = Integer.parseInt(testResultIdStr);
             TestResultDAO testResultDAO = new TestResultDAO();
             UserAnswerDAO userAnswerDAO = new UserAnswerDAO();
+            QuestionDAO questionDAO = new QuestionDAO();
 
-            // Get student result detail (with ownership check)
+            // Lấy chi tiết kết quả bài làm của học viên
             TestResult studentResult = testResultDAO.getStudentResultDetail(testResultId, instructor.getUserId());
             if (studentResult == null) {
                 request.setAttribute("err", "Result not found or access denied.");
@@ -694,17 +707,22 @@ public class InstructorTestServlet extends HttpServlet {
                 return;
             }
 
-            // Get user answers with question details
+            // Lấy danh sách câu trả lời kèm theo question đầy đủ thông tin
             List<UserAnswer> userAnswers = userAnswerDAO.getUserAnswersWithQuestions(testResultId);
+            for (UserAnswer ua : userAnswers) {
+                Question fullQ = questionDAO.getQuestionByID(ua.getQuestion().getQuestionID());
+                ua.setQuestion(fullQ);
+            }
 
             request.setAttribute("studentResult", studentResult);
             request.setAttribute("userAnswers", userAnswers);
 
-            request.getRequestDispatcher("/WEB-INF/views/studentResultDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/instructorLearnerResultsDetail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/instructor/tests?action=studentResults");
         }
     }
+
 
     /**
      * Returns a short description of the servlet.
@@ -713,4 +731,4 @@ public class InstructorTestServlet extends HttpServlet {
     public String getServletInfo() {
         return "InstructorTestServlet for Test and Question CRUD operations";
     }
-} 
+}

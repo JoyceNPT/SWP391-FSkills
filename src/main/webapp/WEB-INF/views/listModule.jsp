@@ -139,13 +139,6 @@
                     </ol>
                 </nav>
 
-                <c:if test="${not empty err}">
-                    <div class="alert alert-danger text-center">${err}</div>
-                </c:if>
-                <c:if test="${not empty success}">
-                    <div class="alert alert-success text-center">${success}</div>
-                </c:if>
-
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <a href="${pageContext.request.contextPath}/instructor/courses?action=list" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back
@@ -392,13 +385,6 @@
                     const name = nameInput.value.trim();
                     const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
-                    if (!spaceOnlyRegex.test(name)) {
-                        showJsToast("Module name must not contain consecutive spaces.");
-                        nameInput.focus();
-                        e.preventDefault();
-                        return;
-                    }
-
                     if (!name) {
                         showJsToast("Module Name is required.");
                         nameInput.focus();
@@ -406,8 +392,15 @@
                         return;
                     }
 
-                    if (name.length > 30) {
-                        showJsToast("Module Name must not exceed 30 characters.");
+                    if (!spaceOnlyRegex.test(name)) {
+                        showJsToast("Module name must not contain consecutive spaces.");
+                        nameInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (name.length < 10 || name.length > 30) {
+                        showJsToast("Module name must not be less than 10 and must not be greater than 30.");
                         nameInput.focus();
                         e.preventDefault();
                         return;
@@ -424,13 +417,6 @@
                         const name = nameInput.value.trim();
                         const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
-                        if (!spaceOnlyRegex.test(name)) {
-                            showJsToast("Module name must not contain consecutive spaces.");
-                            nameInput.focus();
-                            e.preventDefault();
-                            return;
-                        }
-
                         if (!name) {
                             showJsToast("Module Name is required.");
                             nameInput.focus();
@@ -438,8 +424,15 @@
                             return;
                         }
 
-                        if (name.length > 30) {
-                            showJsToast("Module Name must not exceed 30 characters.");
+                        if (!spaceOnlyRegex.test(name)) {
+                            showJsToast("Module name must not contain consecutive spaces.");
+                            nameInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+
+                        if (name.length < 10 || name.length > 30) {
+                            showJsToast("Module name must not be less than 10 and must not be greater than 30.");
                             nameInput.focus();
                             e.preventDefault();
                             return;
