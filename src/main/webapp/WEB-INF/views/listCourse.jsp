@@ -128,7 +128,6 @@
                                     <th>Image</th>
                                     <th>Title</th>
                                     <th>Category</th>
-                                    <th>Instructor</th>
                                     <th>Status</th>
                                     <th>Published</th>
                                     <th>Last Update</th>
@@ -150,7 +149,6 @@
                                             </a>
                                         </td>
                                         <td>${course.category.name}</td>
-                                        <td>${course.user.displayName}</td>
                                         <td>
                                             <span class="
                                                   text-xs font-semibold px-2.5 py-0.5 rounded-full

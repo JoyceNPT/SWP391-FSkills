@@ -139,13 +139,6 @@
                     </ol>
                 </nav>
 
-                <c:if test="${not empty err}">
-                    <div class="alert alert-danger text-center">${err}</div>
-                </c:if>
-                <c:if test="${not empty success}">
-                    <div class="alert alert-success text-center">${success}</div>
-                </c:if>
-
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <a href="${pageContext.request.contextPath}/instructor/courses?action=list" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back

@@ -13,8 +13,9 @@
 
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header.jsp"/>
 
-        <div class="container px-5 mt-5">
+        <div class="container px-5 mt-5 py-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <a href="${pageContext.request.contextPath}/instructor/courses?action=list" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back

@@ -494,7 +494,7 @@ public class UserDAO extends DBContext {
     }
 
     public User getByUsername(String userName) {
-        String sql = "SELECT * FROM users WHERE UserName = ?";
+        String sql = "SELECT * FROM Users WHERE UserName = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, userName);
@@ -524,7 +524,6 @@ public class UserDAO extends DBContext {
                 user.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
                 user.setAvatar(rs.getBytes("Avatar"));
                 user.setInfo(rs.getNString("Info"));
-                user.setReports(rs.getInt("ReportAmount"));
                 user.setPhone(rs.getString("PhoneNumber"));
                 user.setIsVerified(rs.getBoolean("IsVerified"));
                 int banInt = rs.getInt("BanStatus");
@@ -1569,4 +1568,11 @@ public class UserDAO extends DBContext {
 //        }
 //        return users;
 //    }
+    public static void main(String[] args) {
+        UserDAO dao = new UserDAO();
+        
+        User acc = dao.getByUsername("learner1");
+        
+        System.out.println(acc);
+    }
 }
