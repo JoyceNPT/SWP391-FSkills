@@ -21,8 +21,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>All Courses - F-Skill</title>
 
-        <link rel="icon" type="image/png" href="https://placehold.co/32x32/0284c7/ffffff?text=FS">
-
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <script src="https://cdn.tailwindcss.com"></script>
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,7 +73,7 @@
         </header>
 
         <main>
-            <section class="hero-gradient-small py-12">
+            <section class="hero-gradient-small py-2">
                 <div class="container mx-auto px-4 text-center">
                     <h1 class="text-4xl lg:text-5xl font-extrabold text-primary-dark">Explore Our Courses</h1>
                     <p class="mt-4 text-lg text-secondary max-w-2xl mx-auto">Find the perfect course to boost your skills and achieve your goals.</p>
@@ -129,10 +128,25 @@
                                 <c:forEach var="course" items="${courseList}">
                                     <a href="courseDetail?id=${course.courseID}" class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden group flex flex-col">
                                         <div class="overflow-hidden h-48">
-                                            <img src="${course.courseImageLocation}"
-                                                 alt="${course.courseName}"
-                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                 onerror="this.src='https://placehold.co/600x400/38bdf8/ffffff?text=Course'">
+                                            <c:choose>
+                                                <c:when test="${not empty course.imageDataURI}">
+                                                    <img src="${course.imageDataURI}"
+                                                         alt="${course.courseName}"
+                                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                         onerror="this.src='https://placehold.co/600x400/38bdf8/ffffff?text=Course'" />
+                                                </c:when>
+                                                <c:when test="${not empty course.courseImageLocation}">
+                                                    <img src="${course.courseImageLocation}"
+                                                         alt="${course.courseName}"
+                                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                         onerror="this.src='https://placehold.co/600x400/38bdf8/ffffff?text=Course'" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="https://placehold.co/600x400/38bdf8/ffffff?text=Course"
+                                                         alt="${course.courseName}"
+                                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                         <div class="p-5 flex flex-col flex-grow">
                                             <p class="text-sm font-semibold text-primary mb-2">${course.category.name}</p>
@@ -142,36 +156,40 @@
                                             <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
                                                 <div class="flex items-center">
                                                     <c:choose>
-                                                        <c:when test="${not empty course.user.avatar}">
-                                                            <img src="${course.user.avatar}"
+                                                        <c:when test="${not empty course.user.imageDataURI}">
+                                                            <img src="${course.user.imageDataURI}"
                                                                  alt="${course.user.displayName}"
-                                                                 class="w-8 h-8 rounded-full mr-2 object-cover"
-                                                                 onerror="this.src='https://i.pravatar.cc/40?u=${course.user.displayName}'">
+                                                                 class="w-8 h-8 rounded-full mr-2 object-cover"/>
+                                                        </c:when>
+                                                        <c:when test="${not empty course.user.avatarUrl}">
+                                                            <img src="${course.user.avatarUrl}"
+                                                                 alt="${course.user.displayName}"
+                                                                 class="w-8 h-8 rounded-full mr-2 object-cover"/>
                                                         </c:when>
                                                         <c:otherwise>
                                                             <img src="https://i.pravatar.cc/40?u=${course.user.displayName}"
                                                                  alt="${course.user.displayName}"
-                                                                 class="w-8 h-8 rounded-full mr-2 object-cover">
+                                                                 class="w-8 h-8 rounded-full mr-2 object-cover" />
                                                         </c:otherwise>
                                                     </c:choose>
                                                     <span class="text-sm text-gray-600">${course.user.displayName}</span>
                                                 </div>
                                                 <div class="text-right">
                                                     <c:choose>
-                                                       <c:when test="${course.originalPrice == 0}">
+                                                        <c:when test="${course.originalPrice == 0}">
                                                             <span class="text-lg font-bold text-green-600">Free</span>
                                                         </c:when>
-                                                            <c:when test="${course.salePrice == 0}">
+                                                        <c:when test="${course.salePrice == 0}">
                                                             <span class="text-lg font-bold text-green-600">Free</span>
                                                         </c:when>
 
                                                         <c:when test="${course.isSale == 1}">
                                                             <fmt:setLocale value="en_US"/>
                                                             <span class="text-lg font-bold text-primary-dark">
-                                                                <fmt:formatNumber value="${course.salePrice * 1000}" pattern="#,##0"/> VND
+                                                                <fmt:formatNumber value="${course.salePrice}" pattern="#,##0"/> VND
                                                             </span>
                                                             <div class="text-sm text-gray-500 line-through">
-                                                                <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
+                                                                <fmt:formatNumber value="${course.originalPrice}" pattern="#,##0"/> VND
                                                             </div>
                                                         </c:when>
                                                         <c:when test="${course.originalPrice == 0}">
@@ -179,7 +197,7 @@
                                                         </c:when>
                                                         <c:otherwise>
                                                             <span class="text-lg font-bold text-primary-dark">
-                                                                <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
+                                                                <fmt:formatNumber value="${course.originalPrice}" pattern="#,##0"/> VND
                                                             </span>
                                                         </c:otherwise>
                                                     </c:choose>

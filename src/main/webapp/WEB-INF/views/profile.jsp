@@ -185,7 +185,23 @@
                       method="POST" enctype="multipart/form-data" style="display: none;">
                     <div class="avatar-section">
                         <div class="avatar-container">
-                            <img src="${profile.imageDataURI}" alt="Profile Picture" id="avatar-preview">
+                            <c:choose>
+                                <c:when test="${not empty profile.imageDataURI}">
+                                    <img src="${profile.imageDataURI}"
+                                         alt="Profile Picture"
+                                         id="avatar-preview">
+                                    </c:when>
+                                    <c:when test="${not empty profile.avatarUrl}">
+                                        <img src="${profile.avatarUrl}"
+                                        alt="Profile Picture"
+                                        id="avatar-preview">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="https://i.pravatar.cc/150?u=${profile.username}"
+                                        alt="Profile Picture"
+                                        id="avatar-preview">
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                         <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
                         <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-upload').click()">
@@ -861,63 +877,63 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const sidebar = document.querySelector('.sidebar');
-                    const profileContainer = document.querySelector('.profile-edit-container');
-                    const header = document.querySelector('header');
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const sidebar = document.querySelector('.sidebar');
+                        const profileContainer = document.querySelector('.profile-edit-container');
+                        const header = document.querySelector('header');
 
-                    function handleSidebarMouseEnter() {
-                        const windowWidth = window.innerWidth;
-                        profileContainer.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
-                        if (windowWidth <= 768) {
-                            profileContainer.style.marginLeft = '250px';
-                            profileContainer.style.width = 'calc(100% - 250px)';
-                            if (header) {
-                                header.style.left = '250px';
-                                header.style.width = 'calc(100% - 266px)';
-                            }
-                        } else {
-                            profileContainer.style.marginLeft = '250px';
-                            profileContainer.style.width = 'calc(100% - 250px)';
-                            if (header) {
-                                header.style.left = '250px';
-                                header.style.width = 'calc(100% - 266px)';
-                            }
-                        }
-                    }
-
-                    function handleSidebarMouseLeave() {
-                        const windowWidth = window.innerWidth;
-                        profileContainer.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
-                        if (windowWidth <= 768) {
-                            profileContainer.style.marginLeft = '0';
-                            profileContainer.style.width = '100%';
-                            if (header) {
-                                header.style.left = '0';
-                                header.style.width = 'calc(100% - 16px)';
-                            }
-                        } else {
-                            profileContainer.style.marginLeft = '80px';
-                            profileContainer.style.width = 'calc(100% - 80px)';
-                            if (header) {
-                                header.style.left = '80px';
-                                header.style.width = 'calc(100% - 96px)';
+                        function handleSidebarMouseEnter() {
+                            const windowWidth = window.innerWidth;
+                            profileContainer.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+                            if (windowWidth <= 768) {
+                                profileContainer.style.marginLeft = '250px';
+                                profileContainer.style.width = 'calc(100% - 250px)';
+                                if (header) {
+                                    header.style.left = '250px';
+                                    header.style.width = 'calc(100% - 266px)';
+                                }
+                            } else {
+                                profileContainer.style.marginLeft = '250px';
+                                profileContainer.style.width = 'calc(100% - 250px)';
+                                if (header) {
+                                    header.style.left = '250px';
+                                    header.style.width = 'calc(100% - 266px)';
+                                }
                             }
                         }
-                    }
 
-                    sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
-                    sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
-                    handleSidebarMouseLeave();
-
-                    window.addEventListener('resize', function () {
-                        if (sidebar.matches(':hover')) {
-                            handleSidebarMouseEnter();
-                        } else {
-                            handleSidebarMouseLeave();
+                        function handleSidebarMouseLeave() {
+                            const windowWidth = window.innerWidth;
+                            profileContainer.style.transition = 'margin-left 0.2s ease, width 0.2s ease';
+                            if (windowWidth <= 768) {
+                                profileContainer.style.marginLeft = '0';
+                                profileContainer.style.width = '100%';
+                                if (header) {
+                                    header.style.left = '0';
+                                    header.style.width = 'calc(100% - 16px)';
+                                }
+                            } else {
+                                profileContainer.style.marginLeft = '80px';
+                                profileContainer.style.width = 'calc(100% - 80px)';
+                                if (header) {
+                                    header.style.left = '80px';
+                                    header.style.width = 'calc(100% - 96px)';
+                                }
+                            }
                         }
+
+                        sidebar.addEventListener('mouseenter', handleSidebarMouseEnter);
+                        sidebar.addEventListener('mouseleave', handleSidebarMouseLeave);
+                        handleSidebarMouseLeave();
+
+                        window.addEventListener('resize', function () {
+                            if (sidebar.matches(':hover')) {
+                                handleSidebarMouseEnter();
+                            } else {
+                                handleSidebarMouseLeave();
+                            }
+                        });
                     });
-                });
             </script>
 
             <%@include file="../../layout/footer.jsp" %>

@@ -484,7 +484,7 @@ public class CourseDAO extends DBContext {
         int offset = (page - 1) * pageSize;
 
         String sql = "SELECT "
-                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber, "
                 + "c.*, "
                 + "cat.category_id, cat.category_name "
                 + "FROM Courses c "
@@ -515,7 +515,7 @@ public class CourseDAO extends DBContext {
         int offset = (page - 1) * pageSize;
 
         String sql = "SELECT "
-                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber, "
                 + "c.*, "
                 + "cat.category_id, cat.category_name "
                 + "FROM Courses c "
@@ -551,7 +551,7 @@ public class CourseDAO extends DBContext {
         int offset = (page - 1) * pageSize;
 
         String sql = "SELECT "
-                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber, "
                 + "c.*, "
                 + "cat.category_id, cat.category_name "
                 + "FROM Courses c "
@@ -583,7 +583,7 @@ public class CourseDAO extends DBContext {
         int offset = (page - 1) * pageSize;
 
         String sql = "SELECT "
-                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber, "
                 + "c.*, "
                 + "cat.category_id, cat.category_name "
                 + "FROM Courses c "
@@ -726,6 +726,7 @@ public class CourseDAO extends DBContext {
         user.setGender(rs.getInt("Gender"));
         user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
         user.setAvatar(rs.getBytes("Avatar"));
+        user.setAvatarUrl(rs.getString("AvatarGoogle"));
         user.setInfo(rs.getNString("Info"));
 
         Category category = new Category();
@@ -761,7 +762,7 @@ public class CourseDAO extends DBContext {
                 + "LEFT JOIN (SELECT CourseID, COUNT(*) AS TotalEnrolled FROM Enroll GROUP BY CourseID) e ON c.CourseID = e.CourseID "
                 + "WHERE c.CourseID = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
 
@@ -801,7 +802,7 @@ public class CourseDAO extends DBContext {
             moduleDAO.deleteModulesByCourseIDAdmin(courseID);
 
             // Then delete the course
-            try (PreparedStatement deletePs = conn.prepareStatement(deleteCourseSql)) {
+            try ( PreparedStatement deletePs = conn.prepareStatement(deleteCourseSql)) {
                 deletePs.setInt(1, courseID);
                 int rowsAffected = deletePs.executeUpdate();
                 return rowsAffected > 0 ? 1 : 0; // 1 if deleted, 0 if not found
@@ -861,6 +862,63 @@ public class CourseDAO extends DBContext {
         }
     }
 
+    public List<Course> get4CourseApproved() {
+        List<Course> list = new ArrayList<>();
+        String sql = "SELECT TOP 4\n"
+                + "u.UserName, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber,\n"
+                + "c.*,\n"
+                + "cat.category_id, cat.category_name,\n"
+                + "COUNT(DISTINCT e.UserID) AS TotalEnrolled\n"
+                + "FROM Courses c\n"
+                + "JOIN Users u ON c.UserID = u.UserID\n"
+                + "JOIN Category cat ON c.category_id = cat.category_id\n"
+                + "LEFT JOIN Enroll e ON c.CourseID = e.CourseID\n"
+                + "WHERE c.ApproveStatus = 1\n"
+                + "GROUP BY\n"
+                + "u.UserName, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber,\n"
+                + "c.CourseID, c.CourseName, c.OriginalPrice, c.SalePrice, c.IsSale, \n"
+                + "c.CourseImageLocation, c.PublicDate, c.CourseLastUpdate, c.ApproveStatus, c.UserID, c.category_id,\n"
+                + "c.CourseSummary, c.CourseHighlight,\n"
+                + "cat.category_id, cat.category_name\n"
+                + "ORDER BY TotalEnrolled DESC";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                User user = new User();
+                Category cat = new Category();
+                UserDAO uDao = new UserDAO();
+                CategoryDAO catDao = new CategoryDAO();
+
+                int userId = rs.getInt("UserID");
+                user = uDao.getByUserID(userId);
+
+                int categoryId = rs.getInt("category_id");
+                cat = catDao.getCategoryById(categoryId);
+
+                Course course = new Course();
+                course.setCourseID(rs.getInt("CourseID"));
+                course.setCourseName(rs.getNString("CourseName"));
+                course.setApproveStatus(rs.getInt("ApproveStatus"));
+                course.setPublicDate(rs.getTimestamp("PublicDate"));
+                course.setIsSale(rs.getInt("IsSale"));
+                course.setOriginalPrice(rs.getInt("OriginalPrice"));
+                course.setSalePrice(rs.getInt("SalePrice"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
+                course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
+                course.setCategory(cat);
+                course.setUser(user);
+
+                list.add(course);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
 //        List<Course> list = new ArrayList<>();
         CourseDAO dao = new CourseDAO();
@@ -894,8 +952,13 @@ public class CourseDAO extends DBContext {
 //        for (Course course : courseList) {
 //            System.out.println(course);
 //        }
+//        String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
+//        System.out.println(YOUTUBE_API_KEY);
+        List<Course> list = new ArrayList<>();
+        list = dao.get4CourseApproved();
 
-        String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
-        System.out.println(YOUTUBE_API_KEY);
+        for (Course course : list) {
+            System.out.println(course);
+        }
     }
 }

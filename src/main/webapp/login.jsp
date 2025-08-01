@@ -15,7 +15,7 @@
     </head>
     <body>
 
-        <a href="homePage_Guest.jsp" class="login-back-btn btn btn-secondary position-fixed top-0 end-0 m-3" title="Back to Homepage">
+        <a href="${pageContext.request.contextPath}/homePage" class="login-back-btn btn btn-secondary position-fixed top-0 end-0 m-3" title="Back to Homepage">
             <i class="bi bi-arrow-left"></i>
         </a>
 

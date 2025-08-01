@@ -77,8 +77,6 @@ public class AnnouncementDAO extends DBContext {
         }
     }
 
-   
-
     public Announcement getAnnouncementById(int id) {
         Announcement ann = null;
         String sql = "SELECT * FROM [dbo].[Announcement] a JOIN [dbo].[Users] u ON a.UserID = u.UserID\n"
@@ -227,5 +225,28 @@ public class AnnouncementDAO extends DBContext {
         }
 
         return 0;
+    }
+    
+    public Announcement getAnnByCreateLater() {
+        String sql = "SELECT TOP 1 * FROM Announcement ORDER BY CreateAt DESC";
+        
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            if(rs.next()){ 
+                Announcement ann = new Announcement();
+                ann.setAnnoucementID(rs.getInt("AnnoucementID"));
+                ann.setTitle(rs.getNString("Title"));
+                ann.setCreateDate(rs.getTimestamp("CreateAt"));
+                ann.setAnnouncementText(rs.getNString("AnnouncementText"));
+                ann.setAnnouncementImage(rs.getBytes("AnnouncementImage"));
+                
+                return ann;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 }

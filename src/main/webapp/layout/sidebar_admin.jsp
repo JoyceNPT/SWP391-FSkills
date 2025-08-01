@@ -7,7 +7,7 @@
 
 <div class="sidebar">
     <div class="sidebar-content">
-        <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="logo-link">
+        <a href="${pageContext.request.contextPath}/homePage" class="logo-link">
             <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="logo-img">
         </a>
 
@@ -26,11 +26,22 @@
                 <div class="divider"></div>
                 <a href="${pageContext.request.contextPath}/admin/profile" class="user-profile">
                     <c:choose>
-                        <c:when test="${not empty sessionScope.user.avatar}">
-                            <img src="${sessionScope.user.imageDataURI}" alt="Admin Avatar" class="avatar-img small-avatar">
+                        <c:when test="${not empty sessionScope.user.imageDataURI}">
+                            <img src="${sessionScope.user.imageDataURI}"
+                                 alt="User Avatar"
+                                 class="avatar-img small-avatar"
+                                 onerror="this.src='https://placehold.co/80x80/cccccc/333333?text=User'" />
+                        </c:when>
+                        <c:when test="${not empty sessionScope.user.avatarUrl}">
+                            <img src="${sessionScope.user.avatarUrl}"
+                                 alt="User Avatar"
+                                 class="avatar-img small-avatar"
+                                 onerror="this.src='https://placehold.co/80x80/cccccc/333333?text=User'" />
                         </c:when>
                         <c:otherwise>
-                            <img src="https://placehold.co/80x80/cccccc/333333?text=Admin" alt="Default Admin Avatar" class="avatar-img small-avatar">
+                            <img src="https://placehold.co/80x80/cccccc/333333?text=User"
+                                 alt="Default Avatar"
+                                 class="avatar-img small-avatar" />
                         </c:otherwise>
                     </c:choose>
                     <span class="user-profile-name">${sessionScope.user.displayName}</span>
