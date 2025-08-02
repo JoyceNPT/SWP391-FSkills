@@ -105,6 +105,15 @@
                     </div>
 
                     <c:if test="${material.type eq 'video'}">
+                        <div class="section-title">Link</div>
+                        <div class="info-block">
+                            <div class="info-value">
+                                <a href="${material.materialUrl}" 
+                                   class="text-decoration-underline text-primary" target="_blank">
+                                    ${material.materialUrl}
+                                </a>
+                            </div>
+                        </div>
                         <!-- Tách videoId theo nhiều kiểu -->
                         <c:set var="videoId" value="" />
 

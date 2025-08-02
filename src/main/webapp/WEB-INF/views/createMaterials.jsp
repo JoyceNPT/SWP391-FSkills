@@ -95,7 +95,7 @@
                     </h1>
                     <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create" 
                           enctype="multipart/form-data" 
-                          onsubmit="return validateYoutubeFields()">
+                          onsubmit="return validateMaterialForm()">
                         <input type="hidden" name="action" value="create">
                         <input type="hidden" name="moduleId" value="${module.moduleID}">
                         <input type="hidden" name="courseId" value="${course.courseID}">
@@ -123,7 +123,7 @@
                                 <label class="form-label fw-semibold">YouTube Video URL</label>
                                 <input type="text" name="materialVideo" id="youtubeLinkInput" class="form-control"
                                        placeholder="https://www.youtube.com/"
-                                       onchange="previewYoutubeThumbnail(); updateMaterialLocation('video')">
+                                       onchange="previewYoutubeThumbnail(); updateMaterialLocation('video')" >
                                 <div id="youtubeUrlError" class="text-danger small mt-1 d-none">
                                     Please enter Youtube's link!
                                 </div>
@@ -173,7 +173,7 @@
                             <!-- Description -->
                             <div class="col-12">
                                 <label class="form-label fw-semibold">Material Description</label>
-                                <textarea name="materialDescription" class="form-control" rows="4" placeholder="Enter description..."></textarea>
+                                <textarea name="materialDescription" class="form-control" rows="4" placeholder="Enter description..." required ></textarea>
                             </div>
 
                             <!-- Buttons -->
@@ -238,49 +238,110 @@
             }
         </script>
         <script>
-            function validateYoutubeFields() {
-                const urlInput = document.getElementById("youtubeLinkInput");
+            function validateMaterialForm() {
+                const type = document.getElementById('type').value;
+                const name = document.querySelector('[name="materialName"]').value.trim();
+                const order = document.querySelector('[name="materialOrder"]').value;
+                const description = document.querySelector('[name="materialDescription"]').value.trim();
+                const youtubeInput = document.getElementById("youtubeLinkInput");
                 const durationInput = document.getElementById("videoTime");
-
-                const url = urlInput.value.trim();
+                const url = youtubeInput.value.trim();
                 const duration = durationInput.value.trim();
 
-                const urlErrorDiv = document.getElementById("youtubeUrlError");
-                const durationErrorDiv = document.getElementById("durationError");
+                const fileInput = document.querySelector('[name="docFile"]');
+                const materialLink = document.querySelector('[name="materialLink"]').value.trim();
 
-                // Reset lỗi
-                urlErrorDiv.classList.add("d-none");
-                durationErrorDiv.classList.add("d-none");
-                urlErrorDiv.innerText = "";
-                durationErrorDiv.innerText = "";
+                const youtubeUrlError = document.getElementById("youtubeUrlError");
+                const durationError = document.getElementById("durationError");
+
+                // Reset YouTube error messages
+                youtubeUrlError.classList.add("d-none");
+                durationError.classList.add("d-none");
+                youtubeUrlError.innerText = "";
+                durationError.innerText = "";
 
                 let isValid = true;
 
-                const videoIdPattern = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|.*[?&]v=))([a-zA-Z0-9_-]{11})/;
-                const urlIsValid = videoIdPattern.test(url);
+                // Common validation
+                if (!name) {
+                    showJsToast("Material name is required.");
+                    return false;
+                }
 
-                const durationPattern = /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/;
-                const durationIsValid = duration.match(durationPattern) && duration !== "00:00:00";
+                if (!type) {
+                    showJsToast("Please select a Material Type.");
+                    return false;
+                }
 
-                const isYoutubeVisible = !document.getElementById("youtubeLinkDiv").classList.contains("d-none");
+                if (!order || isNaN(order) || parseInt(order) < 1 || parseInt(order) > 10) {
+                    showJsToast("Display order must be a number between 1 and 10.");
+                    return false;
+                }
 
-                if (isYoutubeVisible) {
-                    if (!urlIsValid) {
-                        urlErrorDiv.innerText = "Please enter a valid YouTube video URL.";
-                        urlErrorDiv.classList.remove("d-none");
-                        isValid = false;
+                if (!description || description.length < 5) {
+                    showJsToast("Description is required and must be at least 5 characters.");
+                    return false;
+                }
+
+
+                // Type-specific validation
+                if (type === "video") {
+                    const isYoutubeVisible = !document.getElementById("youtubeLinkDiv").classList.contains("d-none");
+
+                    if (isYoutubeVisible) {
+                        const videoIdPattern = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|.*[?&]v=))([a-zA-Z0-9_-]{11})/;
+                        const urlIsValid = videoIdPattern.test(url);
+
+                        const durationPattern = /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/;
+                        const durationIsValid = duration.match(durationPattern) && duration !== "00:00:00";
+
+                        if (!urlIsValid) {
+                            youtubeUrlError.innerText = "Please enter a valid YouTube video URL.";
+                            youtubeUrlError.classList.remove("d-none");
+                            isValid = false;
+                        }
+
+                        if (!durationIsValid) {
+                            durationError.innerText = "Could not fetch video duration. Please check the YouTube link.";
+                            durationError.classList.remove("d-none");
+                            isValid = false;
+                        }
                     }
 
-                    if (!durationIsValid) {
-                        durationErrorDiv.innerText = "Could not fetch video duration. Please check the YouTube link.";
-                        durationErrorDiv.classList.remove("d-none");
-                        isValid = false;
+                } else if (type === "pdf") {
+                    const file = fileInput.files[0];
+                    if (!file) {
+                        showJsToast("Please upload a file.");
+                        return false;
+                    }
+
+                    const allowedTypes = [
+                        "application/pdf",
+                        "application/msword",
+                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    ];
+
+                    if (!allowedTypes.includes(file.type)) {
+                        showJsToast("Invalid file type. Allowed: PDF, DOC, DOCX.");
+                        return false;
+                    }
+
+                } else if (type === "link") {
+                    const urlRegex = /^https?:\/\/.+$/i;
+                    if (!materialLink || !urlRegex.test(materialLink)) {
+                        showJsToast("Please enter a valid external link (starting with http:// or https://).");
+                        return false;
                     }
                 }
 
                 return isValid;
             }
+
+            function showJsToast(message) {
+                alert(message); // Replace with Bootstrap Toast if needed
+            }
         </script>
+
 
 
 

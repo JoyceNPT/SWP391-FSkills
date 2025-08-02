@@ -73,7 +73,7 @@
                                 class="btn btn-primary btn-lg shadow d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill"
                                 data-bs-toggle="modal" data-bs-target="#createModal">
                             <i class="bi bi-plus-circle fs-5"></i>
-                            <span class="fw-semibold">Submit</span>
+                            <span class="fw-semibold">Create</span>
                         </button>
                     </div>
                     <c:if test="${not empty listAnnouncement}">
@@ -237,7 +237,8 @@
                                     aria-label="Close"></button>
                         </div>
 
-                        <form method="POST" action="${pageContext.request.contextPath}/admin/announcement?action=edit" enctype="multipart/form-data">
+                        <form method="POST" action="${pageContext.request.contextPath}/admin/announcement?action=edit" 
+                              enctype="multipart/form-data">
                             <input type="hidden" name="action" value="edit">
 
                             <div class="modal-body">
@@ -249,7 +250,7 @@
                                 <div class="mb-3">
                                     <label for="announcementTitle" class="form-label fw-bold">Title</label>
                                     <input type="text" class="form-control" id="announcementTitle" name="announcementTitle"
-                                           required value="${ann.title}">
+                                            accept="" value="${ann.title}">
                                 </div>
                                 <input type="hidden" name="takeDownDate" value="2099-12-31T12:59">
                                 <input type="hidden" name="deleteImage" id="deleteImage${ann.annoucementID}" value="false" />
@@ -312,6 +313,96 @@
                     </div>
                 </div>
             </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Validate CREATE Announcement
+                    const createForm = document.querySelector('#createModal form');
+                    if (createForm) {
+                        createForm.addEventListener("submit", function (e) {
+                            const titleInput = document.getElementById("announcementTitle");
+                            const contentInput = document.getElementById("announcementText");
+                            const imageInput = document.getElementById("announcementImage");
+
+                            const title = titleInput.value.trim();
+                            const content = contentInput.value.trim();
+                            const imageFile = imageInput.files[0];
+                            const validImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+                            if (!title) {
+                                showJsToast("Title is required.");
+                                titleInput.focus();
+                                e.preventDefault();
+                                return;
+                            }
+
+                            if (!content) {
+                                showJsToast("Content is required.");
+                                contentInput.focus();
+                                e.preventDefault();
+                                return;
+                            }
+
+                            if (imageFile && !validImageTypes.includes(imageFile.type)) {
+                                showJsToast("Only image files (JPG, PNG, GIF, WEBP) are allowed.");
+                                imageInput.focus();
+                                e.preventDefault();
+                                return;
+                            }
+                        });
+                    }
+
+                    // Validate EDIT Announcement
+                    document.querySelectorAll("form[action*='announcement?action=edit']").forEach(function (form) {
+                        form.addEventListener("submit", function (e) {
+                            const announcementId = form.querySelector("input[name='announcementId']").value;
+                            const titleInput = document.getElementById("announcementTitle");
+                            const contentInput = document.getElementById("announcementText");
+                            const imageInput = document.getElementById("announcementImage" + announcementId);
+                            const keepOldImageInput = document.getElementById("keepOldImage" + announcementId);
+
+                            const title = titleInput.value.trim();
+                            const content = contentInput.value.trim();
+                            const imageFile = imageInput.files[0];
+                            const validImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+                            if (!title) {
+                                showJsToast("Title is required.");
+                                titleInput.focus();
+                                e.preventDefault();
+                                return;
+                            }
+
+                            if (!content) {
+                                showJsToast("Content is required.");
+                                contentInput.focus();
+                                e.preventDefault();
+                                return;
+                            }
+
+                            if (imageFile) {
+                                if (!validImageTypes.includes(imageFile.type)) {
+                                    showJsToast("Invalid image format. Allowed: JPG, PNG, GIF, WEBP.");
+                                    imageInput.focus();
+                                    e.preventDefault();
+                                    return;
+                                }
+
+                                if (keepOldImageInput) {
+                                    keepOldImageInput.value = "false";
+                                }
+                            }
+
+                            titleInput.value = title;
+                            contentInput.value = content;
+                        });
+                    });
+                });
+
+                // Optional: Basic toast message (or replace with your toast implementation)
+                function showJsToast(message) {
+                    alert(message); // Replace with custom toast if needed
+                }
+            </script>
 
             <!-- JavaScript for image preview -->
             <script>
