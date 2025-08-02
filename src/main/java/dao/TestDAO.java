@@ -320,6 +320,15 @@ public class TestDAO extends DBContext {
     }
 
     /**
+     * Check if test order already exists in a module
+     * @param moduleID The module ID to check
+     * @param testOrder The test order to check
+     * @param excludeTestID Test ID to exclude from check (for updates), use -1 for new tests
+     * @return true if test order exists, false otherwise
+     */
+
+
+    /**
      * Helper method to update module's last update timestamp
      */
     private void updateModuleLastUpdate(int moduleID) {

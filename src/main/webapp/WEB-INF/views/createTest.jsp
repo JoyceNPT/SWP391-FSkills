@@ -96,7 +96,7 @@
                         <label for="requiredCorrectAnswers" class="form-label">Required Correct Answers</label>
                         <input type="number" class="form-control" id="requiredCorrectAnswers" name="requiredCorrectAnswers" min="1" required onchange="calculatePassPercentage(); validateRequiredAnswers()">
                         <input type="hidden" id="passPercentage" name="passPercentage" value="70">
-                        <small class="form-text text-muted">
+                        <small class="form-text text-muted" style="display: none">
                             Equivalent percentage: <span id="calculatedPercentage">--</span>%
                         </small>
                     </div>

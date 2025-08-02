@@ -183,7 +183,7 @@
                 <table class="table table-bordered table-hover shadow-sm bg-white rounded">
                     <thead>
                     <tr>
-                        <th>Test #</th>
+                        <th>TestID</th>
                         <th>Test Name</th>
                         <th>Module</th>
                         <th>Course</th>
@@ -198,10 +198,10 @@
                     </thead>
 
                     <tbody>
-                    <c:forEach var="test" items="${listTest}">
-                        <tr>
+                    <c:forEach var="test" items="${listTest}" varStatus="status">
+                    <tr>
                             <td>
-                                <strong>#${test.testID}</strong>
+                                <strong>${status.index + 1}</strong>
                             </td>
                             <td>
                                 <strong>${test.testName}</strong>

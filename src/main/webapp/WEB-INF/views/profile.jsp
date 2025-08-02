@@ -26,6 +26,12 @@
                 border-radius: 12px;
                 font-weight: 500;
             }
+
+            .input-group-text i.bi {
+                font-size: 1rem; /* hoặc 0.9rem để nhỏ hơn */
+                line-height: 1;
+            }
+
             .verified-badge i {
                 margin-right: 4px;
             }
@@ -254,36 +260,59 @@
             </div>
 
             <!-- Modal for Change Password -->
-            <div id="passwordModal" class="avatar-modal">
-                <div class="change-password-container">
-                    <span class="avatar-modal-close password-modal-close">×</span>
-                    <h1>Change Password</h1>
-                    <form id="passwordForm"
-                          action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=password"
-                          method="POST">
-                        <div class="form-group">
-                            <label for="oldPassword">Old Password</label>
-                            <input type="password" id="oldPassword" name="oldPassword" required>
-                            <p id="old-password-message" class="requirement"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="newPassword">New Password</label>
-                            <input type="password" id="newPassword" name="newPassword" required>
-                            <div class="password-requirements">
-                                <p class="requirement" id="length-requirement">At least 8 characters</p>
-                                <p class="requirement" id="case-requirement">Must have uppercase and lowercase letters</p>
-                                <p class="requirement" id="special-requirement">Must have special characters</p>
+                <div id="passwordModal" class="avatar-modal">
+                    <div class="change-password-container">
+                        <span class="avatar-modal-close password-modal-close">×</span>
+                        <h1>Change Password</h1>
+                        <form id="passwordForm"
+                              action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=password"
+                              method="POST">
+
+                            <!-- Old Password -->
+                            <div class="form-group">
+                                <label for="oldPassword">Old Password</label>
+                                <div class="input-group">
+                                    <input type="password" id="oldPassword" name="oldPassword" class="form-control" required>
+                                    <span class="input-group-text" style="cursor: pointer; min-width: 45px;">
+                        <i class="bi bi-eye-slash toggle-password" data-target="oldPassword"></i>
+                    </span>
+                                </div>
+                                <p id="old-password-message" class="requirement"></p>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm New Password</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
-                            <p id="confirm-message" class="requirement"></p>
-                        </div>
-                        <button type="submit" id="savePasswordBtn" disabled>Save Change</button>
-                    </form>
+
+                            <!-- New Password -->
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <div class="input-group">
+                                    <input type="password" id="newPassword" name="newPassword" class="form-control" required>
+                                    <span class="input-group-text" style="cursor: pointer; min-width: 45px;">
+                        <i class="bi bi-eye-slash toggle-password" data-target="newPassword"></i>
+                    </span>
+                                </div>
+                                <div class="password-requirements">
+                                    <p class="requirement" id="length-requirement">At least 8 characters</p>
+                                    <p class="requirement" id="case-requirement">Must have uppercase and lowercase letters</p>
+                                    <p class="requirement" id="special-requirement">Must have special characters</p>
+                                </div>
+                            </div>
+
+                            <!-- Confirm New Password -->
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <div class="input-group">
+                                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+                                    <span class="input-group-text" style="cursor: pointer; min-width: 45px;">
+                        <i class="bi bi-eye-slash toggle-password" data-target="confirmPassword"></i>
+                    </span>
+                                </div>
+                                <p id="confirm-message" class="requirement"></p>
+                            </div>
+
+                            <button type="submit" id="savePasswordBtn" disabled>Save Change</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
+
 
             <!-- Modal for Change Email -->
             <div id="emailModal" class="avatar-modal">
@@ -795,6 +824,26 @@
                             }
                         }
                     });
+
+                    // Toggle password visibility
+                    // Toggle password visibility
+                    document.querySelectorAll('.input-group-text').forEach(span => {
+                        span.addEventListener('click', () => {
+                            const input = span.previousElementSibling;
+                            const icon = span.querySelector('i');
+                            if (input.type === 'password') {
+                                input.type = 'text';
+                                icon.classList.remove('bi-eye-slash');
+                                icon.classList.add('bi-eye');
+                            } else {
+                                input.type = 'password';
+                                icon.classList.remove('bi-eye');
+                                icon.classList.add('bi-eye-slash');
+                            }
+                        });
+                    });
+
+
 
                     document.getElementById('profileEditForm').addEventListener('submit', function (event) {
                         const displayName = document.getElementById('displayName').value;

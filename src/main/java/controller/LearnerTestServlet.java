@@ -354,7 +354,8 @@ public class LearnerTestServlet extends HttpServlet {
                 // Handle multiple choice answers (userAnswer could be "1,3" for A,C)
                 if (!userAnswer.trim().isEmpty()) {
                     String[] userSelections = userAnswer.split(",");
-                    StringBuilder selectedOptions = new StringBuilder();
+                    List<String> selectedLetters = new ArrayList<>();
+                    
                     for (String selection : userSelections) {
                         String letter = "";
                         switch (selection.trim()) {
@@ -371,25 +372,67 @@ public class LearnerTestServlet extends HttpServlet {
                                 letter = "D";
                                 break;
                         }
-                        if (!letter.isEmpty()) {
-                            if (selectedOptions.length() > 0) {
-                                selectedOptions.append(",");
-                            }
-                            selectedOptions.append(letter);
+                        if (!letter.isEmpty() && !selectedLetters.contains(letter)) {
+                            selectedLetters.add(letter);
                         }
                     }
-                    answerToStore = selectedOptions.toString();
+                    
+                    // Sort the selected letters to ensure consistent ordering
+                    Collections.sort(selectedLetters);
+                    answerToStore = String.join(",", selectedLetters);
                 } else {
                     answerToStore = ""; // No answers selected
                 }
 
                 // Compare selected options with correct options
-                if (!answerToStore.isEmpty() && !question.getRightOption().isEmpty()) {
-                    String[] correctOptions = question.getRightOption().split(",");
+                String correctAnswer = question.getRightOption() != null ? question.getRightOption().trim() : "";
+                
+                // Debug logging
+                System.out.println("Question ID: " + question.getQuestionID());
+                System.out.println("User selected: " + userAnswer);
+                System.out.println("Answer to store: " + answerToStore);
+                System.out.println("Correct answer: " + correctAnswer);
+                
+                if (!answerToStore.isEmpty() && !correctAnswer.isEmpty()) {
+                    // Split and normalize both answers
+                    String[] correctOptions = correctAnswer.split(",");
                     String[] selectedOptionsArray = answerToStore.split(",");
-                    Arrays.sort(correctOptions);
-                    Arrays.sort(selectedOptionsArray);
-                    isCorrect = Arrays.equals(correctOptions, selectedOptionsArray);
+                    
+                    // Trim whitespace and sort both arrays
+                    List<String> correctList = new ArrayList<>();
+                    List<String> selectedList = new ArrayList<>();
+                    
+                    for (String opt : correctOptions) {
+                        String trimmed = opt.trim().toUpperCase();
+                        if (!trimmed.isEmpty() && !correctList.contains(trimmed)) {
+                            correctList.add(trimmed);
+                        }
+                    }
+                    
+                    for (String opt : selectedOptionsArray) {
+                        String trimmed = opt.trim().toUpperCase();
+                        if (!trimmed.isEmpty() && !selectedList.contains(trimmed)) {
+                            selectedList.add(trimmed);
+                        }
+                    }
+                    
+                    Collections.sort(correctList);
+                    Collections.sort(selectedList);
+                    
+                    isCorrect = correctList.equals(selectedList);
+                    
+                    System.out.println("Correct options (sorted): " + correctList);
+                    System.out.println("Selected options (sorted): " + selectedList);
+                    System.out.println("Is correct: " + isCorrect);
+                    
+                } else if (answerToStore.isEmpty() && correctAnswer.isEmpty()) {
+                    // Both empty means no correct answers and user selected nothing - this should be correct
+                    isCorrect = true;
+                    System.out.println("Both answers empty - marking as correct");
+                } else {
+                    // One is empty, the other is not - this is incorrect
+                    isCorrect = false;
+                    System.out.println("Answer mismatch - one empty, one not empty");
                 }
 
             } else if (question.getQuestionType().equals("WRITING")) {

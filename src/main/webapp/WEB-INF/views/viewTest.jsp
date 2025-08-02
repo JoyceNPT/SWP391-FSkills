@@ -1,5 +1,4 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -95,10 +94,10 @@
 
 <div class="container px-5 py-6">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="${pageContext.request.contextPath}/instructor/tests?action=list" class="btn btn-secondary">
+        <a href="${pageContext.request.contextPath}/instructor/tests?action=listByModule&moduleId=${test.moduleID}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
-
+        
         <div class="d-flex gap-2">
             <a href="${pageContext.request.contextPath}/instructor/tests?action=update&testId=${test.testID}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Test
@@ -173,7 +172,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="col-md-4">
                 <div class="stats-card">
                     <h5><i class="fas fa-chart-bar"></i> Test Statistics</h5>
@@ -195,7 +194,7 @@
     <!-- Questions -->
     <div class="mb-4">
         <h4 class="mb-3"><i class="fas fa-question-circle"></i> Questions (${questionCount})</h4>
-
+        
         <c:choose>
             <c:when test="${empty questions}">
                 <div class="alert alert-warning text-center">
@@ -212,43 +211,42 @@
                                 <span class="badge bg-warning text-dark">${question.point} point(s)</span>
                             </div>
                         </div>
-
+                        
                         <div class="mb-3">
                             <h6 class="fw-bold">${question.question}</h6>
                         </div>
-
+                        
                         <div class="options">
-                            <c:set var="right" value="${question.rightOption}" />
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="${fn:contains(right, 'A') ? 'correct-option' : 'incorrect-option'}">
-                                        <c:if test="${fn:contains(right, 'A')}">
+                                    <div class="${question.rightOption == 'A' ? 'correct-option' : 'incorrect-option'}">
+                                        <c:if test="${question.rightOption == 'A'}">
                                             <i class="fas fa-check-circle correct-answer-icon"></i>
                                         </c:if>
                                         <strong>A.</strong> ${question.option1}
                                     </div>
-
+                                    
                                     <c:if test="${not empty question.option3}">
-                                        <div class="${fn:contains(right, 'C') ? 'correct-option' : 'incorrect-option'}">
-                                            <c:if test="${fn:contains(right, 'C')}">
+                                        <div class="${question.rightOption == 'C' ? 'correct-option' : 'incorrect-option'}">
+                                            <c:if test="${question.rightOption == 'C'}">
                                                 <i class="fas fa-check-circle correct-answer-icon"></i>
                                             </c:if>
                                             <strong>C.</strong> ${question.option3}
                                         </div>
                                     </c:if>
                                 </div>
-
+                                
                                 <div class="col-md-6">
-                                    <div class="${fn:contains(right, 'B') ? 'correct-option' : 'incorrect-option'}">
-                                        <c:if test="${fn:contains(right, 'B')}">
+                                    <div class="${question.rightOption == 'B' ? 'correct-option' : 'incorrect-option'}">
+                                        <c:if test="${question.rightOption == 'B'}">
                                             <i class="fas fa-check-circle correct-answer-icon"></i>
                                         </c:if>
                                         <strong>B.</strong> ${question.option2}
                                     </div>
-
+                                    
                                     <c:if test="${not empty question.option4}">
-                                        <div class="${fn:contains(right, 'D') ? 'correct-option' : 'incorrect-option'}">
-                                            <c:if test="${fn:contains(right, 'D')}">
+                                        <div class="${question.rightOption == 'D' ? 'correct-option' : 'incorrect-option'}">
+                                            <c:if test="${question.rightOption == 'D'}">
                                                 <i class="fas fa-check-circle correct-answer-icon"></i>
                                             </c:if>
                                             <strong>D.</strong> ${question.option4}
@@ -257,11 +255,10 @@
                                 </div>
                             </div>
                         </div>
-
-
+                        
                         <div class="mt-3 text-end">
                             <small class="text-muted">
-                                <i class="fas fa-bullseye"></i> Correct Answer:
+                                <i class="fas fa-bullseye"></i> Correct Answer: 
                                 <span class="badge bg-success">${question.rightOption}</span>
                             </small>
                         </div>
