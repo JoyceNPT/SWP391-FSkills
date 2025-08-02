@@ -603,3 +603,19 @@ body {
         padding: 20px;
     }
 }
+
+/* FIX: Hiển thị icon con mắt đúng kích thước và không bị co */
+.input-group-text {
+    min-width: 45px;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-group-text .bi {
+    font-size: 1.2rem;
+    display: inline-block;
+    width: 1.5em;
+    text-align: center;
+}
+
+

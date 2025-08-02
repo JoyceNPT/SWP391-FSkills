@@ -194,7 +194,7 @@
                                 <label for="requiredCorrectAnswers" class="form-label">Required Correct Answers</label>
                                 <input type="number" class="form-control" id="requiredCorrectAnswers" name="requiredCorrectAnswers" min="1" required onchange="calculatePassPercentage(); validateRequiredAnswers()">
                                 <input type="hidden" id="passPercentage" name="passPercentage" value="70">
-                                <small id="percentageDisplay" class="form-text text-muted" style="display: inline">
+                                <small id="percentageDisplay" class="form-text text-muted" style="display: none">
                                     Equivalent percentage: <span id="calculatedPercentage">--</span>%
                                 </small>
 
@@ -250,7 +250,6 @@
                             if (isNaN(value) || value < 1) {
                                 requiredInput.classList.add('is-invalid');
                                 percentageText.innerText = 'Error';
-                                percentageContainer.style.display = 'inline';
                                 showJsToast('Required correct answers must be at least 1.', 'danger');
                                 return false;
                             }
@@ -258,7 +257,6 @@
                             if (value > totalQuestions) {
                                 requiredInput.classList.add('is-invalid');
                                 percentageText.innerText = 'Error';
-                                percentageContainer.style.display = 'inline';
                                 showJsToast('Required correct answers cannot exceed total number of questions.', 'danger');
                                 return false;
                             }
@@ -800,10 +798,8 @@
             const percentage = Math.round((requiredAnswers / totalQuestions) * 100);
             document.getElementById('calculatedPercentage').textContent = percentage;
             document.getElementById('passPercentage').value = percentage;
-            displayElement.style.display = 'inline';
         } else {
             document.getElementById('calculatedPercentage').textContent = '--';
-            displayElement.style.display = 'inline';
         }
     }
 

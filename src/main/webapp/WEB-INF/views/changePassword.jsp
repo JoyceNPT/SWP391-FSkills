@@ -105,17 +105,23 @@
                     <label for="newPassword" class="form-label">New Password</label>
                     <div class="input-group">
                         <input type="password" class="form-control pe-5" id="newPassword" name="newPassword" required />
-                        <span class="input-group-text bg-white border-start-0" style="cursor: pointer;">
-                            <i class="bi bi-eye-slash toggle-password" data-target="newPassword"></i>
+                        <span class="input-group-text bg-white border-start-0" style="cursor: pointer; min-width: 45px; text-align: center;">
+                         <i class="bi bi-eye-slash toggle-password" data-target="newPassword"></i>
                         </span>
                     </div>
-                    <div class="password-requirements mt-2">
-                        <p class="requirement" id="length-requirement">Minimum 8 characters, maximum 20 characters</p>
-                        <p class="requirement" id="case-requirement">Must have uppercase and lowercase letters</p>
-                        <p class="requirement" id="special-requirement">Must have special characters</p>
-                        <p class="requirement" id="number-requirement">Must contain at least one number</p>
-                        <p class="requirement" id="whitespace-requirement">Must not contain spaces</p>
+                    <!-- ... -->
+                </div>
+
+                <!-- Confirm New Password -->
+                <div class="mb-3 position-relative">
+                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control pe-5" id="confirmPassword" name="confirmPassword" required />
+                        <span class="input-group-text bg-white border-start-0" style="cursor: pointer; min-width: 45px; text-align: center;">
+                            <i class="bi bi-eye-slash toggle-password" data-target="confirmPassword"></i>
+                         </span>
                     </div>
+                    <p id="confirm-message" class="requirement"></p>
                 </div>
 
                 <div class="mb-3 position-relative">
