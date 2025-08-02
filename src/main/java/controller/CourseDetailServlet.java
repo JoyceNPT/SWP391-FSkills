@@ -90,12 +90,24 @@ public class CourseDetailServlet extends HttpServlet {
 
             // Set attributes for JSP
             request.setAttribute("course", course);
-            request.setAttribute("isInCart", cartDAO.isInCart(user.getUserId(), course.getCourseID()));
-            request.setAttribute("isBought", enrollDAO.checkBought(user.getUserId(), course.getCourseID()));
-            request.setAttribute("isEnroll", enrollDAO.checkEnrollment(user.getUserId(), course.getCourseID()));
+
+            // Only set user-specific attributes if user is logged in
+            if (user != null) {
+                request.setAttribute("isInCart", cartDAO.isInCart(user.getUserId(), course.getCourseID()));
+                request.setAttribute("isBought", enrollDAO.checkBought(user.getUserId(), course.getCourseID()));
+                request.setAttribute("isEnroll", enrollDAO.checkEnrollment(user.getUserId(), course.getCourseID()));
+                request.setAttribute("studyProgress", studyDAO.returnStudyProgress(user.getUserId(), course.getCourseID()));
+                request.setAttribute("hasReviewed", reviewDAO.isReviewed(user.getUserId(), course.getCourseID()));
+            } else {
+                // Set default values for non-logged-in users
+                request.setAttribute("isInCart", false);
+                request.setAttribute("isBought", false);
+                request.setAttribute("isEnroll", false);
+                request.setAttribute("studyProgress", 0);
+                request.setAttribute("hasReviewed", false);
+            }
+
             request.setAttribute("reviewList", reviewList);
-            request.setAttribute("studyProgress", studyDAO.returnStudyProgress(user.getUserId(), course.getCourseID()));
-            request.setAttribute("hasReviewed", reviewDAO.isReviewed(user.getUserId(), course.getCourseID()));
             request.setAttribute("averageRating", averageRating); // Set as double
             request.setAttribute("ratingCounts", ratingCounts);
             request.setAttribute("totalReviews", reviewList.size());
