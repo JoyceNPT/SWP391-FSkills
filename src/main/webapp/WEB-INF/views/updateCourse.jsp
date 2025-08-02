@@ -206,13 +206,6 @@
                         return;
                     }
 
-                    if (highlight && !spaceOnlyRegex.test(highlight)) {
-                        showJsToast("Highlight must not contain consecutive spaces.");
-                        highlightInput.focus();
-                        e.preventDefault();
-                        return;
-                    }
-
                     nameInput.value = name;
                     summaryInput.value = summary;
                     highlightInput.value = highlight;

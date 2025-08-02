@@ -236,15 +236,6 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (courseHighlight.contains("  ")) {
-                    List<Course> list = cDao.getCourseByUserID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Highlight must not contain consecutive spaces.");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
-
                 int insert = cDao.insertCourse(courseName, categoryId, userID, originalPrice, imageInputStream, courseSummary, courseHighlight);
 
                 if (insert > 0) {
@@ -350,15 +341,6 @@ public class InstructorCourseServlet extends HttpServlet {
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Highlight is required.");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
-
-                if (courseHighlight.contains("  ")) {
-                    List<Course> list = cDao.getCourseByUserID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Highlight must not contain consecutive spaces.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
