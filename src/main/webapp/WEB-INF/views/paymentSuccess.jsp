@@ -155,7 +155,7 @@
 
             <div class="mt-4">
                 <a href="${pageContext.request.contextPath}/cart" class="btn btn-primary">Back to Cart</a>
-                <a href="${pageContext.request.contextPath}/myCourses" class="btn btn-primary">My Courses</a>
+                <a href="${pageContext.request.contextPath}/learner/courselist" class="btn btn-primary">My Courses</a>
                 <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="btn btn-secondary">Home</a>
             </div>
         </div>
