@@ -5,11 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     User acc = (User) session.getAttribute("user");
-    if (acc == null) {
-        response.sendRedirect("login");
-        return;
-    }
-
     List<Notification> listNotification = (List<Notification>) request.getAttribute("listNotification");
 %>
 <!DOCTYPE html>
@@ -213,6 +208,19 @@
                                 </div>
                                 <div class="flex space-x-4">
                                     <c:choose>
+                                        <c:when test="${sessionScope.user == null}">
+                                            <!-- Show login prompt for non-logged-in users -->
+                                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 w-full">
+                                                <div class="flex items-center mb-2">
+                                                    <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
+                                                    <h4 class="text-lg font-semibold text-yellow-800">Login Required</h4>
+                                                </div>
+                                                <p class="text-yellow-700 mb-3">Please login to purchase or enroll in this course.</p>
+                                                <button onclick="location.href = '<%= request.getContextPath()%>/login'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                    Login to Continue
+                                                </button>
+                                            </div>
+                                        </c:when>
                                         <c:when test="${isEnroll}">
                                             <button onclick="location.href = '<%= request.getContextPath()%>/learner/course?courseID=${course.courseID}'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                                                 To Course

@@ -754,7 +754,7 @@ public class CourseDAO extends DBContext {
     public Course getCourseByCourseIDAdmin(int courseID) throws SQLException {
         String sql = "SELECT c.*, "
                 + "cat.category_id, cat.category_name, "
-                + "u.UserID, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "u.UserID, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber, "
                 + "COALESCE(e.TotalEnrolled, 0) AS TotalEnrolled "
                 + "FROM Courses c "
                 + "JOIN Users u ON c.UserID = u.UserID "
@@ -821,7 +821,7 @@ public class CourseDAO extends DBContext {
         String sql = "SELECT "
                 + "c.*, "
                 + "cat.category_id, cat.category_name, "
-                + "u.UserID, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "u.UserID, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.AvatarGoogle, u.PhoneNumber, "
                 + "COALESCE(e.TotalEnrolled, 0) AS TotalEnrolled "
                 + "FROM Courses c "
                 + "JOIN Users u ON c.UserID = u.UserID "

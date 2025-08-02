@@ -116,6 +116,10 @@ public class CartServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         String role = (String) session.getAttribute("role");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
         if (null == role) {
             response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
         } else {
