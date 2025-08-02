@@ -26,7 +26,8 @@ public class NotificationDAO extends DBContext {
                 + "FROM [dbo].[Notification] N\n"
                 + "JOIN [dbo].[Users] RU ON N.ReceiverID = RU.UserID\n"
                 + "JOIN [dbo].[Users] SU ON N.Sender = SU.UserName\n"
-                + "WHERE N.ReceiverID = ? AND N.Type = 'toUser' ";
+                + "WHERE N.ReceiverID = ? AND N.Type = 'toUser' \n"
+                + "ORDER BY N.NotificationDate DESC;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, receiverId);
@@ -156,13 +157,13 @@ public class NotificationDAO extends DBContext {
     }
 
     public int getNotiIdByNotiMess(String mess) {
-        int id = -1; 
+        int id = -1;
         String sql = "SELECT NotificationID\n"
                 + "FROM Notification\n"
                 + "WHERE NotificationMessage = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1,mess); 
+            ps.setString(1, mess);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 id = rs.getInt("NotificationID");

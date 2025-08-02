@@ -175,7 +175,7 @@
                                        oninput="previewYoutubeThumbnail()">
                                 <div id="youtubeUrlError" class="text-danger small mt Usermt-1">
                                     <div class="mt-2 d-none" id="youtubeThumbnailPreview">
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal${material.materialId}">
+                                        <a href="#">
                                             <img id="youtubeThumbnailImage" class="img-fluid rounded shadow-sm d-block mx-auto"
                                                  style="max-height: 160px;" src="" alt="YouTube Thumbnail">
                                         </a>

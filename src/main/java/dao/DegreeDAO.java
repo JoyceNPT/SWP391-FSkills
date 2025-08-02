@@ -24,8 +24,9 @@ public class DegreeDAO extends DBContext {
 
     public List<Degree> getAll() {
         List<Degree> list = new ArrayList<>();
-        String sql = "SELECT ia.*,  u.username, u.DisplayName FROM [dbo].[InstructorApplications] AS ia "
-                + "JOIN [dbo].[Users] AS u ON ia.UserID = u.UserID;";
+        String sql = "SELECT ia.*,  u.username, u.DisplayName FROM [dbo].[InstructorApplications] AS ia\n"
+                + "JOIN [dbo].[Users] AS u ON ia.UserID = u.UserID\n"
+                + "ORDER BY ia.ApplicationStatus;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -52,7 +53,8 @@ public class DegreeDAO extends DBContext {
     public List<Degree> getDegreeById(int id) {
         List<Degree> list = new ArrayList<>();
         String sql = "SELECT ia.*, u.username, u.DisplayName FROM [dbo].[InstructorApplications] AS ia "
-                + "JOIN [dbo].[Users] AS u ON ia.UserID = u.UserID WHERE u.UserID = ?";
+                + "JOIN [dbo].[Users] AS u ON ia.UserID = u.UserID WHERE u.UserID = ?"
+                + "ORDER BY ia.ApplicationSubmitDate DESC";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);

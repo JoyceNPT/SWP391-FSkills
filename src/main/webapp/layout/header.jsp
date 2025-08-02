@@ -30,6 +30,13 @@
                 </p>
             </div>
         </div>
+        
+    <c:if test="${not empty sessionScope.user or not empty sessionScope.adminUser}">
+        <div style="margin-left: 16px;">
+            <jsp:include page="/layout/notification.jsp"/>
+        </div>
+    </c:if>
+
 
         <c:if test="${empty sessionScope.user}">
             <div class="auth-buttons" style="display: flex; gap: 10px; margin-left: 20px;">

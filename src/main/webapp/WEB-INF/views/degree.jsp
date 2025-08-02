@@ -119,7 +119,7 @@
                                                         <i class="fas fa-eye"></i>
                                                     </button>
 
-                                                    <c:if test="${deg.status == 0 || deg.status == 1}">
+                                                    <c:if test="${deg.status == 0 || deg.status == 1|| deg.status == 2}">
                                                         <button class="btn btn-primary btn-sm" type="button"
                                                                 data-bs-placement="top" title="Edit"
                                                                 data-bs-target="#editModal${deg.degreeId}" data-bs-toggle="modal">
@@ -127,7 +127,7 @@
                                                         </button>
                                                     </c:if>
 
-                                                    <c:if test="${deg.status == 0 || deg.status == 2}">
+                                                    <c:if test="${deg.status == 2}">
                                                         <button class="btn btn-danger btn-sm" type="button"
                                                                 data-bs-placement="top" title="Delete"
                                                                 data-bs-target="#deleteModal${deg.degreeId}" data-bs-toggle="modal">
@@ -203,256 +203,342 @@
                 </div>
             </div>
         </div>
-    </div>
-    <img id="previewImage" class="img-thumbnail mt-2" style="max-height: 200px;"/>
-    <script>
-        function previewImg(event) {
-            const preview = document.getElementById('imgPreview');
-            const file = event.target.files[0];
+        <script>
+            function previewImg(event) {
+                const preview = document.getElementById('imgPreview');
+                const file = event.target.files[0];
 
-            if (file && preview) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+                if (file && preview) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
-        }
-    </script>
-    <!-- Edit Modal -->
-    <c:forEach var="deg" items="${listDegree}">
-        <div class="modal fade" id="editModal${deg.degreeId}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content shadow-lg rounded-4">
-                    <!-- Modal Header -->
-                    <div class="modal-header bg-primary text-white rounded-top-4">
-                        <h5 class="modal-title w-100 text-center" id="editModalLabel">Edit Degree - ID: ${deg.degreeId}</h5>
-                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                // Validate CREATE
+                const createForm = document.querySelector('#createModal form');
+                if (createForm) {
+                    createForm.addEventListener("submit", function (e) {
+                        const degreeLinkInput = document.getElementById("degreeLink");
+                        const degreeImageInput = document.getElementById("degreeImage");
+
+                        const link = degreeLinkInput.value.trim();
+                        const imageFile = degreeImageInput.files[0];
+                        const urlPattern = /^https?:\/\/.+$/;
+
+                        if (!link) {
+                            showJsToast("Link of Degree is required.");
+                            degreeLinkInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+
+                        if (!urlPattern.test(link)) {
+                            showJsToast("Please enter a valid URL starting with http:// or https://");
+                            degreeLinkInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+
+                        if (!imageFile) {
+                            showJsToast("Degree image is required.");
+                            degreeImageInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+
+                        const validImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+                        if (!validImageTypes.includes(imageFile.type)) {
+                            showJsToast("Only image files (JPG, PNG, GIF, WEBP) are allowed.");
+                            degreeImageInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+                    });
+                }
+
+                // Validate EDIT
+                document.querySelectorAll("form[id^='editForm']").forEach(function (form) {
+                    form.addEventListener("submit", function (e) {
+                        const degreeId = form.id.replace("editForm", "");
+                        const linkInput = document.getElementById("degreeLink" + degreeId);
+                        const imageInput = document.getElementById("degreeImage" + degreeId);
+                        const keepOldImageInput = document.getElementById("keepOldImage" + degreeId);
+
+                        const link = linkInput.value.trim();
+                        const urlPattern = /^https?:\/\/.+$/;
+
+                        if (!link) {
+                            showJsToast("Degree link is required.");
+                            linkInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+
+                        if (!urlPattern.test(link)) {
+                            showJsToast("Please enter a valid URL (must start with http:// or https://).");
+                            linkInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
+
+                        const imageFile = imageInput.files[0];
+                        if (imageFile) {
+                            const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+                            if (!validTypes.includes(imageFile.type)) {
+                                showJsToast("Invalid image format. Allowed: JPG, PNG, GIF, WEBP.");
+                                imageInput.focus();
+                                e.preventDefault();
+                                return;
+                            }
+
+                            if (keepOldImageInput) {
+                                keepOldImageInput.value = "false";
+                            }
+                        }
+
+                        linkInput.value = link;
+                    });
+                });
+            });
+        </script>
+
+        <!-- Edit Modal -->
+        <c:forEach var="deg" items="${listDegree}">
+            <div class="modal fade" id="editModal${deg.degreeId}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content shadow-lg rounded-4">
+                        <!-- Modal Header -->
+                        <div class="modal-header bg-primary text-white rounded-top-4">
+                            <h5 class="modal-title w-100 text-center" id="editModalLabel">Edit Degree - ID: ${deg.degreeId}</h5>
+                            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Form -->
+                        <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=edit" 
+                              enctype="multipart/form-data" id="editForm${deg.degreeId}">
+                            <input type="hidden" name="action" value="edit">
+
+                            <div class="modal-body px-4 py-3">
+                                <!-- Degree ID and Link -->
+                                <div class="mb-3 row">
+                                    <div class="col-md-2">
+                                        <label for="degreeId" class="form-label fw-bold">ID</label>
+                                        <input type="text" class="form-control" id="degreeId" name="degreeId"
+                                               required value="${deg.degreeId}" readonly>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <label for="degreeLink" class="form-label fw-bold">Link of Degree</label>
+                                        <input type="text" class="form-control" id="degreeLink${deg.degreeId}" name="degreeLink"
+                                               required value="${deg.link}">
+                                    </div>
+                                </div>
+
+                                <!-- Image Upload -->
+                                <input type="hidden" name="deleteImage" id="deleteImage${deg.degreeId}" value="false" />
+                                <input type="hidden" name="keepOldImage" id="keepOldImage${deg.degreeId}" value="true" />
+
+                                <div class="mb-4">
+                                    <label for="degreeImage" class="form-label fw-bold">Upload New Image</label>
+                                    <input type="file"
+                                           class="form-control"
+                                           id="degreeImage${deg.degreeId}"
+                                           name="degreeImage"
+                                           accept="image/*"
+                                           onchange="previewImage(event, '${deg.degreeId}')" />
+                                </div>
+
+                                <!-- Current Image -->
+                                <c:if test="${not empty deg.imageDataURI}">
+                                    <div class="mb-4 text-center" id="currentImageDiv${deg.degreeId}">
+                                        <label class="form-label fw-bold">Current Image</label><br>
+                                        <img src="${deg.imageDataURI}" alt="Current Image"
+                                             class="img-fluid rounded shadow"
+                                             style="max-height: 500px; object-fit: contain;" />
+                                    </div>
+                                </c:if>
+
+                                <!-- Image Preview -->
+                                <div class="mb-3 text-center">
+                                    <label class="form-label fw-bold">Image Preview</label><br>
+                                    <img id="imagePreview${deg.degreeId}" class="img-fluid rounded shadow"
+                                         style="max-height: 500px; object-fit: contain; display: none;" />
+                                </div>
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="modal-footer bg-light rounded-bottom-4">
+                                <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary px-4">Edit</button>
+                            </div>
+                        </form>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Form -->
-                    <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=edit" enctype="multipart/form-data">
-                        <input type="hidden" name="action" value="edit">
+            <!-- View Detail Modal -->
+            <div class="modal fade" id="viewModal${deg.degreeId}" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content shadow rounded-4">
+                        <!-- Modal Header -->
+                        <div class="modal-header bg-info text-white rounded-top-4">
+                            <h5 class="modal-title w-100 text-center" id="viewModalLabel">
+                                View Detail - ID: ${deg.degreeId}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
 
+                        <!-- Modal Body -->
                         <div class="modal-body px-4 py-3">
-                            <!-- Degree ID and Link -->
-                            <div class="mb-3 row">
-                                <div class="col-md-2">
-                                    <label for="degreeId" class="form-label fw-bold">ID</label>
-                                    <input type="text" class="form-control" id="degreeId" name="degreeId"
-                                           required value="${deg.degreeId}" readonly>
+                            <!-- ID and Link -->
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">ID</label>
+                                    <input type="text" class="form-control-plaintext border rounded px-2" value="${deg.degreeId}" readonly>
                                 </div>
-                                <div class="col-md-10">
-                                    <label for="degreeLink" class="form-label fw-bold">Link of Degree</label>
-                                    <input type="text" class="form-control" id="degreeLink" name="degreeLink"
-                                           required value="${deg.link}">
+                                <div class="col-md-9">
+                                    <label class="form-label fw-bold">Link of Degree</label>
+                                    <input type="text" class="form-control-plaintext border rounded px-2" value="${deg.link}" readonly>
                                 </div>
                             </div>
 
-                            <!-- Image Upload -->
-                            <input type="hidden" name="deleteImage" id="deleteImage${deg.degreeId}" value="false" />
-                            <input type="hidden" name="keepOldImage" id="keepOldImage${deg.degreeId}" value="true" />
-
-                            <div class="mb-4">
-                                <label for="degreeImage" class="form-label fw-bold">Upload New Image</label>
-                                <input type="file"
-                                       class="form-control"
-                                       id="degreeImage${deg.degreeId}"
-                                       name="degreeImage"
-                                       accept="image/*"
-                                       onchange="previewImage(event, '${deg.degreeId}')" />
-                            </div>
-
-                            <!-- Current Image -->
-                            <c:if test="${not empty deg.imageDataURI}">
-                                <div class="mb-4 text-center" id="currentImageDiv${deg.degreeId}">
-                                    <label class="form-label fw-bold">Current Image</label><br>
-                                    <img src="${deg.imageDataURI}" alt="Current Image"
-                                         class="img-fluid rounded shadow"
-                                         style="max-height: 500px; object-fit: contain;" />
-                                </div>
-                            </c:if>
-
-                            <!-- Image Preview -->
-                            <div class="mb-3 text-center">
-                                <label class="form-label fw-bold">Image Preview</label><br>
-                                <img id="imagePreview${deg.degreeId}" class="img-fluid rounded shadow"
-                                     style="max-height: 500px; object-fit: contain; display: none;" />
+                            <!-- Image -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Current Image</label>
+                                <c:choose>
+                                    <c:when test="${empty deg.imageDataURI}">
+                                        <div class="alert alert-warning text-center mt-2">No Image Available</div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="text-center">
+                                            <img src="${deg.imageDataURI}" alt="Degree Image" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
 
                         <!-- Modal Footer -->
                         <div class="modal-footer bg-light rounded-bottom-4">
-                            <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary px-4">Edit</button>
+                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- View Detail Modal -->
-        <div class="modal fade" id="viewModal${deg.degreeId}" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content shadow rounded-4">
-                    <!-- Modal Header -->
-                    <div class="modal-header bg-info text-white rounded-top-4">
-                        <h5 class="modal-title w-100 text-center" id="viewModalLabel">
-                            View Detail - ID: ${deg.degreeId}
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-
-                    <!-- Modal Body -->
-                    <div class="modal-body px-4 py-3">
-                        <!-- ID and Link -->
-                        <div class="row mb-4">
-                            <div class="col-md-3">
-                                <label class="form-label fw-bold">ID</label>
-                                <input type="text" class="form-control-plaintext border rounded px-2" value="${deg.degreeId}" readonly>
-                            </div>
-                            <div class="col-md-9">
-                                <label class="form-label fw-bold">Link of Degree</label>
-                                <input type="text" class="form-control-plaintext border rounded px-2" value="${deg.link}" readonly>
-                            </div>
-                        </div>
-
-                        <!-- Image -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Current Image</label>
-                            <c:choose>
-                                <c:when test="${empty deg.imageDataURI}">
-                                    <div class="alert alert-warning text-center mt-2">No Image Available</div>
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="text-center">
-                                        <img src="${deg.imageDataURI}" alt="Degree Image" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
-                                    </div>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
-                    </div>
-
-                    <!-- Modal Footer -->
-                    <div class="modal-footer bg-light rounded-bottom-4">
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
-        </div>
 
 
-        <div class="modal fade" id="zoomImageModal${deg.degreeId}" tabindex="-1" aria-labelledby="zoomImageModalLabel${deg.degreeId}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content border-0 shadow-lg rounded-4">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title" id="zoomImageModalLabel${deg.degreeId}">Image Preview</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body d-flex justify-content-center">
-                        <img src="${deg.imageDataURI}" alt="Zoomed Image" class="img-fluid rounded shadow" style="max-height: 600px; object-fit: contain;">
+            <div class="modal fade" id="zoomImageModal${deg.degreeId}" tabindex="-1" aria-labelledby="zoomImageModalLabel${deg.degreeId}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow-lg rounded-4">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title" id="zoomImageModalLabel${deg.degreeId}">Image Preview</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body d-flex justify-content-center">
+                            <img src="${deg.imageDataURI}" alt="Zoomed Image" class="img-fluid rounded shadow" style="max-height: 600px; object-fit: contain;">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
 
 
-        <!-- JavaScript for image preview -->
-        <script>
-            function removeCurrentImage(id) {
-                const div = document.getElementById("currentImageDiv" + id);
-                const inputDelete = document.getElementById("deleteImage" + id);
-                const inputKeep = document.getElementById("keepOldImage" + id); // Thêm dòng này
+            <!-- JavaScript for image preview -->
+            <script>
+                function removeCurrentImage(id) {
+                    const div = document.getElementById("currentImageDiv" + id);
+                    const inputDelete = document.getElementById("deleteImage" + id);
+                    const inputKeep = document.getElementById("keepOldImage" + id); // Thêm dòng này
 
-                if (div)
-                    div.style.display = "none";
-                if (inputDelete)
-                    inputDelete.value = "true";
-                if (inputKeep)
-                    inputKeep.value = "false"; // Cực kỳ quan trọng: cho servlet biết là không giữ ảnh
-            }
+                    if (div)
+                        div.style.display = "none";
+                    if (inputDelete)
+                        inputDelete.value = "true";
+                    if (inputKeep)
+                        inputKeep.value = "false"; // Cực kỳ quan trọng: cho servlet biết là không giữ ảnh
+                }
 
-            function previewImage(event, id) {
-                const input = event.target;
-                const preview = document.getElementById("imagePreview" + id);
-                const currentImageDiv = document.getElementById("currentImageDiv" + id);
+                function previewImage(event, id) {
+                    const input = event.target;
+                    const preview = document.getElementById("imagePreview" + id);
+                    const currentImageDiv = document.getElementById("currentImageDiv" + id);
 
-                if (input.files && input.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        preview.src = e.target.result;
-                        preview.style.display = "block";
+                    if (input.files && input.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            preview.src = e.target.result;
+                            preview.style.display = "block";
+                            if (currentImageDiv)
+                                currentImageDiv.style.display = "none";
+                        };
+                        reader.readAsDataURL(input.files[0]);
+                    } else {
+                        preview.style.display = "none";
                         if (currentImageDiv)
-                            currentImageDiv.style.display = "none";
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                } else {
-                    preview.style.display = "none";
-                    if (currentImageDiv)
-                        currentImageDiv.style.display = "block";
-                }
-            }
-            document.getElementById("degreeImage${deg.degreeId}").addEventListener("change", function (event) {
-                const preview = document.getElementById("imagePreview${deg.degreeId}");
-                const currentImageDiv = document.getElementById("currentImageDiv${deg.degreeId}"); // Sử dụng ID cụ thể
-                const file = event.target.files[0];
-
-                if (file) {
-                    preview.src = URL.createObjectURL(file);
-                    preview.style.display = "block";
-                    if (currentImageDiv) {
-                        currentImageDiv.style.display = "none"; // Ẩn ảnh hiện tại
-                    }
-                } else {
-                    preview.style.display = "none";
-                    if (currentImageDiv) {
-                        currentImageDiv.style.display = "block"; // Hiển thị ảnh hiện tại nếu không có ảnh mới
+                            currentImageDiv.style.display = "block";
                     }
                 }
-            });
-            const zoomModal = document.getElementById('zoomImageModal${deg.degreeId}');
-            zoomModal.addEventListener('click', function (e) {
-                if (e.target === zoomModal) {
-                    const modalInstance = bootstrap.Modal.getInstance(zoomModal);
-                    modalInstance.hide();
-                }
-            });
-        </script>
+                document.getElementById("degreeImage${deg.degreeId}").addEventListener("change", function (event) {
+                    const preview = document.getElementById("imagePreview${deg.degreeId}");
+                    const currentImageDiv = document.getElementById("currentImageDiv${deg.degreeId}"); // Sử dụng ID cụ thể
+                    const file = event.target.files[0];
 
-        <!-- Delete Modal -->
-        <div class="modal fade" id="deleteModal${deg.degreeId}" tabindex="-1" aria-labelledby="deleteModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete Degree</h5>
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                        preview.style.display = "block";
+                        if (currentImageDiv) {
+                            currentImageDiv.style.display = "none"; // Ẩn ảnh hiện tại
+                        }
+                    } else {
+                        preview.style.display = "none";
+                        if (currentImageDiv) {
+                            currentImageDiv.style.display = "block"; // Hiển thị ảnh hiện tại nếu không có ảnh mới
+                        }
+                    }
+                });
+                const zoomModal = document.getElementById('zoomImageModal${deg.degreeId}');
+                zoomModal.addEventListener('click', function (e) {
+                    if (e.target === zoomModal) {
+                        const modalInstance = bootstrap.Modal.getInstance(zoomModal);
+                        modalInstance.hide();
+                    }
+                });
+            </script>
 
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal${deg.degreeId}" tabindex="-1" aria-labelledby="deleteModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete Degree</h5>
+
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=delete">
+                            <input type="hidden" name="action" value="delete">
+
+                            <div class="modal-body">
+                                <input type="hidden" name="id" value="${deg.degreeId}">
+                                <p>Are you sure you want to delete this degree?</p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
                     </div>
-                    <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=delete">
-                        <input type="hidden" name="action" value="delete">
-
-                        <div class="modal-body">
-                            <input type="hidden" name="id" value="${deg.degreeId}">
-                            <p>Are you sure you want to delete this degree?</p>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
-    </c:forEach>
-    <jsp:include page="/layout/toast.jsp"/>
-    <jsp:include page="/layout/footer.jsp"/>
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+        </c:forEach>
+        <jsp:include page="/layout/toast.jsp"/>
+        <jsp:include page="/layout/footer.jsp"/>
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
