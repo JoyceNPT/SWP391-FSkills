@@ -391,7 +391,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                         List<Material> listMaterial = madao.getAllMaterial(courseId, moduleId);
                         request.setAttribute("module", m);
                         request.setAttribute("listMaterial", listMaterial);
-                        request.setAttribute("success", "Failed to delete material!");
+                        request.setAttribute("err", "Failed to delete material!");
                         request.getRequestDispatcher("/WEB-INF/views/listMaterials.jsp").forward(request, response);
                     }
                 } catch (Exception e) {
