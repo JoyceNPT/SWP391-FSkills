@@ -117,8 +117,8 @@
                     <div class="table-container">
                         <table class="table table-bordered table-hover">
                             <thead>
-                                <c:if test="${isAdmin}">
-                                    <th>User ID</th>   
+                                <c:if test="${showModal}">
+                                    <th>User ID</th> 
                                 </c:if> 
                                 <th>Receipt ID</th>
                                 <th>Payment Date</th>
@@ -128,7 +128,7 @@
                             <tbody>
                                 <c:forEach var="receipt" items="${receipts}">
                                     <tr>
-                                        <c:if test="${isAdmin}">
+                                        <c:if test="${showModal}">
                                             <td><c:out value="${receipt.userID}"/></td>   
                                         </c:if>
                                         <td><c:out value="${receipt.receiptID}"/></td>
@@ -167,13 +167,6 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Instructor Earning (85%)</th>
-                                            <td>
-                                                <c:set var="platformCut" value="${totalAmount * 0.85}"/>
-                                                <fmt:formatNumber value="${platformCut}" type="number" groupingUsed="true"/> VND
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <th>Platform Cut (15%)</th>
                                             <td>
                                                 <c:set var="platformCut" value="${totalAmount * 0.15}"/>
@@ -181,7 +174,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th>Net Amount</th>
+                                            <th>Instructor Earning (85%)</th>
                                             <td>
                                                 <fmt:formatNumber value="${totalAmount - platformCut}" type="number" groupingUsed="true"/> VND
                                             </td>
@@ -217,6 +210,10 @@
                                             <tr>
                                                 <th>Voucher Used</th>
                                                 <td><c:out value="${receipt.voucherCode eq '0' ? 'None' : receipt.voucherCode}"/></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Payment Detail</th>
+                                                <td><c:out value="${receipt.paymentDetail}"/></td>
                                             </tr>
                                             <tr>
                                                 <th>Purchased Courses</th>

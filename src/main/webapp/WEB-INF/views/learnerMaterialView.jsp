@@ -373,7 +373,7 @@
                         </video>
                     </c:when>
 
-                    <c:when test="${not empty Material.materialFile && (Material.type == 'pdf' || fn:endsWith(Material.materialFile, '.pdf'))}">
+                    <c:when test="${not empty Material.materialFile && (Material.type == 'pdf' && fn:endsWith(Material.materialFile, '.pdf'))}">
                         <!-- PDF file (inline viewing) -->
                         <iframe src="${pageContext.request.contextPath}/downloadmaterial?id=${Material.materialId}" class="material-pdf mx-auto"></iframe>
                         <div class="text-center mt-2">

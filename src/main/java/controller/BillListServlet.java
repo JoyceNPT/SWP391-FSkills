@@ -51,6 +51,7 @@ public class BillListServlet extends HttpServlet {
                     isAdmin = false;
                     request.setAttribute("receipts", receipts);
                     request.setAttribute("isAdmin", isAdmin);
+                    request.setAttribute("showModal", showModal);
                 } catch (Exception e) {
                     System.err.println("Error fetching receipts for userID: " + user.getUserId() + ", error: " + e.getMessage());
                     request.setAttribute("errorMessage", "Failed to load bill list. Please try again or contact support.");
