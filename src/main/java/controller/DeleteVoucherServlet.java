@@ -1,4 +1,3 @@
-// Giữ nguyên code Servlet này
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -14,6 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Role;
@@ -38,14 +39,17 @@ public class DeleteVoucherServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
             return;
         }
+
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
+        List<String> errorMessages = new ArrayList<>();
+        String globalMessage = "";
+
         String action = request.getParameter("action");
         String voucherIDStr = request.getParameter("voucherID");
-        
+
         VoucherDAO voucherDAO = new VoucherDAO();
-        String globalMessage = ""; 
         boolean success = false;
 
         try {
@@ -53,41 +57,46 @@ public class DeleteVoucherServlet extends HttpServlet {
                 success = voucherDAO.deleteExpiredVouchers();
                 if (success) {
                     globalMessage = "Successfully deleted all expired vouchers.";
-                    request.setAttribute("successMessage", true);
+                    request.setAttribute("success", globalMessage);
                 } else {
                     globalMessage = "No expired vouchers were found to delete.";
-                    request.setAttribute("errorMessages", true);
+                    errorMessages.add(globalMessage);
+                    request.setAttribute("err", errorMessages);
                 }
             } else if (voucherIDStr != null && !voucherIDStr.trim().isEmpty()) {
                 try {
                     int voucherID = Integer.parseInt(voucherIDStr.trim());
                     success = voucherDAO.deleteVoucher(voucherID);
                     if (success) {
-                        globalMessage = "Delete Voucher " + voucherID + " Succeed!";
-                        request.setAttribute("successMessage", true);
+                        globalMessage = "Delete Voucher " + voucherID + " succeeded!";
+                        request.setAttribute("success", globalMessage);
                     } else {
-                        globalMessage = "Delete Voucher " + voucherID + " Fail to found the Voucher.";
-                        request.setAttribute("errorMessages", true);
+                        globalMessage = "Delete failed: Voucher " + voucherID + " not found.";
+                        errorMessages.add(globalMessage);
+                        request.setAttribute("err", errorMessages);
                     }
                 } catch (NumberFormatException e) {
-                    globalMessage = "ID Voucher must be an integer.";
-                    request.setAttribute("errorMessages", true);
+                    globalMessage = "Voucher ID must be an integer.";
+                    errorMessages.add(globalMessage);
+                    request.setAttribute("err", errorMessages);
                 }
             } else {
-                globalMessage = "Voucher ID has errors.";
-                request.setAttribute("errorMessages", true);
+                globalMessage = "Missing or invalid Voucher ID.";
+                errorMessages.add(globalMessage);
+                request.setAttribute("err", errorMessages);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Database error deleting voucher", ex);
-            globalMessage = "Error: " + ex.getMessage();
-            request.setAttribute("errorMessages", true);
+            globalMessage = "Database error: " + ex.getMessage();
+            errorMessages.add(globalMessage);
+            request.setAttribute("err", errorMessages);
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Unexpected error deleting voucher", ex);
-            globalMessage = "Error.";
-            request.setAttribute("errorMessages", true);
+            globalMessage = "Unexpected error occurred.";
+            errorMessages.add(globalMessage);
+            request.setAttribute("err", errorMessages);
         }
 
-        request.setAttribute("globalMessage", globalMessage);
         request.getRequestDispatcher("/voucherList").forward(request, response);
     }
 

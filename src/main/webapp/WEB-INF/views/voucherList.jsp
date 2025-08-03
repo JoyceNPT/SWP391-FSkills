@@ -2,7 +2,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setLocale value="en_US" scope="session"/>
-
+<%
+    java.time.ZonedDateTime nowVN = java.time.ZonedDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh"));
+    java.sql.Timestamp now = java.sql.Timestamp.valueOf(nowVN.toLocalDateTime().minusSeconds(1)); // trừ đi 1s
+    request.setAttribute("nowVN", now);
+%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -287,11 +291,17 @@
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         <c:forEach var="voucher" items="${voucherList}">
-                                            <jsp:useBean id="now" class="java.util.Date"/>
+                                            <c:set var="isExpired" value="${voucher.expiredDate.time lt nowVN.time}" />
 
-                                            <c:set var="isExpired" value="${voucher.expiredDate lt now}"/>
+                                            <c:choose>
+                                                <c:when test="${isExpired}">
+                                                    <tr class="hover:bg-gray-50 text-red-500 font-semibold">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                    <tr class="hover:bg-gray-50">
+                                                    </c:otherwise>
+                                                </c:choose>
 
-                                            <tr class="hover:bg-gray-50 <c:if test="${isExpired}">text-red-500 font-semibold</c:if>">
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${voucher.voucherID}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm">${voucher.voucherName}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm">${voucher.voucherCode}</td>
