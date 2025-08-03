@@ -178,7 +178,7 @@ public class VoucherDAO extends DBContext {
     }
 
     public boolean deleteExpiredVouchers() throws SQLException {
-        String sql = "DELETE FROM Vouchers WHERE ExpiredDate < GETDATE()";
+        String sql = "DELETE FROM Vouchers WHERE ExpiredDate < DATEADD(HOUR, 7, GETUTCDATE())";
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;

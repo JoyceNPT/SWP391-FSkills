@@ -1,12 +1,17 @@
-<%--
-    Document   : voucherDetails
-    Created on : Jun 1, 2025, 5:34:00 PM
-    Author     : DELL
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:choose>
+    <c:when test="${not empty param.expiredDate}">
+        <c:set var="expiredDateValue" value="${param.expiredDate}" />
+    </c:when>
+    <c:when test="${not empty voucher.expiredDate}">
+        <fmt:formatDate value="${voucher.expiredDate}" pattern="yyyy-MM-dd'T'HH:mm" var="expiredDateValue" />
+    </c:when>
+    <c:otherwise>
+        <c:set var="expiredDateValue" value="" />
+    </c:otherwise>
+</c:choose>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -324,7 +329,8 @@
                                   <div class="form-group">
                                       <label for="expiredDate">Expiration Date:<span style="color:red">*</span></label>
                                       <input type="datetime-local" id="expiredDate" name="expiredDate"
-                                             value="<c:if test="${not empty param.expiredDate}">${param.expiredDate}</c:if><c:if test="${empty param.expiredDate && not empty voucher.expiredDate}"><fmt:formatDate value="${voucher.expiredDate}" pattern="yyyy-MM-dd'T'HH:mm"/></c:if>" required>
+                                             min="${currentDateTime}"
+                                             value="${expiredDateValue}" required>
                                       <c:if test="${not empty errorMessages['expiredDate']}">
                                           <span class="error-message">${errorMessages['expiredDate']}</span>
                                       </c:if>
@@ -375,14 +381,35 @@
                               <button type="submit" class="save-button">
                                   <c:if test="${not empty voucher && voucher.voucherID > 0}">Update</c:if>
                                   <c:if test="${empty voucher || voucher.voucherID == 0}">Add New</c:if>
-                              </button>
-                              <button type="button" class="cancel-button" onclick="window.location.href = 'voucherList'">Cancel</button>
-                          </div>
-                    </form>
+                                  </button>
+                                  <button type="button" class="cancel-button" onclick="window.location.href = 'voucherList'">Cancel</button>
+                              </div>
+                          </form>
+                    </div>
                 </div>
             </div>
-        </div>
-                              <jsp:include page="/layout/toast.jsp" />
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const expiredInput = document.getElementById("expiredDate");
+                    const form = expiredInput.closest("form");
+
+                    form.addEventListener("submit", function (e) {
+                        const inputTime = new Date(expiredInput.value);
+                        const now = new Date();
+
+                        now.setSeconds(0);
+                        now.setMilliseconds(0);
+
+                        if (inputTime <= now) {
+                            e.preventDefault();
+                            showJsToast("The expired day must be in the future.", "danger");
+                            expiredInput.focus();
+                        }
+                    });
+                });
+            </script>
+        <jsp:include page="/layout/toast.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
