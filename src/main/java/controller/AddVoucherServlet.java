@@ -93,6 +93,10 @@ public class AddVoucherServlet extends HttpServlet {
             errorMessages.add("Voucher code is too long. Please input <= 30");
         }
 
+        if (!voucherCode.matches("^[a-zA-Z0-9_]+$")) {
+            errorMessages.add("Voucher code must only contain letters, numbers, or underscores, without spaces or Vietnamese accents.");
+        }
+
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
             errorMessages.add("Expired date: Not null here.");
         } else {
@@ -160,7 +164,7 @@ public class AddVoucherServlet extends HttpServlet {
         VoucherDAO voucherDAO = new VoucherDAO();
         try {
             if (voucherCode != null && !voucherCode.trim().isEmpty()) {
-                if (voucherDAO.isVoucherCodeExists(voucherCode.trim())) { 
+                if (voucherDAO.isVoucherCodeExists(voucherCode.trim())) {
                     errorMessages.add("Voucher code '" + voucherCode.trim() + "' already exists. Please select another code..");
                 }
             }
