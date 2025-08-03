@@ -312,7 +312,6 @@
                                         <a href="${fn:escapeXml(degree.link)}" target="_blank">
                                             <img src="${degree.imageDataURI}" alt="Degree Certificate"
                                                  onerror="this.src='https://placehold.co/180x180/38bdf8/ffffff?text=Degree'">
-                                            <span>Degree ${degree.degreeId}</span>
                                         </a>
                                     </div>
                                 </c:forEach>
