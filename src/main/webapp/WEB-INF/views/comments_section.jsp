@@ -181,7 +181,9 @@
                 <div class="comment-content-area">
                     <c:if test="${comment.user != null}">
                         <p class="comment-author">
-                            <span>${comment.user.displayName}</span>
+                            <a class="link-opacity-100-hover" href="${pageContext.request.contextPath}/viewprofile?id=${comment.user.userId}">
+                                ${comment.user.displayName}
+                            </a>
                             <c:if test="${sessionScope.user != null && sessionScope.user.userId != comment.userId}">
                                 <button class="btn btn-outline-danger btn-sm report-comment-btn"
                                         data-bs-toggle="modal"

@@ -131,7 +131,7 @@
             color: #333;
         }
 
-        .course-list {
+        .course-list, .degree-list {
             margin-top: 2.5rem;
             padding: 1.5rem;
             background-color: white;
@@ -139,20 +139,20 @@
             box-shadow: var(--card-shadow);
         }
 
-        .course-list h3 {
+        .course-list h3, .degree-list h3 {
             font-size: 1.8rem;
             font-weight: 600;
             color: var(--primary-color);
             margin-bottom: 1.5rem;
         }
 
-        .course-grid {
+        .course-grid, .degree-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 1.5rem;
         }
 
-        .course-item {
+        .course-item, .degree-item {
             background-color: #f8f9fa;
             border-radius: var(--border-radius);
             overflow: hidden;
@@ -160,18 +160,18 @@
             transition: var(--transition);
         }
 
-        .course-item:hover {
+        .course-item:hover, .degree-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
-        .course-item img {
+        .course-item img, .degree-item img {
             width: 100%;
             height: 180px;
             object-fit: cover;
         }
 
-        .course-item a {
+        .course-item a, .degree-item a {
             display: block;
             padding: 0.75rem;
             font-size: 1rem;
@@ -180,7 +180,7 @@
             text-decoration: none;
         }
 
-        .course-item a:hover {
+        .course-item a:hover, .degree-item a:hover {
             color: #1e40af;
         }
 
@@ -303,6 +303,27 @@
                         </c:if>
                     </div>
 
+                    <c:if test="${profile.role eq 'INSTRUCTOR' && not empty degreeList}">
+                        <div class="degree-list">
+                            <h3>Degrees & Certifications</h3>
+                            <div class="degree-grid" id="degreeGrid">
+                                <c:forEach var="degree" items="${degreeList}">
+                                    <div class="degree-item">
+                                        <a href="${fn:escapeXml(degree.link)}" target="_blank">
+                                            <img src="${degree.imageDataURI}" alt="Degree Certificate"
+                                                 onerror="this.src='https://placehold.co/180x180/38bdf8/ffffff?text=Degree'">
+                                            <span>Degree ${degree.degreeId}</span>
+                                        </a>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                            <div class="pagination">
+                                <button id="prevDegreePage" disabled>Previous</button>
+                                <button id="nextDegreePage">Next</button>
+                            </div>
+                        </div>
+                    </c:if>
+
                     <c:if test="${profile.role eq 'INSTRUCTOR' && not empty courses}">
                         <div class="course-list">
                             <h3>Courses Created</h3>
@@ -357,11 +378,45 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Pagination for degrees
+            const degreeItems = document.querySelectorAll('#degreeGrid .degree-item');
+            const prevDegreeBtn = document.getElementById('prevDegreePage');
+            const nextDegreeBtn = document.getElementById('nextDegreePage');
+            const itemsPerPage = 6;
+            let currentDegreePage = 1;
+
+            function showDegreePage(page) {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+
+                degreeItems.forEach((item, index) => {
+                    item.style.display = (index >= start && index < end) ? 'block' : 'none';
+                });
+
+                prevDegreeBtn.disabled = page === 1;
+                nextDegreeBtn.disabled = end >= degreeItems.length;
+            }
+
+            if (degreeItems.length > 0) {
+                showDegreePage(currentDegreePage);
+                prevDegreeBtn.addEventListener('click', () => {
+                    if (currentDegreePage > 1) {
+                        currentDegreePage--;
+                        showDegreePage(currentDegreePage);
+                    }
+                });
+                nextDegreeBtn.addEventListener('click', () => {
+                    if (currentDegreePage * itemsPerPage < degreeItems.length) {
+                        currentDegreePage++;
+                        showDegreePage(currentDegreePage);
+                    }
+                });
+            }
+
             // Pagination for instructor courses
             const courseItems = document.querySelectorAll('#courseGrid .course-item');
             const prevCourseBtn = document.getElementById('prevCoursePage');
             const nextCourseBtn = document.getElementById('nextCoursePage');
-            const itemsPerPage = 6;
             let currentCoursePage = 1;
 
             function showCoursePage(page) {
