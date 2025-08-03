@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <title>Change Password</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <style>
             body {
@@ -101,33 +101,27 @@
             <form id="passwordForm" method="POST" action="changepassword">
                 <input type="hidden" name="token" value="${token}" />
 
-                <div class="mb-3 position-relative">
+                <div class="mb-3">
                     <label for="newPassword" class="form-label">New Password</label>
                     <div class="input-group">
-                        <input type="password" class="form-control pe-5" id="newPassword" name="newPassword" required />
-                        <span class="input-group-text bg-white border-start-0" style="cursor: pointer; min-width: 45px; text-align: center;">
-                         <i class="bi bi-eye-slash toggle-password" data-target="newPassword"></i>
+                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                        <span class="input-group-text bg-white border-start-0" style="cursor: pointer;">
+                            <i class="bi bi-eye-slash toggle-password" data-target="newPassword"></i>
                         </span>
                     </div>
-                    <!-- ... -->
-                </div>
-
-                <!-- Confirm New Password -->
-                <div class="mb-3 position-relative">
-                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control pe-5" id="confirmPassword" name="confirmPassword" required />
-                        <span class="input-group-text bg-white border-start-0" style="cursor: pointer; min-width: 45px; text-align: center;">
-                            <i class="bi bi-eye-slash toggle-password" data-target="confirmPassword"></i>
-                         </span>
+                    <div class="password-requirements mt-2">
+                        <p class="requirement" id="length-requirement">Minimum 8 characters, maximum 20 characters</p>
+                        <p class="requirement" id="case-requirement">Must have uppercase and lowercase letters</p>
+                        <p class="requirement" id="special-requirement">Must have special characters</p>
+                        <p class="requirement" id="number-requirement">Must contain at least one number</p>
+                        <p class="requirement" id="whitespace-requirement">Must not contain spaces</p>
                     </div>
-                    <p id="confirm-message" class="requirement"></p>
                 </div>
 
-                <div class="mb-3 position-relative">
+                <div class="mb-3">
                     <label for="confirmPassword" class="form-label">Confirm New Password</label>
                     <div class="input-group">
-                        <input type="password" class="form-control pe-5" id="confirmPassword" name="confirmPassword" required />
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                         <span class="input-group-text bg-white border-start-0" style="cursor: pointer;">
                             <i class="bi bi-eye-slash toggle-password" data-target="confirmPassword"></i>
                         </span>
@@ -142,11 +136,11 @@
         <script>
             document.querySelectorAll('.toggle-password').forEach(icon => {
                 icon.addEventListener('click', () => {
-                    const targetInput = document.getElementById(icon.getAttribute('data-target'));
-                    const isPassword = targetInput.type === 'password';
-                    targetInput.type = isPassword ? 'text' : 'password';
-                    icon.classList.toggle('bi-eye');
+                    const input = document.getElementById(icon.getAttribute('data-target'));
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
                     icon.classList.toggle('bi-eye-slash');
+                    icon.classList.toggle('bi-eye');
                 });
             });
         </script>
