@@ -75,7 +75,7 @@ public class VerifyEmailServlet extends HttpServlet {
 
         SendEmail se = new SendEmail();
         String title = "FSkills - Verify Email";
-        String verifyLink = "http://localhost:8080/FSkills/verifiedemail?token=" + token;
+        String verifyLink = "http://fskills.website/verifiedemail?token=" + token;
         String message = "<!DOCTYPE html>"
                 + "<html>"
                 + "<head>"
