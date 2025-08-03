@@ -167,6 +167,10 @@
             let content = "${addInfo}";
             document.addEventListener("DOMContentLoaded", () => {
                 setInterval(() => {
+                    window.price = price;
+                    window.content = content;
+                    window.contentBefore = content;
+                    console.log('Initial values:', {price: window.price, content: window.content});
                     checkPaid(window.price, window.content || '');
                 }, 1000);
             });
