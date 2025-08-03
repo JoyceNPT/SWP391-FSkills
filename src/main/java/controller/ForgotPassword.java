@@ -147,7 +147,7 @@ public class ForgotPassword extends HttpServlet {
 
             SendEmail se = new SendEmail();
             String title = "FSkills - Reset Your Password";
-            String resetLink = "http://localhost:8080/FSkills/changepassword?token=" + token;
+            String resetLink = "http://fskills.website/changepassword?token=" + token;
             String message = "<!DOCTYPE html>"
                     + "<html>"
                     + "<head>"
