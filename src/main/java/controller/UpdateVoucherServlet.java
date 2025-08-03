@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
 import dao.VoucherDAO;
@@ -75,13 +74,17 @@ public class UpdateVoucherServlet extends HttpServlet {
                 errorMessages.add("Voucher ID must be an integer.");
             }
         }
-        
+
         if (voucherName == null || voucherName.trim().isEmpty()) {
             errorMessages.add("Voucher name cannot be empty.");
         }
-        
+
         if (voucherCode == null || voucherCode.trim().isEmpty()) {
             errorMessages.add("Voucher code cannot be empty.");
+        }
+
+        if (!voucherCode.matches("^[a-zA-Z0-9_]+$")) {
+            errorMessages.add("Voucher code must only contain letters, numbers, or underscores, without spaces or Vietnamese accents.");
         }
 
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
@@ -89,7 +92,7 @@ public class UpdateVoucherServlet extends HttpServlet {
         } else {
             try {
                 LocalDateTime inaddDateTime = LocalDateTime.parse(expiredDateStr);
-                expiredDate = Timestamp.valueOf(inaddDateTime); 
+                expiredDate = Timestamp.valueOf(inaddDateTime);
                 if (inaddDateTime.isBefore(LocalDateTime.now())) {
                     errorMessages.add("The expired day must be in the future.");
                 }
@@ -136,7 +139,7 @@ public class UpdateVoucherServlet extends HttpServlet {
                 errorMessages.add("Invalid minimum price (must be an integer).");
             }
         }
-       
+
         if (amountStr == null || amountStr.trim().isEmpty()) {
             errorMessages.add("Amount cannot be empty.");
         } else {
@@ -149,11 +152,11 @@ public class UpdateVoucherServlet extends HttpServlet {
                 errorMessages.add("Invalid amount (must be an integer).");
             }
         }
-        
+
         VoucherDAO voucherDAO = new VoucherDAO();
         try {
-            Voucher originalVoucher = voucherDAO.getVoucherByID(voucherID); 
-            
+            Voucher originalVoucher = voucherDAO.getVoucherByID(voucherID);
+
             if (originalVoucher != null && !originalVoucher.getVoucherCode().equals(voucherCode.trim())) {
                 if (voucherDAO.isVoucherCodeExistsForOtherVoucher(voucherCode.trim(), voucherID)) {
                     errorMessages.add("Updated Failed: Voucher code '" + voucherCode.trim() + "' already exists for another voucher. Please choose a different code.");
@@ -189,7 +192,7 @@ public class UpdateVoucherServlet extends HttpServlet {
         updatedVoucher.setVoucherID(voucherID);
         updatedVoucher.setVoucherName(voucherName.trim());
         updatedVoucher.setVoucherCode(voucherCode.trim());
-        updatedVoucher.setExpiredDate(expiredDate); 
+        updatedVoucher.setExpiredDate(expiredDate);
         updatedVoucher.setSaleType(saleType.trim());
         updatedVoucher.setSaleAmount(saleAmount);
         updatedVoucher.setMinPrice(minPrice);
@@ -218,7 +221,7 @@ public class UpdateVoucherServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
         }
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
