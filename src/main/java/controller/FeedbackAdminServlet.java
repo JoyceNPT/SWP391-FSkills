@@ -1,189 +1,78 @@
 package controller;
 
 import dao.FeedbackDAO;
-import java.io.IOException;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import model.Feedback;
 import model.Role;
 import model.User;
 
-/**
- * Servlet to handle admin feedback management
- */
+import java.io.IOException;
+import java.util.List;
+
 @WebServlet(name = "FeedbackAdminServlet", urlPatterns = {"/admin/feedback"})
 public class FeedbackAdminServlet extends HttpServlet {
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     * Displays the feedback management interface.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Check if user is logged in and is an admin
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        if (!isAdmin(request, response)) return;
 
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
+        String feedbackType = getOrDefault(request.getParameter("type"), "comments");
+        String sortBy = getOrDefault(request.getParameter("sort"), "newest");
 
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
-            return;
-        }
-
-        // Get feedback type parameter (default to "comments")
-        String feedbackType = request.getParameter("type");
-        if (feedbackType == null || feedbackType.isEmpty()) {
-            feedbackType = "comments";
-        }
-
-        // Get sort parameter (default to "newest")
-        String sortBy = request.getParameter("sort");
-        if (sortBy == null || sortBy.isEmpty()) {
-            sortBy = "newest";
-        }
-
-        // Get feedback data
         FeedbackDAO dao = new FeedbackDAO();
-        List<Feedback> feedbackList;
+        List<Feedback> feedbackList = "all".equals(feedbackType)
+                ? dao.getAllFeedback()
+                : dao.getFeedbackByType(feedbackType);
 
-        if ("all".equals(feedbackType)) {
-            feedbackList = dao.getAllFeedback();
-        } else {
-            feedbackList = dao.getFeedbackByType(feedbackType);
-        }
+        feedbackList.sort((a, b) -> "oldest".equals(sortBy)
+                ? a.getTimestamp().compareTo(b.getTimestamp())
+                : b.getTimestamp().compareTo(a.getTimestamp()));
 
-        // Sort the feedback list based on the sortBy parameter
-        if ("oldest".equals(sortBy)) {
-            feedbackList.sort((a, b) -> a.getTimestamp().compareTo(b.getTimestamp()));
-        } else {
-            // Default to newest first
-            feedbackList.sort((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()));
-        }
-
-        // Log feedback list for debugging
-        System.out.println("[DEBUG_LOG] Passing " + feedbackList.size() + " feedback items to JSP");
-        for (Feedback feedback : feedbackList) {
-            System.out.println("[DEBUG_LOG] Feedback to JSP: ID=" + feedback.getFeedbackId() + 
-                               ", userName=" + feedback.getUserName() + 
-                               ", email=" + feedback.getEmail());
-        }
-        
-        // Set attributes for the JSP
         request.setAttribute("feedbackList", feedbackList);
         request.setAttribute("activeTab", feedbackType);
         request.setAttribute("sortBy", sortBy);
         request.setAttribute("feedbackCount", feedbackList.size());
 
-        // Forward to the feedback admin JSP page
         request.getRequestDispatcher("/WEB-INF/views/feedback_admin.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     * Processes feedback actions (update status, delete).
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Check if user is logged in and is an admin
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        if (!isAdmin(request, response)) return;
 
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
-            return;
-        }
-
-        // Get action parameter
         String action = request.getParameter("action");
-        if (action == null || action.isEmpty()) {
+        if (action == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing action parameter");
             return;
         }
 
-        // Process the action
         FeedbackDAO dao = new FeedbackDAO();
-        int result = 0;
+        HttpSession session = request.getSession();
 
-        // Special case for deleteAll action which doesn't require an ID
         if ("deleteAll".equals(action)) {
-            result = dao.deleteAllFeedback();
-            // For deleteAll, any non-negative result is considered success
-            if (result >= 0) {
-                // Set success message in session
-                session.setAttribute("success", "All feedback deleted successfully. " + result + " records removed.");
-
-                // Redirect back to the feedback page after successful deletion
-                String redirectUrl = request.getContextPath() + "/admin/feedback";
-                String type = request.getParameter("type");
-                if (type != null && !type.isEmpty()) {
-                    redirectUrl += "?type=" + type;
-                }
-                response.sendRedirect(redirectUrl);
-            } else {
-                // Set error message in session
-                session.setAttribute("err", "Failed to delete all feedback");
-
-                // Redirect back to the feedback page
-                String redirectUrl = request.getContextPath() + "/admin/feedback";
-                String type = request.getParameter("type");
-                if (type != null && !type.isEmpty()) {
-                    redirectUrl += "?type=" + type;
-                }
-                response.sendRedirect(redirectUrl);
-            }
+            int deleted = dao.deleteAllFeedback();
+            setSessionMessage(session, deleted >= 0,
+                    "All feedback deleted successfully. " + deleted + " records removed.",
+                    "Failed to delete all feedback");
+            redirectBack(request, response);
             return;
         }
 
-        // For other actions, get feedback ID parameter
-        String feedbackIdStr = request.getParameter("id");
-        if (feedbackIdStr == null || feedbackIdStr.isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing feedback ID parameter");
+        int feedbackId = parseIntParam(request.getParameter("id"));
+        if (feedbackId == -1) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid or missing feedback ID");
             return;
         }
 
-        int feedbackId;
-        try {
-            feedbackId = Integer.parseInt(feedbackIdStr);
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid feedback ID format");
-            return;
-        }
-
-        // Process actions that require an ID
+        int result = 0;
         switch (action) {
             case "archive":
-                result = dao.updateFeedbackStatus(feedbackId, "archived");
-                break;
             case "resolve":
-                result = dao.updateFeedbackStatus(feedbackId, "resolved");
+                result = dao.updateFeedbackStatus(feedbackId, action);
                 break;
             case "delete":
                 result = dao.deleteFeedback(feedbackId);
@@ -193,51 +82,62 @@ public class FeedbackAdminServlet extends HttpServlet {
                 return;
         }
 
-        // Prepare response
-        if (result > 0) {
-            // Success
-            if ("delete".equals(action)) {
-                // Set success message in session
-                session.setAttribute("success", "Feedback deleted successfully");
 
-                // Redirect back to the feedback page after successful deletion
-                String redirectUrl = request.getContextPath() + "/admin/feedback";
-                String type = request.getParameter("type");
-                if (type != null && !type.isEmpty()) {
-                    redirectUrl += "?type=" + type;
-                }
-                response.sendRedirect(redirectUrl);
-            } else {
-                // For other actions (archive, resolve), return JSON response
-                response.setContentType("application/json");
-                response.getWriter().write("{\"success\": true, \"message\": \"Feedback " + action + "d successfully\"}");
-            }
+        boolean isSuccess = result > 0;
+        if ("delete".equals(action)) {
+            setSessionMessage(session, isSuccess,
+                    "Feedback deleted successfully",
+                    "Failed to delete feedback");
+            redirectBack(request, response);
         } else {
-            // Error
-            // Set error message in session
-            session.setAttribute("err", "Failed to " + action + " feedback");
-
-            if ("delete".equals(action)) {
-                // Redirect back to the feedback page
-                String redirectUrl = request.getContextPath() + "/admin/feedback";
-                String type = request.getParameter("type");
-                if (type != null && !type.isEmpty()) {
-                    redirectUrl += "?type=" + type;
-                }
-                response.sendRedirect(redirectUrl);
-            } else {
-                // For other actions (archive, resolve), return JSON response
-                response.setContentType("application/json");
-                response.getWriter().write("{\"success\": false, \"message\": \"Failed to " + action + " feedback\"}");
-            }
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": " + isSuccess + ", \"message\": \"" +
+                    (isSuccess ? "Feedback " + action + "d successfully" : "Failed to " + action + " feedback") + "\"}");
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    private boolean isAdmin(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return false;
+        }
+
+        if (user.getRole() != Role.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void setSessionMessage(HttpSession session, boolean success, String successMsg, String errorMsg) {
+        session.setAttribute(success ? "success" : "err", success ? successMsg : errorMsg);
+    }
+
+    private void redirectBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String redirectUrl = request.getContextPath() + "/admin/feedback";
+        String type = request.getParameter("type");
+        if (type != null && !type.isEmpty()) {
+            redirectUrl += "?type=" + type;
+        }
+        response.sendRedirect(redirectUrl);
+    }
+
+    private int parseIntParam(String param) {
+        try {
+            return param != null ? Integer.parseInt(param) : -1;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private String getOrDefault(String value, String def) {
+        return value == null || value.isEmpty() ? def : value;
+    }
+
     @Override
     public String getServletInfo() {
         return "Admin Feedback Management Servlet";
