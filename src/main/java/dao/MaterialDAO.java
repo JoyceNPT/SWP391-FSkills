@@ -237,7 +237,7 @@ public class MaterialDAO extends DBContext {
         return 0;
     }
 
-     public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
+    public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
         List<Material> materials = new ArrayList<>();
         String query = "SELECT materialId, materialName, moduleID, type, materialLastUpdate, "
                 + "materialOrder, time, materialDescription, materialUrl, materialFile, fileName "
@@ -309,6 +309,7 @@ public class MaterialDAO extends DBContext {
             throw e;
         }
     }
+
     public boolean checkMaterialOrderExists(int materialOrder, int moduleId, int courseId) {
         boolean exists = false;
 
@@ -349,7 +350,7 @@ public class MaterialDAO extends DBContext {
 
         return exists;
     }
-    
+
     public int countMaterialOrderConflict(int moduleId, int courseId) {
         int count = 0;
         String sql = "SELECT COUNT(*) FROM Materials m \n"
@@ -358,27 +359,27 @@ public class MaterialDAO extends DBContext {
                 + "WHERE mo.ModuleID = ?\n"
                 + "AND c.CourseID = ?";
 
-	try {
+        try {
             PreparedStatement ps = conn.prepareStatement(sql);
-	    ps.setInt(1, moduleId);
+            ps.setInt(1, moduleId);
             ps.setInt(2, courseId);
-	    ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-	    count = rs.getInt(1);
+                count = rs.getInt(1);
             }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-	return count;
+        return count;
     }
-    
+
     public int checkMaterialInCourse(int CourseID) {
-        String sql = "SELECT TOP 1\n" +
-                "m.MaterialID\n" +
-                "FROM Materials m\n" +
-                "JOIN Modules mo ON m.ModuleID = mo.ModuleID\n" +
-                "WHERE mo.CourseID = ?";
+        String sql = "SELECT TOP 1\n"
+                + "m.MaterialID\n"
+                + "FROM Materials m\n"
+                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID\n"
+                + "WHERE mo.CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -394,5 +395,48 @@ public class MaterialDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return 0;
+    }
+
+    public boolean checkMaterialNameExists(String materialName, int moduleId, int courseId) {
+        boolean exists = false;
+
+        String sql = "SELECT 1 \n"
+                + "FROM Materials m\n"
+                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID\n"
+                + "JOIN Courses c ON mo.CourseID = c.CourseID\n"
+                + "WHERE m.MaterialName = ? AND mo.ModuleID = ? AND c.CourseID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, materialName);
+            ps.setInt(2, moduleId);
+            ps.setInt(3, courseId);
+            ResultSet rs = ps.executeQuery();
+            exists = rs.next(); // Nếu có dòng nào trả về là tồn tại
+        } catch (SQLException e) {
+        }
+
+        return exists;
+    }
+        public boolean checkMaterialNameExistsForUpdate(String materialName, int moduleId, int courseId, int materialId) {
+        boolean exists = false;
+
+        String sql = "SELECT 1 \n"
+                + "FROM Materials m\n"
+                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID\n"
+                + "JOIN Courses c ON mo.CourseID = c.CourseID\n"
+                + "WHERE m.MaterialName = ? AND mo.ModuleID = ? AND c.CourseID = ?"
+                + "and m.MaterialID != ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, materialName);
+            ps.setInt(2, moduleId);
+            ps.setInt(3, courseId);
+            ps.setInt(4, materialId);
+            ResultSet rs = ps.executeQuery();
+            exists = rs.next(); // Nếu có dòng nào trả về là tồn tại
+        } catch (SQLException e) {
+        }
+
+        return exists;
     }
 }
