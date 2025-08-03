@@ -462,7 +462,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int courseUpdateTime(int id) {
-        String updateSql = "  UPDATE [dbo].[Courses] SET [CourseLastUpdate] = GETDATE() WHERE [CourseID] = ?;";
+        String updateSql = "  UPDATE [dbo].[Courses] SET [CourseLastUpdate] = GETUTCDATE() WHERE [CourseID] = ?;";
         try {
             PreparedStatement ps = conn.prepareStatement(updateSql);
             ps.setInt(1, id);
