@@ -187,7 +187,6 @@
                         <th>Test Name</th>
                         <th>Module</th>
                         <th>Course</th>
-                        <th>Test Order</th>
                         <th>Questions</th>
                         <th>Pass %</th>
                         <th>Randomize</th>
@@ -199,7 +198,7 @@
 
                     <tbody>
                     <c:forEach var="test" items="${listTest}" varStatus="status">
-                    <tr>
+                        <tr>
                             <td>
                                 <strong>${status.index + 1}</strong>
                             </td>
@@ -215,9 +214,6 @@
                                 <c:if test="${not empty test.module && not empty test.module.course}">
                                     ${test.module.course.courseName}
                                 </c:if>
-                            </td>
-                            <td>
-                                <span class="badge badge-info">${test.testOrder}</span>
                             </td>
                             <td>
                                 <span class="badge bg-secondary">${test.questionCount} questions</span>
