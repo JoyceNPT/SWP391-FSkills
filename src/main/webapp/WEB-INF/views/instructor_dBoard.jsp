@@ -117,9 +117,6 @@
                             <div class="p-6">
                                 <div class="flex justify-between items-start mb-2">
                                     <h3 class="text-xl font-bold text-gray-800 leading-tight">${course.courseName}</h3>
-                                    <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                                        Approved
-                                    </span>
                                 </div>
 
                                 <div class="flex items-center text-sm text-gray-500 space-x-4 mb-4">
@@ -134,14 +131,6 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </span>
-                                </div>
-
-                                <div class="flex space-x-3">
-                                    <a href="courseDetail?id=${course.courseID}"
-                                       class="flex-1 text-center bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Manage</a>
-                                    <a href="courseStats?id=${course.courseID}"
-                                       class="flex-1 text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors">View
-                                        Stats</a>
                                 </div>
                             </div>
                         </div>

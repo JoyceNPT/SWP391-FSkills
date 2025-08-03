@@ -86,8 +86,8 @@
             </c:if>
 
             <c:if test="${empty sessionScope.user.role}">
-                <a href="${pageContext.request.contextPath}/homePage_Guest.jsp"><i class="bi bi-house-door"></i> <span>Home</span></a>
-                <a href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a>
+                <a href="${pageContext.request.contextPath}/homePage"><i class="bi bi-house-door"></i> <span>Home</span></a>
+                <a href="${pageContext.request.contextPath}/AllCourses"><i class="bi bi-book"></i> <span>All Courses</span></a>
 
                 <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
 
