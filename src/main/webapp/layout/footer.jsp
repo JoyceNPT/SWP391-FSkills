@@ -63,10 +63,9 @@
                 <!-- About F-Skill -->
                 <!-- Adjusted classes to center the content horizontally -->
                 <div class="lg:col-span-1 flex flex-col items-center text-center">
-                    <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="flex items-center space-x-2">
+                    <a href="${pageContext.request.contextPath}/homePage" class="flex items-center space-x-2">
                         <!-- Placeholder image in case the logo path is not found -->
                         <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-Skill Logo" class="w-auto h-12"
-                             onerror="this.onerror=null; this.src='https://placehold.co/100x48/CCCCCC/333333?text=F-Skill';" />
                         <span class="text-lg font-bold text-gray-900"></span>
                     </a>
                     <!-- Adjusted text size for description -->

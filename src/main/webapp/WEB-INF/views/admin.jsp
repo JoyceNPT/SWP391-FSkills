@@ -16,133 +16,156 @@
     }
 %>
 <html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Trang Quản Trị F-SKILL</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <!-- Bootstrap Icons -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="css/style.css"/>
-        <style>
-            body {
-                font-family: 'Inter', sans-serif;
-                background-color: #f0f2f5; /* Màu nền tổng thể */
-            }
-            /* Hiệu ứng hover cho các mục menu */
-            .nav-item:hover .nav-icon,
-            .nav-item:hover .nav-text {
-                color: white; /* Đảo ngược màu chữ và icon thành trắng khi hover */
-            }
-            .nav-item:hover {
-                background-color: #000; /* Đổi màu nền thành đen khi hover */
-            }
-            /* Style cho thanh cuộn */
-            ::-webkit-scrollbar {
-                width: 8px;
-            }
-            ::-webkit-scrollbar-track {
-                background: #f1f1f1;
-                border-radius: 10px;
-            }
-            ::-webkit-scrollbar-thumb {
-                background: #888;
-                border-radius: 10px;
-            }
-            ::-webkit-scrollbar-thumb:hover {
-                background: #555;
-                border-radius: 10px;
-            }
-        </style>
-    </head>
-    <body class="flex flex-col h-screen">
-        <jsp:include page="/layout/header.jsp" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị F-SKILL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css"/>
+    <style>
+        /* CSS for the entire page, only applied to the welcome card for a consistent look */
+        .welcome-card-wrapper {
+            flex: 1; /* Allows this wrapper to take up the remaining space */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem; /* Add some padding for spacing */
+        }
 
-        <div class="flex flex-grow">
-            <jsp:include page="/layout/sidebar_admin.jsp" />
+        /* Card containing the content */
+        .container {
+            background-color: #e8f4ff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 90%;
+            width: 600px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.5s ease-in-out;
+            cursor: pointer;
+        }
 
-            <main class="flex-grow p-6 bg-white rounded-tl-lg overflow-y-auto">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Tạo Thông Báo Công Khai</h2>
-                    <div class="flex items-center space-x-4 mb-4">
-                        <input type="text" placeholder="Viết một thông báo công khai..." class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200">
-                            Tạo
-                        </button>
-                        <button id="upload-file-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <input type="file" id="file-input" class="hidden">
-                        <button id="upload-image-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-image"></i>
-                        </button>
-                        <input type="file" id="image-input" accept="image/*" class="hidden">
-                    </div>
-                    <div class="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
-                        <p>Chào mừng bạn đến với bảng điều khiển quản trị! Tại đây bạn có thể quản lý các hóa đơn, thông báo, tài khoản người dùng và xem báo cáo.</p>
-                    </div>
-                </div>
-            </main>
+        .container:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Container for the image */
+        .image-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .image-container:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 5px solid #4a90e2;
+        }
+
+        /* Main title */
+        .welcome-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #4a90e2;
+            margin: 0;
+            background: linear-gradient(90deg, #4a90e2 0%, #7b4397 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: letter-spacing 0.3s ease-in-out;
+        }
+
+        .welcome-text:hover {
+            letter-spacing: 2px;
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* Call-to-action button */
+        .cta-button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .cta-button:hover {
+            background: #7b4397;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(123, 67, 151, 0.5);
+        }
+
+        /* Responsive Design for smaller screens */
+        @media (max-width: 600px) {
+            .welcome-text {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 30px;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+<jsp:include page="/layout/header.jsp" />
+
+<div class="flex flex-grow">
+    <jsp:include page="/layout/sidebar_admin.jsp" />
+
+    <!-- Main content area -->
+    <main class="welcome-card-wrapper">
+        <div class="container">
+            <div class="image-container">
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user.avatar}">
+                        <img src="${sessionScope.user.imageDataURI}" alt="Admin Avatar" class="profile-pic">
+                    </c:when>
+                    <c:otherwise>
+                        <img src="https://placehold.co/150x150/cccccc/333333?text=Admin" alt="Default Admin Avatar" class="profile-pic">
+                    </c:otherwise>
+                </c:choose>
+            </div>
+            <h1 class="welcome-text">Welcome Back, Admin!</h1>
+            <p class="subtitle">We're glad to see you again. Let's get to work!</p>
+
         </div>
+    </main>
+</div>
 
-        <script>
-            const uploadFileBtn = document.getElementById('upload-file-btn');
-            const fileInput = document.getElementById('file-input');
-            const uploadImageBtn = document.getElementById('upload-image-btn');
-            const imageInput = document.getElementById('image-input');
-
-            
-          
-
-            // Xử lý sự kiện click cho nút upload file (+)
-            uploadFileBtn.addEventListener('click', () => {
-                fileInput.click(); // Kích hoạt input file ẩn
-            });
-
-            // Xử lý sự kiện khi file được chọn
-            fileInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    // Ở đây bạn có thể thêm logic để tải file lên server
-                    console.log('Tệp đã chọn:', file.name);
-                    // Hiển thị thông báo hoặc xử lý file
-                    showMessage(`Đã chọn tệp: ${file.name}`);
-                }
-            });
-
-            // Xử lý sự kiện click cho nút upload ảnh (biểu tượng ảnh)
-            uploadImageBtn.addEventListener('click', () => {
-                imageInput.click(); // Kích hoạt input ảnh ẩn
-            });
-
-            // Xử lý sự kiện khi ảnh được chọn
-            imageInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    // Ở đây bạn có thể thêm logic để tải ảnh lên server
-                    console.log('Ảnh đã chọn:', file.name);
-                    // Hiển thị thông báo hoặc xử lý ảnh
-                    showMessage(`Đã chọn ảnh: ${file.name}`);
-                }
-            });
-
-            // Hàm hiển thị thông báo tùy chỉnh (thay thế alert)
-            function showMessage(message) {
-                const messageBox = document.createElement('div');
-                messageBox.className = 'fixed bottom-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300 ease-out';
-                messageBox.textContent = message;
-                document.body.appendChild(messageBox);
-
-                setTimeout(() => {
-                    messageBox.classList.add('opacity-0');
-                    messageBox.addEventListener('transitionend', () => messageBox.remove());
-                }, 3000); // Ẩn sau 3 giây
-            }
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
 </html>
