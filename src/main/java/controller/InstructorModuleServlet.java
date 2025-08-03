@@ -206,6 +206,16 @@ public class InstructorModuleServlet extends HttpServlet {
                     moduleName = "";
                 }
                 moduleName = moduleName.trim();
+                
+                Module moduleExist = mDao.getModuleByModuleName(moduleName);
+                if (moduleExist != null) {
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.setAttribute("err", "Create failed: Module already exists!");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    return;
+                }
 
                 if (moduleName.isEmpty()) {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
