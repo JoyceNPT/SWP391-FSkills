@@ -847,19 +847,19 @@ public class CourseDAO extends DBContext {
         }
         return null;
     }
-    public boolean updateStatusAndPublicDate(int courseID, int status, Timestamp publicDate) {
-        String sql = "UPDATE Course SET approveStatus = ?, publicDate = ? WHERE courseID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, status);
-            ps.setTimestamp(2, publicDate);
-            ps.setInt(3, courseID);
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    public boolean updateStatusAndPublicDate(int courseID, int status, Timestamp publicDate) {
+//        String sql = "UPDATE Course SET approveStatus = ?, publicDate = ? WHERE courseID = ?";
+//        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+//            ps.setInt(1, status);
+//            ps.setTimestamp(2, publicDate);
+//            ps.setInt(3, courseID);
+//            int rowsAffected = ps.executeUpdate();
+//            return rowsAffected > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
     public int deleteCourseAdmin(int courseID) {
         String checkEnrollmentSql = "SELECT COUNT(*) AS enrolledCount FROM Enroll WHERE CourseID = ?";
         String deleteCourseSql = "DELETE FROM Courses WHERE CourseID = ?";
@@ -926,61 +926,71 @@ public class CourseDAO extends DBContext {
 
     public boolean updateCourseStatus(int courseID, int status) {
         boolean isApprove = (status == 1); // 1 = approved
-
         String courseSql = isApprove
                 ? "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE(), PublicDate = ? WHERE CourseID = ?"
                 : "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE() WHERE CourseID = ?";
 
+        PreparedStatement psCourse = null;
+        PreparedStatement psModule = null;
+
         try {
-            conn.setAutoCommit(false); // Bắt đầu transaction
-
-            // 1. Cập nhật trạng thái course
-            try (PreparedStatement psCourse = conn.prepareStatement(courseSql)) {
-                psCourse.setInt(1, status);
-
-                if (isApprove) {
-                    // Lấy thời gian hiện tại UTC+7 cho PublicDate
-                    ZonedDateTime nowInUtcPlus7 = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
-                    Timestamp publicDateTs = Timestamp.from(nowInUtcPlus7.toInstant());
-                    psCourse.setTimestamp(2, publicDateTs);
-                    psCourse.setInt(3, courseID);
-                } else {
-                    psCourse.setInt(2, courseID);
-                }
-
-                int courseUpdated = psCourse.executeUpdate();
-                if (courseUpdated <= 0) {
-                    conn.rollback();
-                    return false;
-                }
+            // Ensure connection is valid and not closed
+            if (conn == null || conn.isClosed()) {
+                throw new SQLException("Database connection is not initialized or closed.");
             }
 
-            // 2. Nếu là approve, đồng thời approve tất cả module của course
+            conn.setAutoCommit(false); // Begin transaction
+
+            // 1. Update course status
+            psCourse = conn.prepareStatement(courseSql);
+            psCourse.setInt(1, status);
             if (isApprove) {
-                String approveModulesSql =
-                        "UPDATE Modules SET ApproveStatus = 1, ModuleLastUpdate = GETDATE() WHERE CourseID = ?";
-                try (PreparedStatement psModule = conn.prepareStatement(approveModulesSql)) {
-                    psModule.setInt(1, courseID);
-                    psModule.executeUpdate();
-                }
+                // Set PublicDate to current time in UTC+7 for approval
+                ZonedDateTime nowInUtcPlus7 = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+                Timestamp publicDateTs = Timestamp.from(nowInUtcPlus7.toInstant());
+                psCourse.setTimestamp(2, publicDateTs);
+                psCourse.setInt(3, courseID);
+            } else {
+                psCourse.setInt(2, courseID);
+            }
+
+            int courseUpdated = psCourse.executeUpdate();
+            if (courseUpdated <= 0) {
+                System.err.println("No rows updated for courseID: " + courseID);
+                conn.rollback();
+                return false;
+            }
+
+            // 2. If approving, update all modules' status to approved
+            if (isApprove) {
+                String approveModulesSql = "UPDATE Modules SET ApproveStatus = 1, ModuleLastUpdate = GETDATE() WHERE CourseID = ?";
+                psModule = conn.prepareStatement(approveModulesSql);
+                psModule.setInt(1, courseID);
+                int modulesUpdated = psModule.executeUpdate();
+                System.out.println("Modules updated for courseID " + courseID + ": " + modulesUpdated);
             }
 
             conn.commit();
+            System.out.println("Course status updated successfully for courseID: " + courseID + ", status: " + status);
             return true;
 
         } catch (SQLException e) {
-            System.out.println("Error updating course status: " + e.getMessage());
+            System.err.println("Error updating course status for courseID " + courseID + ": " + e.getMessage());
+            e.printStackTrace();
             try {
                 conn.rollback();
             } catch (SQLException ex) {
-                System.out.println("Rollback failed: " + ex.getMessage());
+                System.err.println("Rollback failed for courseID " + courseID + ": " + ex.getMessage());
             }
             return false;
         } finally {
+            // Clean up resources
             try {
+                if (psCourse != null) psCourse.close();
+                if (psModule != null) psModule.close();
                 conn.setAutoCommit(true);
             } catch (SQLException e) {
-                System.out.println("Failed to reset autocommit: " + e.getMessage());
+                System.err.println("Failed to clean up resources: " + e.getMessage());
             }
         }
     }

@@ -1,16 +1,12 @@
 package controller;
 
 import java.io.IOException;
-
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
-
-
+import java.util.List;
 
 import dao.CourseDAO;
 import dao.ModuleDAO;
-
 import dao.MaterialDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,19 +14,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import model.Course;
 import model.Role;
 import model.User;
 import model.Module;
 import model.Material;
 
-/**
- * Servlet to handle course details and administrative actions for an admin.
- * URL pattern: /admin/CourseDetailAdmin
- *
- * @author NguyenThanhHuy - CE182349 - SE1815
- */
 @WebServlet(name = "CourseDetailAdminServlet", urlPatterns = {"/admin/CourseDetailAdmin"})
 public class CourseDetailAdminServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -147,6 +136,18 @@ public class CourseDetailAdminServlet extends HttpServlet {
                         break;
                     }
                     int status = Integer.parseInt(statusParam);
+
+                    // Check current course status to prevent redundant updates
+                    Course course = courseDAO.getCourseByCourseID(courseID);
+                    if (course == null) {
+                        error = "Course does not exist.";
+                        break;
+                    }
+                    if (course.getApproveStatus() == status) {
+                        message = "Course is already in the requested status.";
+                        break;
+                    }
+
                     if (courseDAO.updateCourseStatus(courseID, status)) {
                         message = "Course status updated successfully!";
                     } else {
@@ -191,15 +192,14 @@ public class CourseDetailAdminServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        // Redirect lại trang detail để load dữ liệu mới từ DB
+        // Construct redirect URL with encoded message or error
         String redirectURL = contextPath + "/admin/CourseDetailAdmin?courseID=" + courseID;
         if (message != null) {
-            response.sendRedirect(redirectURL + "&message=" + java.net.URLEncoder.encode(message, "UTF-8"));
+            redirectURL += "&message=" + java.net.URLEncoder.encode(message, "UTF-8");
         } else if (error != null) {
-            response.sendRedirect(redirectURL + "&error=" + java.net.URLEncoder.encode(error, "UTF-8"));
-        } else {
-            response.sendRedirect(redirectURL);
+            redirectURL += "&error=" + java.net.URLEncoder.encode(error, "UTF-8");
         }
+        response.sendRedirect(redirectURL);
     }
 
     @Override
