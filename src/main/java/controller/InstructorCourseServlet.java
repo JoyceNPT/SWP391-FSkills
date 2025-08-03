@@ -268,6 +268,17 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
+                
+                Course courseExist = cDao.getCourseByCourseName(courseName);
+                
+                if (courseExist != null) {
+                    List<Course> list = cDao.getCourseByUserID(userID);
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course already exists!");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
 
                 int insert = cDao.insertCourse(courseName, categoryId, userID, originalPrice, imageInputStream, courseSummary, courseHighlight);
 
@@ -280,6 +291,9 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 } else {
+                    List<Course> list = cDao.getCourseByUserID(userID);
+
+                    request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Unknown error!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
@@ -388,6 +402,9 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 } else {
+                    List<Course> list = cDao.getCourseByUserID(userID);
+
+                    request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Update failed: Unknown error!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;

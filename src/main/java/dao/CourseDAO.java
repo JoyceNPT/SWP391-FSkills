@@ -89,6 +89,71 @@ public class CourseDAO extends DBContext {
         }
         return list;
     }
+    
+    public Course getCourseByCourseName(String courseName) {
+        String sql = "SELECT\n"
+                + "u.UserName, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
+                + "c.*,\n"
+                + "cat.category_id, cat.category_name\n"
+                + "FROM Courses c\n"
+                + "JOIN Users u ON c.UserID = u.UserID\n"
+                + "JOIN Category cat ON c.category_id = cat.category_id\n"
+                + "WHERE c.CourseName = ? AND c.ApproveStatus <> 4";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setNString(1, courseName);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setUserName(rs.getString("UserName"));
+                user.setDisplayName(rs.getString("DisplayName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("PhoneNumber"));
+                int roleInt = rs.getInt("Role");
+                switch (roleInt) {
+                    case 0:
+                        user.setRole(Role.LEARNER);
+                        break;
+                    case 1:
+                        user.setRole(Role.INSTRUCTOR);
+                        break;
+                    case 2:
+                        user.setRole(Role.ADMIN);
+                        break;
+                }
+                user.setGender(rs.getInt("Gender"));
+                user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+                user.setAvatar(rs.getBytes("Avatar"));
+                user.setInfo(rs.getNString("Info"));
+
+                Category category = new Category();
+                category.setId(rs.getInt("category_id"));
+                category.setName(rs.getNString("category_name"));
+
+                Course course = new Course();
+                course.setCourseID(rs.getInt("CourseID"));
+                course.setCourseName(rs.getNString("CourseName"));
+                course.setUser(user);
+                course.setCategory(category);
+                course.setApproveStatus(rs.getInt("ApproveStatus"));
+                course.setPublicDate(rs.getTimestamp("PublicDate"));
+                course.setCourseLastUpdate(rs.getTimestamp("CourseLastUpdate"));
+                course.setSalePrice(rs.getInt("SalePrice"));
+                course.setOriginalPrice(rs.getInt("OriginalPrice"));
+                course.setIsSale(rs.getInt("IsSale"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
+                course.setCourseSummary(rs.getNString("CourseSummary"));
+                course.setCourseHighlight(rs.getNString("CourseHighlight"));
+
+                return course;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
