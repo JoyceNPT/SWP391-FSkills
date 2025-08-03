@@ -110,18 +110,51 @@ public class InstructorCourseServlet extends HttpServlet {
                 case "update":
                     String courseIdUpdate = request.getParameter("courseID");
                     if (courseIdUpdate == null || courseIdUpdate.isEmpty()) {
-                        response.sendRedirect(contextPath + "/instructor/courses?action=list");
+                        List<Course> listCourse = cDao.getCourseByUserID(acc.getUserId());
+                        
+                        request.setAttribute("listCourse", listCourse);
+                        request.setAttribute("err", "Update failed: You do not have access to this course!");
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                         return;
                     }
 
-                    int courseId = Integer.parseInt(courseIdUpdate);
-                    List<Category> listCatUpdate = catDao.getAllCategory();
-                    Course listCourseUpdate = cDao.getCourseByCourseID(courseId);
-
-                    request.setAttribute("listCategory", listCatUpdate);
-                    request.setAttribute("listCourse", listCourseUpdate);
-                    request.getRequestDispatcher("/WEB-INF/views/updateCourse.jsp").forward(request, response);
-                    break;
+                    try {
+                        int courseId = Integer.parseInt(courseIdUpdate);
+                        List<Category> listCatUpdate = catDao.getAllCategory();
+                        Course listCourseUpdate = cDao.getCourseByCourseID(courseId);
+                        
+                        if (listCourseUpdate == null) {
+                            List<Course> listCourse = cDao.getCourseByUserID(acc.getUserId());
+                            
+                            request.setAttribute("listCourse", listCourse);
+                            request.setAttribute("err", "Update failed: Course does not exist!");
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        }
+                        
+                        if (acc.getUserId() != listCourseUpdate.getUser().getUserId()) {
+                            List<Course> listCourse = cDao.getCourseByUserID(acc.getUserId());
+                            
+                            request.setAttribute("listCourse", listCourse);
+                            request.setAttribute("err", "Update failed: You do not have access to this course!");
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        }
+                        
+                        request.setAttribute("listCategory", listCatUpdate);
+                        request.setAttribute("listCourse", listCourseUpdate);
+                        request.getRequestDispatcher("/WEB-INF/views/updateCourse.jsp").forward(request, response);
+                        break;
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        
+                        List<Course> listCourse = cDao.getCourseByUserID(acc.getUserId());
+                        request.setAttribute("listCourse", listCourse);
+                        request.setAttribute("err", "Update failed: Unknown error");
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
+                    }
+                    
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -509,7 +542,7 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 List<Course> listCourse;
 
-                if(inputSearch != null && !inputSearch.trim().isEmpty()) {
+                if (inputSearch != null && !inputSearch.trim().isEmpty()) {
                     listCourse = cDao.searchCourseByName(inputSearch.trim(), userId);
                 } else {
                     listCourse = cDao.getCourseByUserID(userId);
