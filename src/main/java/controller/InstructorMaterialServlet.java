@@ -335,6 +335,15 @@ public class InstructorMaterialServlet extends HttpServlet {
                         request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
                         return;
                     }
+                    boolean r = dao.checkMaterialNameExists(materialName, moduleId, courseId);
+                    if(r){
+                        moduleId = Integer.parseInt(module);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Material name already exists. Please choose a different name.");
+                        request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                        return;
+                    }
                     int res = dao.insertMaterial(moduleId, materialName, type, materialOrder,
                             materialUrl, materialFile, fileName, videoTimeStr, materialDescription);
 
@@ -596,6 +605,18 @@ public class InstructorMaterialServlet extends HttpServlet {
                     MaterialDAO dao = new MaterialDAO();
                     ModuleDAO moddao = new ModuleDAO();
                     CourseDAO coudao = new CourseDAO();
+                    boolean ro = dao.checkMaterialNameExistsForUpdate(materialName, moduleId, courseId, materialId);
+                    if(ro){
+                        moduleId = Integer.parseInt(module);
+                        materialId = Integer.parseInt(material);
+                        Material ma = madao.getMaterialById(materialId);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("material", ma);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Material name already exists. Please choose a different name.");
+                        request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                        return;
+                    }
                     boolean res = dao.update(materialName, type, materialOrder, materialUrl,
                             materialFile, fileName,
                             videoTime, materialDescription, materialId, moduleId, courseId, updateNew);
