@@ -1,5 +1,6 @@
 package dao;
 
+import java.sql.Timestamp;
 import java.io.InputStream;
 import java.sql.*;
 import java.time.Instant;
@@ -904,9 +905,8 @@ public class CourseDAO extends DBContext {
                 + "JOIN Users u ON c.UserID = u.UserID "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
                 + "LEFT JOIN (SELECT CourseID, COUNT(*) AS TotalEnrolled FROM Enroll GROUP BY CourseID) e ON c.CourseID = e.CourseID "
-                + "ORDER BY c.PublicDate DESC "
+                + "ORDER BY c.CourseID DESC "
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, offset);
@@ -925,19 +925,66 @@ public class CourseDAO extends DBContext {
     }
 
     public boolean updateCourseStatus(int courseID, int status) {
-        String sql = "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE() WHERE CourseID = ?";
+        boolean isApprove = (status == 1); // 1 = approved
 
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, status);
-            ps.setInt(2, courseID);
+        String courseSql = isApprove
+                ? "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE(), PublicDate = ? WHERE CourseID = ?"
+                : "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE() WHERE CourseID = ?";
 
-            int rowsAffected = ps.executeUpdate();
-            return rowsAffected > 0;
+        try {
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            // 1. Cập nhật trạng thái course
+            try (PreparedStatement psCourse = conn.prepareStatement(courseSql)) {
+                psCourse.setInt(1, status);
+
+                if (isApprove) {
+                    // Lấy thời gian hiện tại UTC+7 cho PublicDate
+                    ZonedDateTime nowInUtcPlus7 = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+                    Timestamp publicDateTs = Timestamp.from(nowInUtcPlus7.toInstant());
+                    psCourse.setTimestamp(2, publicDateTs);
+                    psCourse.setInt(3, courseID);
+                } else {
+                    psCourse.setInt(2, courseID);
+                }
+
+                int courseUpdated = psCourse.executeUpdate();
+                if (courseUpdated <= 0) {
+                    conn.rollback();
+                    return false;
+                }
+            }
+
+            // 2. Nếu là approve, đồng thời approve tất cả module của course
+            if (isApprove) {
+                String approveModulesSql =
+                        "UPDATE Modules SET ApproveStatus = 1, ModuleLastUpdate = GETDATE() WHERE CourseID = ?";
+                try (PreparedStatement psModule = conn.prepareStatement(approveModulesSql)) {
+                    psModule.setInt(1, courseID);
+                    psModule.executeUpdate();
+                }
+            }
+
+            conn.commit();
+            return true;
+
         } catch (SQLException e) {
             System.out.println("Error updating course status: " + e.getMessage());
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                System.out.println("Rollback failed: " + ex.getMessage());
+            }
             return false;
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println("Failed to reset autocommit: " + e.getMessage());
+            }
         }
     }
+
 
     public List<Course> get4CourseApproved() {
         List<Course> list = new ArrayList<>();
