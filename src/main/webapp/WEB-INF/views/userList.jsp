@@ -261,7 +261,7 @@
                     </c:if>
                     <div class="search-form flex items-center gap-3 mb-6">
                         <form action="alluser" method="get" class="flex-grow flex gap-3" id="searchForm">
-                            <input type="text" id="searchName" name="searchName" placeholder="Search by User Name..." value="${param.searchName}"
+                            <input type="text" id="searchName" name="searchName" placeholder="Search by USERNAME" value="${param.searchName}"
                                    class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition duration-200">
                             <button type="submit" class="btn btn-primary bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200">
                                 <i class="fas fa-search mr-2"></i>Search
@@ -513,7 +513,7 @@
 
             currentRoleFilterInput.value = selectedRole;
 
-            //searchNameInput.value = ''; //neu muon xoa khi doi thi uncmt
+            //searchNameInput.value = ''; //neu muon xoa khi doi qua lai giua learner va instructor thi uncmt
 
             searchForm.submit();
         }
