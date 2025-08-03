@@ -227,6 +227,7 @@
                                                     <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
                                                         <input type="hidden" name="action" value="approve">
                                                         <input type="hidden" name="courseID" value="${course.courseID}">
+                                                        <input type="hidden" name="courseName" value="${course.courseName}">
                                                         <input type="hidden" name="userID" value="${course.user.userId}">
                                                         <input type="hidden" name="userName" value="${course.user.userName}">
                                                         <input type="hidden" name="displayName" value="${course.user.displayName}">
@@ -241,6 +242,7 @@
                                                     <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
                                                         <input type="hidden" name="action" value="cancel">
                                                         <input type="hidden" name="courseID" value="${course.courseID}">
+                                                        <input type="hidden" name="courseName" value="${course.courseName}">
                                                         <input type="hidden" name="userID" value="${course.user.userId}">
                                                         <input type="hidden" name="userName" value="${course.user.userName}">
                                                         <input type="hidden" name="displayName" value="${course.user.displayName}">
@@ -358,10 +360,11 @@
                     });
                 });
             </script>
-
+            <jsp:include page="/layout/footer.jsp" />    
             <jsp:include page="/layout/toast.jsp" />
             <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
             <!-- Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         </body>
+        
     </html>

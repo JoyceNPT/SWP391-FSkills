@@ -491,8 +491,9 @@ public class InstructorCourseServlet extends HttpServlet {
 
                     if (submit > 0) {
                         String sender = request.getParameter("userName");
+                        String courseName = request.getParameter("courseName");
                         String displayName = request.getParameter("displayName");
-                        String notiMess = " has created a new course is " + courseID;
+                        String notiMess = " has created a new course is " + courseName;
                         String type = "addCourse";//max10
                         String link = "http://";
                         int idAdmin = 5;
@@ -527,8 +528,9 @@ public class InstructorCourseServlet extends HttpServlet {
 
                     if (cancel > 0) {
                         String sender = request.getParameter("userName");
+                        String courseName = request.getParameter("courseName");
                         String displayName = request.getParameter("displayName");
-                        String notiMess = " has created a new course is " + courseID;
+                        String notiMess = " has created a new course is " + courseName;
                         int deleteId = notiDao.getNotiIdByNotiMess(notiMess);
                         int row = notiDao.delete(deleteId);
                         if (row == 0) {

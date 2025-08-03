@@ -15,7 +15,7 @@
             }
         </style>
     </head>
-    <body class="bg-light">
+    <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
         <jsp:include page="/layout/header.jsp"/>
 
@@ -152,4 +152,5 @@
             });
         </script>
     </body>
+    <jsp:include page="/layout/footer.jsp"/>
 </html>
