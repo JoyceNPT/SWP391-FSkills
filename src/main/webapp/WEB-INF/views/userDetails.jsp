@@ -232,7 +232,7 @@
                 }
             </c:if>
             /* Luôn hiển thị username, user create date, role, reports and ensure they get the box style */
-            #displayUsername, #displayUserCreateDate, #displayReports, #displayRole {
+            #displayUsername, #displayUserCreateDate, #displayReports, #displayRole, #displayEmail {
                 display: block !important; /* Override display: none if editMode is true */
                 background-color: #f8f8f8;
                 border: 1px solid #e0e0e0;
@@ -390,7 +390,7 @@
                                         <div class="detail-item">
                                             <span class="detail-label">Email:<span style="color:red">*</span></span>
                                             <span class="detail-value" id="displayEmail">${user.email}</span>
-                                            <input type="email" id="inputEmail" name="email" class="detail-input" value="${param.email != null ? param.email : user.email}" required>
+                                            <input type="hidden" name="email" value="${user.email}">
                                             <c:if test="${not empty errorMessages['email']}">
                                                 <span class="error-message">${errorMessages['email']}</span>
                                             </c:if>

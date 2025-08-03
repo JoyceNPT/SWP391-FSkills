@@ -107,7 +107,7 @@
                     <p class="text-center">No bills found.</p>
                 </c:when>
                 <c:otherwise>
-                    <c:if test="${isAdmin}">
+                    <c:if test="${showModal}">
                     <div class="summary-btn-container">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#summaryModal">
                             View Total Summary
