@@ -96,9 +96,37 @@ public class InstructorModuleServlet extends HttpServlet {
         String courseIdParam = request.getParameter("courseId");
         int courseId = -1;
 
+        if (courseIdParam == null || courseIdParam.isEmpty()) {
+            List<Course> listCourse = cDao.getCourseByUserID(acc.getUserId());
+            
+            request.setAttribute("listCourse", listCourse);
+            request.setAttribute("err", "Access failed: You do not have access to this course!");
+            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+            return;
+        }
+
         try {
             courseId = Integer.parseInt(courseIdParam);
             course = cDao.getCourseByCourseID(courseId);
+
+            if (course == null) {
+                List<Course> listCourse = cDao.getCourseByUserID(acc.getUserId());
+                
+                request.setAttribute("listCourse", listCourse);
+                request.setAttribute("err", "Access failed: Course does not exist!");
+                request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                return;
+            }
+
+            if (acc.getUserId() != course.getUser().getUserId()) {
+                List<Course> listCourse = cDao.getCourseByUserID(acc.getUserId());
+
+                request.setAttribute("listCourse", listCourse);
+                request.setAttribute("err", "Access failed: You do not have access to this course!");
+                request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                return;
+            }
+
             session.setAttribute("course", course);
 
             if (course == null) {
@@ -115,7 +143,7 @@ public class InstructorModuleServlet extends HttpServlet {
                 case "list":
                     List<Category> listCat = catDao.getAllCategory();
                     List<Module> list = mDao.getAllModuleByCourseID(courseId);
-                    
+
                     List<Enroll> enrollments = enrollDAO.getEnrolledCourseByCourseID(courseId);
                     List<Map<String, Object>> enrolledUsers = new ArrayList<>();
                     int totalStudents = enrollments.size();
@@ -196,7 +224,7 @@ public class InstructorModuleServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                     return;
                 }
-                
+
                 if (moduleName.length() < 10 || moduleName.length() > 30) {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
@@ -246,7 +274,7 @@ public class InstructorModuleServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                     return;
                 }
-                
+
                 if (moduleName.length() < 10 || moduleName.length() > 30) {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
