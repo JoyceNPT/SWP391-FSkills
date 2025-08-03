@@ -360,11 +360,10 @@
                     });
                 });
             </script>
-            <jsp:include page="/layout/footer.jsp" />    
             <jsp:include page="/layout/toast.jsp" />
             <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
             <!-- Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         </body>
-        
+
     </html>
