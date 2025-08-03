@@ -208,8 +208,7 @@
                                 </c:choose>">
                                 <c:choose>
                                     <c:when test="${course.approveStatus == 1}">Approved</c:when>
-                                    <c:when test="${course.approveStatus == 3}">Processing</c:when>
-                                    <c:when test="${course.approveStatus == 0}">Pending</c:when>
+                                    <c:when test="${course.approveStatus == 3}">Pending</c:when>
                                     <c:when test="${course.approveStatus == 2}">Rejected</c:when>
                                     <c:when test="${course.approveStatus == 4}">Hidden</c:when>
                                     <c:otherwise>Unknown</c:otherwise>

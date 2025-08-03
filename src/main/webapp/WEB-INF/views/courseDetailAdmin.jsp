@@ -138,7 +138,6 @@
                                                 course.approveStatus == 3 ? 'Processing' : 'Hidden'}
                     </p>
                 </div>
-
                 <div class="flex flex-wrap gap-4 mt-6 pt-6 border-t border-gray-200">
                     <c:if test="${course.approveStatus != 1}">
                         <form action="CourseDetailAdmin" method="post" class="inline">
@@ -161,7 +160,30 @@
                             </button>
                         </form>
                     </c:if>
+
+                    <c:if test="${course.approveStatus != 3}">
+                        <form action="CourseDetailAdmin" method="post" class="inline">
+                            <input type="hidden" name="action" value="updateStatus">
+                            <input type="hidden" name="courseID" value="${course.courseID}">
+                            <input type="hidden" name="status" value="3">
+                            <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md flex items-center gap-2">
+                                <i class="fas fa-hourglass-half"></i> Pending
+                            </button>
+                        </form>
+                    </c:if>
+
+                    <c:if test="${course.approveStatus != 4}">
+                        <form action="CourseDetailAdmin" method="post" class="inline">
+                            <input type="hidden" name="action" value="updateStatus">
+                            <input type="hidden" name="courseID" value="${course.courseID}">
+                            <input type="hidden" name="status" value="4">
+                            <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md flex items-center gap-2">
+                                <i class="fas fa-eye-slash"></i> Hide
+                            </button>
+                        </form>
+                    </c:if>
                 </div>
+
             </section>
 
             <section class="mb-8">
