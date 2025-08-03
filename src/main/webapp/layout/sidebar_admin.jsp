@@ -7,13 +7,13 @@
 
 <div class="sidebar">
     <div class="sidebar-content">
-        <a href="${pageContext.request.contextPath}/homePage" class="logo-link">
+        <a href="" class="logo-link">
             <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="logo-img">
         </a>
 
         <nav class="sidebar-nav">
             <c:if test="${sessionScope.user.role eq 'ADMIN'}">
-                <a href="${pageContext.request.contextPath}/admin"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+<%--                <a href="${pageContext.request.contextPath}/admin"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>--%>
                 <a href="${pageContext.request.contextPath}/bills"><i class="bi bi-receipt"></i> <span>Bills</span></a>
                 <a href="${pageContext.request.contextPath}/voucherList"><i class="bi bi-ticket-perforated"></i> <span>Voucher</span></a>
                 <a href="${pageContext.request.contextPath}/admin/announcement"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
