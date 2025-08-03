@@ -781,7 +781,19 @@ public class CourseDAO extends DBContext {
         }
         return null;
     }
-
+    public boolean updateStatusAndPublicDate(int courseID, int status, Timestamp publicDate) {
+        String sql = "UPDATE Course SET approveStatus = ?, publicDate = ? WHERE courseID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, status);
+            ps.setTimestamp(2, publicDate);
+            ps.setInt(3, courseID);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public int deleteCourseAdmin(int courseID) {
         String checkEnrollmentSql = "SELECT COUNT(*) AS enrolledCount FROM Enroll WHERE CourseID = ?";
         String deleteCourseSql = "DELETE FROM Courses WHERE CourseID = ?";

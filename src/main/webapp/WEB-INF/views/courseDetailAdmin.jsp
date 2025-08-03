@@ -39,15 +39,11 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
-<!-- Flex container for sidebar and main content -->
 <div class="flex">
-    <!-- Header Section (Sidebar) -->
     <jsp:include page="/layout/sidebar_admin.jsp"/>
 
-    <!-- Main Content Area -->
     <div class="flex-1 p-4 md:p-6 lg:p-8">
         <main class="bg-white rounded-2xl shadow-lg p-6 md:p-8 lg:p-10">
-            <!-- Back Button & Page Title -->
             <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900">Course Details</h1>
                 <a href="<c:url value='/admin/ManageCourse'/>" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-2 text-lg font-medium transition-colors duration-200">
@@ -55,7 +51,6 @@
                 </a>
             </div>
 
-            <!-- Messages -->
             <c:if test="${not empty message}">
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-r-lg shadow-sm" role="alert">
                         ${message}
@@ -67,7 +62,6 @@
                 </div>
             </c:if>
 
-            <!-- Course Header Section -->
             <section class="mb-8 p-6 bg-blue-50 rounded-xl shadow-inner border border-blue-100">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center gap-6">
                     <div class="flex-shrink-0 w-full lg:w-1/3">
@@ -125,7 +119,6 @@
                 </div>
             </section>
 
-            <!-- Detailed Course Information -->
             <section class="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner border border-gray-100">
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Course Overview</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 text-gray-700">
@@ -146,10 +139,9 @@
                     </p>
                 </div>
 
-                <!-- Admin Actions -->
                 <div class="flex flex-wrap gap-4 mt-6 pt-6 border-t border-gray-200">
                     <c:if test="${course.approveStatus != 1}">
-                        <form action="ManageCourse" method="post" class="inline">
+                        <form action="CourseDetailAdmin" method="post" class="inline">
                             <input type="hidden" name="action" value="updateStatus">
                             <input type="hidden" name="courseID" value="${course.courseID}">
                             <input type="hidden" name="status" value="1">
@@ -160,7 +152,7 @@
                     </c:if>
 
                     <c:if test="${course.approveStatus != 2}">
-                        <form action="ManageCourse" method="post" class="inline">
+                        <form action="CourseDetailAdmin" method="post" class="inline">
                             <input type="hidden" name="action" value="updateStatus">
                             <input type="hidden" name="courseID" value="${course.courseID}">
                             <input type="hidden" name="status" value="2">
@@ -169,13 +161,9 @@
                             </button>
                         </form>
                     </c:if>
-
-                    
-                    
                 </div>
             </section>
 
-            <!-- Modules List -->
             <section class="mb-8">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6">Course Content</h3>
                 <div class="space-y-4">
@@ -190,7 +178,7 @@
                                     <span class="text-sm text-gray-600 hidden md:inline">
                                         Last Update: <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     </span>
-                                    <form action="ManageCourse" method="post" class="inline-block"
+                                    <form action="CourseDetailAdmin" method="post" class="inline-block"
                                           onsubmit="return confirm('Are you sure you want to delete this module? This will also delete all its materials.');">
                                         <input type="hidden" name="action" value="deleteModule"/>
                                         <input type="hidden" name="courseID" value="${course.courseID}"/>
@@ -204,7 +192,6 @@
                             <div class="p-5 border-t border-gray-200 bg-white">
                                 <p class="text-sm text-gray-600 mb-4">Module ID: ${module.moduleID}</p>
 
-                                <!-- Materials List -->
                                 <h5 class="text-md font-semibold text-gray-800 mb-3">Materials for this Module</h5>
                                 <div class="table-container">
                                     <table class="min-w-full bg-white rounded-lg shadow-sm border border-gray-200 material-table">
@@ -276,7 +263,7 @@
                                                             <i class="fas fa-eye"></i>
                                                         </button>
                                                     </c:if>
-                                                    <form action="ManageCourse" method="post" class="inline-block"
+                                                    <form action="CourseDetailAdmin" method="post" class="inline-block"
                                                           onsubmit="return confirm('Are you sure you want to delete this material?');">
                                                         <input type="hidden" name="action" value="deleteMaterialAdmin"/>
                                                         <input type="hidden" name="courseID" value="${course.courseID}"/>
@@ -295,9 +282,6 @@
                                                     <div class="flex flex-col items-center justify-center py-4">
                                                         <i class="fas fa-folder-open text-gray-400 text-3xl mb-2"></i>
                                                         <p>No materials found for this module</p>
-                                                        <a href="#" class="text-indigo-600 hover:text-indigo-800 mt-2 text-sm font-medium">
-                                                            <i class="fas fa-plus mr-1"></i> Add Material
-                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -313,9 +297,6 @@
                             <div class="flex flex-col items-center justify-center py-4">
                                 <i class="fas fa-folder-open text-gray-400 text-4xl mb-3"></i>
                                 <p class="text-lg mb-2">No modules found for this course</p>
-                                <a href="#" class="text-indigo-600 hover:text-indigo-800 mt-2 text-sm font-medium">
-                                    <i class="fas fa-plus mr-1"></i> Add Module
-                                </a>
                             </div>
                         </div>
                     </c:if>
