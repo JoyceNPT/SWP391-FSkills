@@ -135,6 +135,10 @@ public class UpdateVoucherServlet extends HttpServlet {
                 if (minPrice < 0) {
                     errorMessages.add("Minimum price must be non-negative.");
                 }
+
+                if (minPrice < 1000) {
+                    errorMessages.add("Minimum Price must be >= 1000.");
+                }
             } catch (NumberFormatException e) {
                 errorMessages.add("Invalid minimum price (must be an integer).");
             }
