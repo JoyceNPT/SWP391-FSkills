@@ -328,16 +328,16 @@
     // Hàm validateReportForm và các logic liên quan đến Modal Report
     function validateReportForm() {
         const selectedInput = document.getElementById("selectedCategoryIdComment");
-        if (!selectedInput || !selectedInput.value) { 
+        if (!selectedInput || !selectedInput.value) {
             console.log("Validation failed: No report reason selected");
             alert("Please select a report reason.");
             return false;
         }
-        const commentIdInput = document.getElementById("reportCommentId"); 
-        const userTargetInput = document.getElementById("reportUserTargetComment"); 
+        const commentIdInput = document.getElementById("reportCommentId");
+        const userTargetInput = document.getElementById("reportUserTargetComment");
 
-        const commentId = commentIdInput ? commentIdInput.value : 'N/A'; 
-        const userTarget = userTargetInput ? userTargetInput.value : 'N/A'; 
+        const commentId = commentIdInput ? commentIdInput.value : 'N/A';
+        const userTarget = userTargetInput ? userTargetInput.value : 'N/A';
 
         console.log("Submitting report - commentId:", commentId, "userTargetComment:", userTarget);
         return true;
@@ -356,57 +356,57 @@
         const step2 = document.getElementById("reportStep2Comment");
         const reportModal = document.getElementById('reportCommentModal');
 
-        // Handle report button click to set commentId and userTargetComment
+        // Handle report button click
         document.querySelectorAll('.report-comment-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const commentId = button.getAttribute('data-comment-id');
                 const userTarget = button.getAttribute('data-user-target');
                 console.log("Report button clicked - commentId:", commentId, "userTarget:", userTarget);
-                if (reportCommentIdInput) reportCommentIdInput.value = commentId; 
+                if (reportCommentIdInput) reportCommentIdInput.value = commentId;
                 if (reportUserTargetInput) reportUserTargetInput.value = userTarget;
                 console.log("Set form inputs - reportCommentId:", reportCommentIdInput ? reportCommentIdInput.value : 'N/A', "reportUserTargetComment:", reportUserTargetInput ? reportUserTargetInput.value : 'N/A');
             });
         });
 
-        // Handle radio button selection for report category
+        // Handle radio button selection
         if (radios.length > 0) {
             radios.forEach(radio => {
                 radio.addEventListener("change", () => {
                     console.log("Radio selected - categoryId:", radio.value);
-                    if (nextBtn) nextBtn.disabled = false; 
-                    if (selectedInput) selectedInput.value = radio.value; 
+                    if (nextBtn) nextBtn.disabled = false;
+                    if (selectedInput) selectedInput.value = radio.value;
                     console.log("Updated selectedCategoryIdComment:", selectedInput ? selectedInput.value : 'N/A');
                 });
             });
         }
 
-        // Handle Next button click
+        // Next button
         if (nextBtn) {
             nextBtn.addEventListener("click", () => {
                 console.log("Next button clicked, switching to step 2");
-                if (step1) step1.style.display = "none"; 
+                if (step1) step1.style.display = "none";
                 if (step2) step2.style.display = "block";
             });
         }
 
-        // Handle Back button click
-        if (backBtn) { // Thêm kiểm tra null
+        // Back button
+        if (backBtn) {
             backBtn.addEventListener("click", () => {
                 console.log("Back button clicked, returning to step 1");
-                if (step2) step2.style.display = "none"; 
+                if (step2) step2.style.display = "none";
                 if (step1) step1.style.display = "block";
             });
         }
 
-        // Reset modal when closed
-        if (reportModal) { 
+        // Reset modal
+        if (reportModal) {
             reportModal.addEventListener('hidden.bs.modal', () => {
                 console.log("Modal closed, resetting form");
                 if (step1) step1.style.display = "block";
-                if (step2) step2.style.display = "none"; 
-                if (nextBtn) nextBtn.disabled = true; 
-                if (selectedInput) selectedInput.value = ""; 
-                if (reportCommentIdInput) reportCommentIdInput.value = ""; 
+                if (step2) step2.style.display = "none";
+                if (nextBtn) nextBtn.disabled = true;
+                if (selectedInput) selectedInput.value = "";
+                if (reportCommentIdInput) reportCommentIdInput.value = "";
                 if (reportUserTargetInput) reportUserTargetInput.value = "";
                 radios.forEach(radio => radio.checked = false);
                 console.log("Form reset - selectedCategoryIdComment:", selectedInput ? selectedInput.value : 'N/A',
@@ -415,20 +415,19 @@
             });
         }
 
-        // Logic for "Read More" button 
+        // "Read More" toggle
         document.querySelectorAll('.read-more-btn').forEach(button => {
-            button.addEventListener('click', function(event) {
+            button.addEventListener('click', function (event) {
                 event.preventDefault();
                 const textWrapper = this.closest('.comment-text-wrapper');
                 if (textWrapper) {
                     const truncatedText = textWrapper.querySelector('.comment-truncated-text');
                     const fullText = textWrapper.querySelector('.comment-full-text');
                     if (truncatedText && fullText) {
-                        // Toggle display
                         if (fullText.style.display === 'none' || fullText.style.display === '') {
                             truncatedText.style.display = 'none';
                             fullText.style.display = 'inline';
-                            this.textContent = 'Compact'; 
+                            this.textContent = 'Compact';
                         } else {
                             truncatedText.style.display = 'inline';
                             fullText.style.display = 'none';
@@ -442,5 +441,17 @@
                 }
             });
         });
+
+        // ✅ Validate add comment form to prevent whitespace-only input
+        const addCommentForm = document.getElementById("addCommentForm");
+        if (addCommentForm) {
+            addCommentForm.addEventListener("submit", function (e) {
+                const commentInput = document.getElementById("addCommentContent");
+                if (commentInput && !commentInput.value.trim()) {
+                    e.preventDefault();
+                    alert("Comment cannot be empty or just spaces.");
+                }
+            });
+        }
     });
 </script>

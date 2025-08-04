@@ -54,7 +54,7 @@
 
                                 <div class="flex-1 text-sm">
                                     <p>
-                                        <span class="font-semibold">${noti.userName.userName}</span>
+                                        <span class="font-semibold">${noti.userName.displayName}</span>
                                         ${noti.notificationMessage}
                                     </p>
                                     <p class="text-xs text-gray-500 mt-1">
