@@ -350,52 +350,6 @@
                             }
                         });
                     }
-
-                    // Validate EDIT Announcement
-                    document.querySelectorAll("form[action*='announcement?action=edit']").forEach(function (form) {
-                        form.addEventListener("submit", function (e) {
-                            const announcementId = form.querySelector("input[name='announcementId']").value;
-                            const titleInput = document.getElementById("announcementTitle");
-                            const contentInput = document.getElementById("announcementText");
-                            const imageInput = document.getElementById("announcementImage" + announcementId);
-                            const keepOldImageInput = document.getElementById("keepOldImage" + announcementId);
-
-                            const title = titleInput.value.trim();
-                            const content = contentInput.value.trim();
-                            const imageFile = imageInput.files[0];
-                            const validImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-
-                            if (!title) {
-                                showJsToast("Title is required.");
-                                titleInput.focus();
-                                e.preventDefault();
-                                return;
-                            }
-
-                            if (!content) {
-                                showJsToast("Content is required.");
-                                contentInput.focus();
-                                e.preventDefault();
-                                return;
-                            }
-
-                            if (imageFile) {
-                                if (!validImageTypes.includes(imageFile.type)) {
-                                    showJsToast("Invalid image format. Allowed: JPG, PNG, GIF, WEBP.");
-                                    imageInput.focus();
-                                    e.preventDefault();
-                                    return;
-                                }
-
-                                if (keepOldImageInput) {
-                                    keepOldImageInput.value = "false";
-                                }
-                            }
-
-                            titleInput.value = title;
-                            contentInput.value = content;
-                        });
-                    });
                 });
 
                 // Optional: Basic toast message (or replace with your toast implementation)
