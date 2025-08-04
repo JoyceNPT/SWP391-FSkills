@@ -239,29 +239,29 @@ public class MaterialDAO extends DBContext {
 
     public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
         List<Material> materials = new ArrayList<>();
-        String query = "SELECT materialId, materialName, moduleID, type, materialLastUpdate, "
-                + "materialOrder, time, materialDescription, materialUrl, materialFile, fileName "
+        String query = "SELECT MaterialID, MaterialName, ModuleID, Type, MaterialLastUpdate, "
+                + "MaterialOrder, VideoTime, MaterialDescription, MaterialUrl, MaterialFile, FileName "
                 + "FROM Materials WHERE moduleID = ?";
         try ( PreparedStatement ps = conn.prepareStatement(query)) {
             ps.setInt(1, moduleID);
             try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Material material = new Material();
-                    material.setMaterialId(rs.getInt("materialId"));
-                    material.setMaterialName(rs.getString("materialName"));
+                    material.setMaterialId(rs.getInt("MaterialID"));
+                    material.setMaterialName(rs.getString("MaterialName"));
 
                     // Create a simple module object with just the ID since module name is not needed here
                     Module module = new Module();
-                    module.setModuleID(rs.getInt("moduleID"));
+                    module.setModuleID(rs.getInt("ModuleID"));
                     material.setModule(module);
-                    material.setType(rs.getString("type"));
-                    material.setMaterialLastUpdate(rs.getTimestamp("materialLastUpdate"));
-                    material.setMaterialOrder(rs.getInt("materialOrder"));
-                    material.setTime(rs.getString("time"));
-                    material.setMaterialDescription(rs.getString("materialDescription"));
-                    material.setMaterialUrl(rs.getString("materialUrl"));
-                    material.setMaterialFile(rs.getBytes("materialFile"));
-                    material.setFileName(rs.getString("fileName"));
+                    material.setType(rs.getString("Type"));
+                    material.setMaterialLastUpdate(rs.getTimestamp("MaterialLastUpdate"));
+                    material.setMaterialOrder(rs.getInt("MaterialOrder"));
+                    material.setTime(rs.getString("VideoTime"));
+                    material.setMaterialDescription(rs.getString("MaterialDescription"));
+                    material.setMaterialUrl(rs.getString("MaterialUrl"));
+                    material.setMaterialFile(rs.getBytes("MaterialFile"));
+                    material.setFileName(rs.getString("FileName"));
                     // Encode PDF file to base64 (nếu cần)
                     if ("pdf".equalsIgnoreCase(material.getType()) && material.getMaterialFile() != null) {
                         String base64 = java.util.Base64.getEncoder().encodeToString(material.getMaterialFile());

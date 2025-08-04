@@ -90,7 +90,7 @@ public class CourseDAO extends DBContext {
         }
         return list;
     }
-    
+
     public Course getCourseByCourseName(String courseName) {
         String sql = "SELECT\n"
                 + "u.UserName, u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
@@ -860,6 +860,7 @@ public class CourseDAO extends DBContext {
 //            return false;
 //        }
 //    }
+
     public int deleteCourseAdmin(int courseID) {
         String checkEnrollmentSql = "SELECT COUNT(*) AS enrolledCount FROM Enroll WHERE CourseID = ?";
         String deleteCourseSql = "DELETE FROM Courses WHERE CourseID = ?";
@@ -924,77 +925,91 @@ public class CourseDAO extends DBContext {
         return list;
     }
 
+//    public boolean updateCourseStatus(int courseID, int status) {
+//        boolean isApprove = (status == 1); // 1 = approved
+//        String courseSql = isApprove
+//                ? "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETUTCDATE(), PublicDate = GETUTCDATE() WHERE CourseID = ?"
+//                : "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETUTCDATE() WHERE CourseID = ?";
+//
+//        PreparedStatement psCourse = null;
+//        PreparedStatement psModule = null;
+//
+//        try {
+//            // Ensure connection is valid and not closed
+//            if (conn == null || conn.isClosed()) {
+//                throw new SQLException("Database connection is not initialized or closed.");
+//            }
+//
+//            conn.setAutoCommit(false); // Begin transaction
+//
+//            // 1. Update course status
+//            psCourse = conn.prepareStatement(courseSql);
+//            psCourse.setInt(1, status);
+//            psCourse.setInt(2, courseID);
+//
+//            int courseUpdated = psCourse.executeUpdate();
+//            System.out.println("Cập Nhật Thành Công" + courseUpdated);
+//            if (courseUpdated <= 0) {
+//                System.err.println("No rows updated for courseID: " + courseID);
+//                conn.rollback();
+//                return false;
+//            }
+//
+//            conn.commit();
+//            System.out.println("Course status updated successfully for courseID: " + courseID + ", status: " + status);
+//            return true;
+//
+//        } catch (SQLException e) {
+//            System.err.println("Error updating course status for courseID " + courseID + ": " + e.getMessage());
+//            e.printStackTrace();
+//            try {
+//                conn.rollback();
+//            } catch (SQLException ex) {
+//                System.err.println("Rollback failed for courseID " + courseID + ": " + ex.getMessage());
+//            }
+//            return false;
+//        } finally {
+//            // Clean up resources
+//            try {
+//                if (psCourse != null) psCourse.close();
+//                if (psModule != null) psModule.close();
+//                conn.setAutoCommit(true);
+//            } catch (SQLException e) {
+//                System.err.println("Failed to clean up resources: " + e.getMessage());
+//            }
+//        }
+//    }
     public boolean updateCourseStatus(int courseID, int status) {
-        boolean isApprove = (status == 1); // 1 = approved
-        String courseSql = isApprove
-                ? "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE(), PublicDate = ? WHERE CourseID = ?"
-                : "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETDATE() WHERE CourseID = ?";
-
-        PreparedStatement psCourse = null;
-        PreparedStatement psModule = null;
+        String sql1 = "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETUTCDATE(), PublicDate = GETUTCDATE() WHERE CourseID = ?";
+        String sql2 = "UPDATE Courses SET ApproveStatus = ?, CourseLastUpdate = GETUTCDATE() WHERE CourseID = ?";
+        int courseUpdated = 0;
 
         try {
-            // Ensure connection is valid and not closed
-            if (conn == null || conn.isClosed()) {
-                throw new SQLException("Database connection is not initialized or closed.");
-            }
-
-            conn.setAutoCommit(false); // Begin transaction
-
-            // 1. Update course status
-            psCourse = conn.prepareStatement(courseSql);
-            psCourse.setInt(1, status);
-            if (isApprove) {
-                // Set PublicDate to current time in UTC+7 for approval
-                ZonedDateTime nowInUtcPlus7 = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
-                Timestamp publicDateTs = Timestamp.from(nowInUtcPlus7.toInstant());
-                psCourse.setTimestamp(2, publicDateTs);
-                psCourse.setInt(3, courseID);
+            PreparedStatement ps;
+            if (status == 1) {
+                ps = conn.prepareStatement(sql1);
             } else {
-                psCourse.setInt(2, courseID);
+                ps = conn.prepareStatement(sql2);
             }
 
-            int courseUpdated = psCourse.executeUpdate();
+            ps.setInt(1, status);
+            ps.setInt(2, courseID);
+
+            courseUpdated = ps.executeUpdate();
+
             if (courseUpdated <= 0) {
                 System.err.println("No rows updated for courseID: " + courseID);
                 conn.rollback();
                 return false;
+            } else {
+                return true;
             }
-
-            // 2. If approving, update all modules' status to approved
-            if (isApprove) {
-                String approveModulesSql = "UPDATE Modules SET ApproveStatus = 1, ModuleLastUpdate = GETDATE() WHERE CourseID = ?";
-                psModule = conn.prepareStatement(approveModulesSql);
-                psModule.setInt(1, courseID);
-                int modulesUpdated = psModule.executeUpdate();
-                System.out.println("Modules updated for courseID " + courseID + ": " + modulesUpdated);
-            }
-
-            conn.commit();
-            System.out.println("Course status updated successfully for courseID: " + courseID + ", status: " + status);
-            return true;
 
         } catch (SQLException e) {
-            System.err.println("Error updating course status for courseID " + courseID + ": " + e.getMessage());
-            e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException ex) {
-                System.err.println("Rollback failed for courseID " + courseID + ": " + ex.getMessage());
-            }
-            return false;
-        } finally {
-            // Clean up resources
-            try {
-                if (psCourse != null) psCourse.close();
-                if (psModule != null) psModule.close();
-                conn.setAutoCommit(true);
-            } catch (SQLException e) {
-                System.err.println("Failed to clean up resources: " + e.getMessage());
-            }
+            System.out.println(e.getMessage());
         }
+        return false;
     }
-
 
     public List<Course> get4CourseApproved() {
         List<Course> list = new ArrayList<>();
@@ -1068,15 +1083,14 @@ public class CourseDAO extends DBContext {
 //        ZonedDateTime vn = ZonedDateTime.now(ZoneId.of("Asia/Saigon"));
 //        System.out.println("VN time: " + vn);
 
-        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
-        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
-        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
-        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
-        System.out.println("Secret Key:" + secretKey);
-        System.out.println("Site Key:" + turnstileSiteKey);
-        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
-        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
-
+//        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
+//        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+//        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
+//        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+//        System.out.println("Secret Key:" + secretKey);
+//        System.out.println("Site Key:" + turnstileSiteKey);
+//        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
+//        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
 //        System.out.println("Local JVM time: " + ZonedDateTime.now());
 //
 //        Instant nowInstant = Instant.now();
@@ -1088,11 +1102,7 @@ public class CourseDAO extends DBContext {
 //        }
 //        String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
 //        System.out.println(YOUTUBE_API_KEY);
-        List<Course> list = new ArrayList<>();
-        list = dao.get4CourseApproved();
-
-        for (Course course : list) {
-            System.out.println(course);
-        }
+        boolean update = dao.updateCourseStatus(1084, 1);
+        System.out.println(update);
     }
 }
