@@ -130,6 +130,9 @@
     <body>
         <div>
             <jsp:include page="/layout/sidebar_user.jsp" />
+
+            <jsp:include page="/layout/header.jsp" />
+
         </div>
 
         <main class="ml-24 p-6">
@@ -245,7 +248,7 @@
                                         </c:when>
                                         <c:when test="${(course.salePrice == 0 && course.isSale == 1) || (course.originalPrice == 0 && course.isSale == 0)}">
                                             <form method="POST" action="<%= request.getContextPath()%>/learner/course">
-                                                <button type="submit" name="AddEnroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                                                <button type="submit" name="Enroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                                                     Enroll Now
                                                 </button>
                                             </form>
