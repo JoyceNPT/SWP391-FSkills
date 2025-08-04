@@ -204,7 +204,7 @@
                                         <c:otherwise>
                                             <span class="text-3xl font-bold text-blue-600">
                                                 <fmt:setLocale value="en_US"/>
-                                                <fmt:formatNumber value="${course.originalPrice}" type="currency" currencySymbol="" groupingUsed="true"/> VND
+                                                <fmt:formatNumber value="${course.originalPrice}" type="number" currencySymbol="" groupingUsed="true"/> VND
                                             </span>
                                         </c:otherwise>
                                     </c:choose>
