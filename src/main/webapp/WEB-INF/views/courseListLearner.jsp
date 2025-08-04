@@ -65,6 +65,7 @@
 
         <header>
             <jsp:include page="/layout/sidebar_user.jsp" />
+            <jsp:include page="/layout/header.jsp" />
         </header>
 
         <main>
