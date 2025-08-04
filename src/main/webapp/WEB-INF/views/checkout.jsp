@@ -166,10 +166,10 @@
             let price = ${totalPrice};
             let content = "${addInfo}";
             document.addEventListener("DOMContentLoaded", () => {
+                window.price = price;
+                window.content = content;
+                window.contentBefore = content;
                 setInterval(() => {
-                    window.price = price;
-                    window.content = content;
-                    window.contentBefore = content;
                     console.log('Initial values:', {price: window.price, content: window.content});
                     checkPaid(window.price, window.content || '');
                 }, 1000);
@@ -279,7 +279,7 @@
                         const submitAction = document.createElement("input");
                         console.log('Comparing values:', {lastPrice, price, lastContent, windowContent: window.content});
 
-                        if (lastPrice >= price && lastContent.includes(window.content)) {
+                        if ((lastPrice >= price && lastContent.includes(window.content)) || price === 0) {
                             isSuccess = true;
                             submitData.type = "hidden";
                             submitData.name = "submitData";
