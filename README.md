@@ -44,10 +44,10 @@ This project provides a foundational platform for online education with the foll
 
 ## 🛠️ Technologies Used
 
-* **Language:** Java (JDK 8)
+* **Language:** Java (JDK 11)
 * **Web Framework:** JSP & Servlets
 * **Build Tool:** Maven
-* **Database:** MySQL
+* **Database:** SQL Server
 * **JSON Processing:** Gson
 * **Authentication:** Google OAuth2
 * **Anti-bot:** Cloudflare Turnstile
@@ -74,15 +74,19 @@ src/
 3. Set environment variables:
 
    * `CLOUDFLARE_SECRET_KEY`
+   * `CLOUDFLARE_SITE_KEY`
    * `GOOGLE_CLIENT_ID`
    * `GOOGLE_CLIENT_SECRET`
+   * `SENDGRID_API_KEY`
+   * `YOUTUBE_API_KEY`
 4. Build the project with:
 
    ```bash
    mvn clean install
    ```
 5. Deploy to Apache Tomcat or another Java EE-compatible servlet container
-
+  - Use JDK 11
+  - Use Tomcat 10
 ---
 
 ## ✅ Future Enhancements
@@ -99,6 +103,7 @@ src/
 
 Developed 1: **Ngo Phuoc Thinh**
 Contact: ThinhNPCE170008@fpt.edu.vn
+Contact: joyce.npt.2k3@gmail.com
 
 Developed 2: **Hong Tuan Nguyen**
 Contact: NguyenHTCE181325@fpt.edu.vn
