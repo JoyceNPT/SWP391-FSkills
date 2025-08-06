@@ -1,4 +1,8 @@
-# 📚 Online Course Platform - FSkills
+# 🌐 Online Course Platform - FSkills Website
+
+🔗 Visit here: [https://www.fskills.website/homePage](https://www.fskills.website/homePage)
+
+---
 
 A modern web-based application that enables users to access and manage online courses. The system allows students to learn and track progress, while instructors can create and deliver course content with ease.
 > **🔔 NOTE:** This is a project I manage the source code for from my GitHub account at school and remoted to my personal admin page.
