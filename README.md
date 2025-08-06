@@ -104,7 +104,7 @@ src/
 
 Developed 1: **Ngo Phuoc Thinh**
 Contact: ThinhNPCE170008@fpt.edu.vn
-Contact: joyce.npt.2k3@gmail.com
+Or joyce.npt.2k3@gmail.com
 
 Developed 2: **Hong Tuan Nguyen**
 Contact: NguyenHTCE181325@fpt.edu.vn
