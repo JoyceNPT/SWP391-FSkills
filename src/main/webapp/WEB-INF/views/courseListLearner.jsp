@@ -69,7 +69,7 @@
         </header>
 
         <main>
-            <section style="margin-top: 8%;" class="hero-gradient-small py-2">
+            <section style="margin-top: 4%;" class="hero-gradient-small py-2">
                 <div class="container mx-auto px-4 text-center">
                     <h1 class="text-4xl lg:text-5xl font-extrabold text-primary-dark">Explore Our Courses</h1>
                     <p class="mt-4 text-lg text-secondary max-w-2xl mx-auto">Find the perfect course to boost your skills and achieve your goals.</p>
